@@ -1,28 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ChefOS Stock</title>
-  <link rel="stylesheet" href="assets/css/styles.css" />
-</head>
-<body>
+const inventoryDiv = document.getElementById("inventory");
 
-<header class="app-header">
-  <h1>ChefOS</h1>
-  <nav>
-    <a href="pos.html">POS</a>
-    <a href="kds.html">ChefOS Line</a>
-    <a href="inventory.html" class="active">ChefOS Stock</a>
-    <a href="reports.html">ChefOS Insights</a>
-  </nav>
-</header>
+let inventory = JSON.parse(localStorage.getItem("chefos_inventory")) || {};
 
-<h2>Inventory Dashboard</h2>
-<div id="inventory"></div>
+/* =========================
+   RENDER INVENTORY
+========================= */
+function renderInventory() {
+  inventoryDiv.innerHTML = "";
 
-<script src="assets/js/menuItems.js"></script>
-<script src="assets/js/inventory.js"></script>
-</body>
-</html>
+  Object.entries(inventory).forEach(([ingredient, qty]) => {
+    const row = document.createElement("div");
+    row.className = "cart-row";
 
+    const isLow = qty <= 3;
+
+    row.innerHTML = `
+      <p>
+        <strong>${formatName(ingredient)}</strong>
+        <span class="${isLow ? "low-stock" : ""}">(${qty})</span>
+      </p>
+      <div class="qty-controls">
+        <button data-item="${ingredient}" class="decrease">-</button>
+        <button data-item="${ingredient}" class="increase">+</button>
+      </div>
+    `;
+
+    inventoryDiv.appendChild(row);
+  });
+}
+
+/* =========================
+   FORMAT LABELS
+========================= */
+function formatName(name) {
+  return name.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+}
+
+/* =========================
+   UPDATE STOCK
+========================= */
+inventoryDiv.addEventListener("click", (e) => {
+  const item = e.target.dataset.item;
+  if (!item) return;
+
+  if (e.target.classList.contains("increase")) {
+    inventory[item] += 1;
+  }
+
+  if (e.target.classList.contains("decrease")) {
+    if (inventory[item] > 0) inventory[item] -= 1;
+  }
+
+  saveInventory();
+});
+
+/* =========================
+   SAVE INVENTORY
+========================= */
+function saveInventory() {
+  localStorage.setItem("chefos_inventory", JSON.stringify(inventory));
+  renderInventory();
+}
+
+/* =========================
+   INIT
+========================= */
+renderInventory();
