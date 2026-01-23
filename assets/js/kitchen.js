@@ -4,14 +4,14 @@ const ordersDiv = document.getElementById("orders");
    LOAD ORDERS
 ========================= */
 function getOrders() {
-  return JSON.parse(localStorage.getItem("chefos_orders")) || [];
+  return JSON.parse(localStorage.getItem("orders")) || [];
 }
 
 /* =========================
    SAVE ORDERS
 ========================= */
 function saveOrders(orders) {
-  localStorage.setItem("chefos_orders", JSON.stringify(orders));
+  localStorage.setItem("orders", JSON.stringify(orders));
 }
 
 /* =========================
