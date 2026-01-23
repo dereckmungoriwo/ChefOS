@@ -1,22 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>KitchenFlow - Inventory</title>
-  <link rel="stylesheet" href="assets/css/styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChefOS Stock</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 <body>
 
-<header>
-  <h1>Inventory Dashboard</h1>
+<header class="app-header">
+  <h1>ChefOS</h1>
   <nav>
-    <a href="index.html">Menu</a>
-    <a href="cart.html">Cart</a>
-    <a href="kitchen.html">Kitchen</a>
+    <a href="pos.html">POS</a>
+    <a href="kds.html">ChefOS Line</a>
+    <a href="inventory.html" class="active">ChefOS Stock</a>
+    <a href="reports.html">ChefOS Insights</a>
   </nav>
 </header>
 
+<h2>Inventory Dashboard</h2>
 <div id="inventory"></div>
 
-<script src="js/inventory-ui.js"></script>
+<script src="assets/js/menuItems.js"></script>
+<script src="assets/js/inventory.js"></script>
 </body>
 </html>
+
