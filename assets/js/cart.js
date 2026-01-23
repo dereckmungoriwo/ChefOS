@@ -2,50 +2,120 @@ const cartDiv = document.getElementById("cart");
 const totalDiv = document.getElementById("total");
 const placeOrderBtn = document.getElementById("placeOrder");
 
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let cart = JSON.parse(localStorage.getItem("chefos_cart")) || [];
+let inventory = JSON.parse(localStorage.getItem("chefos_inventory")) || {};
 let total = 0;
 
-cart.forEach(item => {
-  const p = document.createElement("p");
-  p.textContent = `${item.name} - $${item.price.toFixed(2)}`;
-  cartDiv.appendChild(p);
-  total += item.price;
+/* =========================
+   RENDER CART
+========================= */
+function renderCart() {
+  cartDiv.innerHTML = "";
+  total = 0;
+
+  cart.forEach((item, index) => {
+    const row = document.createElement("div");
+    row.className = "cart-row";
+
+    row.innerHTML = `
+      <p>${item.name} - R${item.price.toFixed(2)}</p>
+      <div class="qty-controls">
+        <button data-index="${index}" class="decrease">-</button>
+        <span>${item.qty}</span>
+        <button data-index="${index}" class="increase">+</button>
+      </div>
+    `;
+
+    cartDiv.appendChild(row);
+    total += item.price * item.qty;
+  });
+
+  totalDiv.textContent = `Total: R${total.toFixed(2)}`;
+}
+
+/* =========================
+   UPDATE QUANTITY
+========================= */
+cartDiv.addEventListener("click", (e) => {
+  const index = e.target.dataset.index;
+  if (index === undefined) return;
+
+  if (e.target.classList.contains("increase")) {
+    cart[index].qty += 1;
+  }
+
+  if (e.target.classList.contains("decrease")) {
+    if (cart[index].qty > 1) {
+      cart[index].qty -= 1;
+    } else {
+      cart.splice(index, 1);
+    }
+  }
+
+  saveCart();
 });
 
-totalDiv.textContent = `Total: $${total.toFixed(2)}`;
+/* =========================
+   SAVE CART
+========================= */
+function saveCart() {
+  localStorage.setItem("chefos_cart", JSON.stringify(cart));
+  renderCart();
+}
 
+/* =========================
+   INVENTORY DEDUCTION
+========================= */
 function deductInventory(orderItems) {
-  let inventory = JSON.parse(localStorage.getItem("inventory"));
+  orderItems.forEach(orderItem => {
+    const menuItem = menuItems.find(m => m.id === orderItem.id);
+    if (!menuItem) return;
 
-  orderItems.forEach(item => {
-    Object.entries(item.ingredients).forEach(([ingredient, qty]) => {
-      inventory[ingredient] -= qty;
+    Object.entries(menuItem.ingredients).forEach(([ingredient, qty]) => {
+      inventory[ingredient] -= qty * orderItem.qty;
     });
   });
 
-  localStorage.setItem("inventory", JSON.stringify(inventory));
+  localStorage.setItem("chefos_inventory", JSON.stringify(inventory));
 }
 
+/* =========================
+   PLACE ORDER
+========================= */
 placeOrderBtn.addEventListener("click", () => {
   if (cart.length === 0) {
-    alert("Your cart is empty");
+    alert("Cart is empty.");
     return;
   }
 
-  let orders = JSON.parse(localStorage.getItem("orders")) || [];
+  let orders = JSON.parse(localStorage.getItem("chefos_orders")) || [];
 
-  orders.push({
-    id: Date.now(),
+  const tableNumber =
+    document.getElementById("tableNumber").value || "Takeaway";
+
+  const order = {
+    id: "T" + Date.now(),          // Ticket ID
     items: cart,
     total: total,
     status: "Pending",
+    table: tableNumber,
     timestamp: new Date().toLocaleTimeString()
-  });
+  };
 
-  localStorage.setItem("orders", JSON.stringify(orders));
+  orders.push(order);
+
+  localStorage.setItem("chefos_orders", JSON.stringify(orders));
+
   deductInventory(cart);
-  localStorage.removeItem("cart");
+
+  localStorage.removeItem("chefos_cart");
+  cart = [];
 
   alert("Order sent to kitchen!");
-  window.location.href = "index.html";
+  window.location.href = "kds.html";
 });
+
+/* =========================
+   INIT
+========================= */
+renderCart();
