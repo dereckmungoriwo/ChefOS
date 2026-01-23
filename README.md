@@ -2,7 +2,7 @@
 A Web-Based Food Ordering, Kitchen Display, and Inventory Management System
 
 ## Project Overview
-KitchenFlow is a web-based food ordering application developed to demonstrate
+ChefOS is a web-based food ordering application developed to demonstrate
 core concepts in culinary technology and restaurant systems. The application
 models the full order lifecycle, from customer menu selection to kitchen
 preparation, while integrating basic ingredient-level inventory management.
