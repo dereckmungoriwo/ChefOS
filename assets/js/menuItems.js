@@ -9,7 +9,7 @@ const menuItems = [
     description: "Fluffy pancakes with maple syrup and butter",
     price: 65,
     category: "Breakfast",
-    image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop",
+    image: "assets/images/pancakes.jpg",
     ingredients: {
       flour: 2,
       eggs: 2,
@@ -23,7 +23,7 @@ const menuItems = [
     description: "Poached eggs, ham, hollandaise on English muffin",
     price: 95,
     category: "Breakfast",
-    image: "https://images.unsplash.com/photo-1608039829572-78524f79cbd2?w=400&h=300&fit=crop",
+    image: "assets/images/eggs-benedict.jpg",
     ingredients: {
       eggs: 2,
       muffin: 1,
@@ -37,7 +37,7 @@ const menuItems = [
     description: "Scrambled eggs, bacon, cheese, salsa in tortilla",
     price: 75,
     category: "Breakfast",
-    image: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400&h=300&fit=crop",
+    image: "assets/images/breakfast-burrito.jpg",
     ingredients: {
       eggs: 2,
       tortilla: 1,
@@ -53,7 +53,7 @@ const menuItems = [
     description: "Grilled beef patty, cheese, lettuce, tomato on bun",
     price: 85,
     category: "Main Course",
-    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop",
+    image: "assets/images/burger.jpg",
     ingredients: {
       beef_patty: 1,
       burger_bun: 1,
@@ -67,7 +67,7 @@ const menuItems = [
     description: "Atlantic salmon with lemon butter and vegetables",
     price: 145,
     category: "Main Course",
-    image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop",
+    image: "assets/images/salmon.jpg",
     ingredients: {
       salmon: 1,
       lemon: 1,
@@ -81,7 +81,7 @@ const menuItems = [
     description: "Creamy alfredo sauce with grilled chicken and fettuccine",
     price: 110,
     category: "Main Course",
-    image: "https://images.unsplash.com/photo-1645112411341-6c4fd023714a?w=400&h=300&fit=crop",
+    image: "assets/images/pasta.jpg",
     ingredients: {
       chicken: 1,
       pasta: 1,
@@ -97,7 +97,7 @@ const menuItems = [
     description: "Warm chocolate cake with molten center and ice cream",
     price: 65,
     category: "Desserts",
-    image: "https://images.unsplash.com/photo-1624353365286-3f8d62daad51?w=400&h=300&fit=crop",
+    image: "assets/images/chocolate-cake.jpg",
     ingredients: {
       chocolate: 2,
       flour: 1,
@@ -111,7 +111,7 @@ const menuItems = [
     description: "Classic creamy cheesecake with berry compote",
     price: 70,
     category: "Desserts",
-    image: "https://images.unsplash.com/photo-1533134486753-c833f0ed4866?w=400&h=300&fit=crop",
+    image: "assets/images/cheesecake.jpg",
     ingredients: {
       cream_cheese: 2,
       graham_cracker: 1,
@@ -125,7 +125,7 @@ const menuItems = [
     description: "Italian coffee-flavored dessert with mascarpone",
     price: 75,
     category: "Desserts",
-    image: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400&h=300&fit=crop",
+    image: "assets/images/tiramisu.jpg",
     ingredients: {
       mascarpone: 1,
       ladyfingers: 2,
