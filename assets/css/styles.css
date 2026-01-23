@@ -1,1 +1,6 @@
-
+body { font-family: Arial, sans-serif; padding: 20px; }
+.menu-item { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+button { padding: 6px 10px; cursor: pointer; }
+.status-pending { background-color: #fff3cd; }
+.status-preparing { background-color: #cce5ff; }
+.status-ready { background-color: #d4edda; }
