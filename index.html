@@ -1,1 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChefOS POS</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
 
+<header class="app-header">
+  <h1>ChefOS POS</h1>
+  <nav>
+    <a href="pos.html" class="active">POS</a>
+    <a href="orders.html">Orders</a>
+    <a href="kds.html">ChefOS Line</a>
+    <a href="inventory.html">ChefOS Stock</a>
+    <a href="reports.html">ChefOS Insights</a>
+    <a href="login.html">Login</a>
+  </nav>
+</header>
+
+<main class="pos-layout">
+  <section class="menu-area">
+    <h2>Menu</h2>
+    <div id="menu"></div>
+  </section>
+
+  <aside class="order-area">
+    <h2>Current Order</h2>
+    <div id="cart"></div>
+    <h3 id="total"></h3>
+
+    <label>Table Number</label>
+    <input id="tableNumber" type="number" min="1" />
+
+    <button id="placeOrder">Send to Kitchen</button>
+  </aside>
+</main>
+
+<script src="assets/js/menuItems.js"></script>
+<script src="assets/js/menu.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/inventory.js"></script>
+<script src="assets/js/kitchen.js"></script>
+</body>
+</html>
