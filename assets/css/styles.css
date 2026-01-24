@@ -1157,6 +1157,106 @@ button:disabled {
   font-size: 50px;
 }
 
+/* ================== CONTAINER BORDERS ================== */
+.menu-area {
+  background: var(--white);
+  padding: 25px;
+  border-radius: 15px;
+  overflow-y: auto;
+  box-shadow: var(--shadow);
+  border: 2px solid var(--primary);
+  border-top: 8px solid var(--primary);
+  position: relative;
+  transition: var(--transition);
+}
+
+.menu-area::before {
+  content: 'MENU';
+  position: absolute;
+  top: -8px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: var(--primary);
+  color: white;
+  font-size: 0;
+  text-indent: -9999px;
+}
+
+.order-area {
+  background: var(--white);
+  padding: 25px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow);
+  border: 2px solid #2c3e50;
+  border-top: 8px solid #2c3e50;
+  position: relative;
+  transition: var(--transition);
+}
+
+.order-area::before {
+  content: 'CURRENT ORDER';
+  position: absolute;
+  top: -8px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: #2c3e50;
+  color: white;
+  font-size: 0;
+  text-indent: -9999px;
+}
+
+/* Container headers with icons */
+.menu-area h2 {
+  color: var(--primary);
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--gray-light);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 24px;
+}
+
+.menu-area h2::before {
+  content: '\f0f5';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 20px;
+}
+
+.order-area h2 {
+  color: #2c3e50;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--gray-light);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 24px;
+}
+
+.order-area h2::before {
+  content: '\f07a';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 20px;
+}
+
+/* Enhanced border effects on hover */
+.menu-area:hover {
+  border-color: var(--primary-dark);
+  box-shadow: 0 8px 25px rgba(30, 111, 92, 0.15);
+}
+
+.order-area:hover {
+  border-color: #1a252f;
+  box-shadow: 0 8px 25px rgba(44, 62, 80, 0.15);
+}
+
 /* ================== ENHANCED CATEGORY TABS ================== */
 .category-tabs {
   display: flex;
