@@ -1336,3 +1336,25 @@ button:disabled {
   background: var(--primary);
   border-radius: 2px;
 }
+
+/* ================== DEBUG STYLES ================== */
+#menu {
+  min-height: 300px;
+  border: 2px dashed #f00 !important; /* Red border to see the area */
+}
+
+.menu-item {
+  min-height: 200px;
+  background: #fff !important;
+  border: 1px solid #ddd !important;
+}
+
+.item-image-placeholder {
+  height: 150px;
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 40px;
+}
