@@ -2,8 +2,11 @@
    CHEFOS POS - MENU & CART MANAGEMENT
 ========================= */
 const menuDiv = document.getElementById("menu");
-let cart = JSON.parse(localStorage.getItem("chefos_cart")) || [];
-let inventory = JSON.parse(localStorage.getItem("chefos_inventory")) || {};
+// REMOVE these duplicate lines:
+// let cart = JSON.parse(localStorage.getItem("chefos_cart")) || [];
+// let inventory = JSON.parse(localStorage.getItem("chefos_inventory")) || {};
+
+// Use the cart and inventory from menuItems.js instead
 let currentCategory = "breakfast"; // Match HTML data-category values
 
 /* =========================
@@ -11,6 +14,12 @@ let currentCategory = "breakfast"; // Match HTML data-category values
 ========================= */
 document.addEventListener('DOMContentLoaded', function() {
   console.log("DOM loaded, initializing ChefOS POS...");
+  
+  // Initialize inventory if not already done
+  if (!localStorage.getItem("chefos_inventory")) {
+    localStorage.setItem("chefos_inventory", JSON.stringify(defaultInventory));
+  }
+  
   initializePage();
   setupEventListeners();
 });
@@ -27,6 +36,20 @@ function initializePage() {
   renderMenu();
   renderCartSummary();
   updateCurrentOrderDisplay();
+}
+
+/* =========================
+   GET CART FUNCTION
+========================= */
+function getCart() {
+  return JSON.parse(localStorage.getItem("chefos_cart")) || [];
+}
+
+/* =========================
+   GET INVENTORY FUNCTION
+========================= */
+function getInventory() {
+  return JSON.parse(localStorage.getItem("chefos_inventory")) || {};
 }
 
 /* =========================
@@ -88,6 +111,7 @@ function setupSidebarCategoryLinks() {
    INVENTORY CHECK
 ========================= */
 function canMakeItem(item) {
+  const inventory = getInventory();
   return Object.entries(item.ingredients).every(
     ([ingredient, qty]) => inventory[ingredient] >= qty
   );
@@ -102,7 +126,9 @@ function addToCart(item) {
     return;
   }
   
+  let cart = getCart();
   const existing = cart.find(c => c.id === item.id);
+  
   if (existing) {
     existing.qty += 1;
   } else {
@@ -163,8 +189,8 @@ function renderMenu() {
     'Breakfast': 'breakfast',
     'Main Course': 'main',
     'Salads': 'salads',
-    'Desserts': 'desserts'
-    // Note: 'Drinks' category not in menuItems.js yet
+    'Desserts': 'desserts',
+    'Drinks': 'drinks'
   };
   
   // Filter items by current category
@@ -238,6 +264,7 @@ function updateCurrentOrderDisplay() {
   const cartContainer = document.getElementById("cart");
   if (!cartContainer) return;
   
+  const cart = getCart();
   cartContainer.innerHTML = "";
   
   if (cart.length === 0) {
@@ -297,6 +324,7 @@ function updateCurrentOrderDisplay() {
    UPDATE ITEM QUANTITY
 ========================= */
 function updateQuantity(index, change) {
+  let cart = getCart();
   if (cart[index]) {
     cart[index].qty += change;
     
@@ -315,6 +343,7 @@ function updateQuantity(index, change) {
    REMOVE ITEM FROM CART
 ========================= */
 function removeItem(index) {
+  let cart = getCart();
   if (cart[index]) {
     cart.splice(index, 1);
     localStorage.setItem("chefos_cart", JSON.stringify(cart));
@@ -327,6 +356,7 @@ function removeItem(index) {
    CART SUMMARY (TOTAL)
 ========================= */
 function renderCartSummary() {
+  const cart = getCart();
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const totalEl = document.getElementById("total");
   if (totalEl) {
@@ -338,6 +368,7 @@ function renderCartSummary() {
    PLACE ORDER
 ========================= */
 function placeOrder() {
+  const cart = getCart();
   if (cart.length === 0) {
     alert("Cart is empty!");
     return;
@@ -368,7 +399,6 @@ function placeOrder() {
   updateInventoryForOrder(order);
   
   // Clear cart
-  cart = [];
   localStorage.removeItem('chefos_cart');
   
   // Reset UI
@@ -385,7 +415,7 @@ function placeOrder() {
    UPDATE INVENTORY AFTER ORDER
 ========================= */
 function updateInventoryForOrder(order) {
-  let inventory = JSON.parse(localStorage.getItem("chefos_inventory"));
+  let inventory = getInventory();
   
   order.items.forEach(item => {
     const menuItem = menuItems.find(m => m.id === item.id);
