@@ -8,7 +8,7 @@ const menuItems = [
     name: "Classic Pancakes",
     description: "Fluffy pancakes with maple syrup",
     price: 65,
-    category: "Breakfast",
+    category: "breakfast",
     image: "assets/images/pancakes.jpg",
     ingredients: { flour: 2, eggs: 2, milk: 1, butter: 1 }
   },
@@ -17,7 +17,7 @@ const menuItems = [
     name: "Eggs Benedict",
     description: "Poached eggs with hollandaise",
     price: 95,
-    category: "Breakfast",
+    category: "breakfast",
     image: "assets/images/eggs-benedict.jpg",
     ingredients: { eggs: 2, muffin: 1, ham: 1, hollandaise: 1 }
   },
@@ -26,7 +26,7 @@ const menuItems = [
     name: "Breakfast Burrito",
     description: "Eggs, bacon, cheese in tortilla",
     price: 75,
-    category: "Breakfast",
+    category: "breakfast",
     image: "assets/images/breakfast-burrito.jpg",
     ingredients: { eggs: 2, tortilla: 1, bacon: 2, cheese: 1 }
   },
@@ -35,7 +35,7 @@ const menuItems = [
     name: "French Toast",
     description: "Golden brioche with berries",
     price: 70,
-    category: "Breakfast",
+    category: "breakfast",
     image: "assets/images/french-toast.jpg",
     ingredients: { bread: 2, eggs: 2, milk: 1, berries: 1 }
   },
@@ -44,7 +44,7 @@ const menuItems = [
     name: "Veggie Omelette",
     description: "Three eggs with vegetables",
     price: 60,
-    category: "Breakfast",
+    category: "breakfast",
     image: "assets/images/omelette.jpg",
     ingredients: { eggs: 3, vegetables: 2, cheese: 1 }
   },
@@ -53,7 +53,7 @@ const menuItems = [
     name: "Avocado Toast",
     description: "Smashed avocado on sourdough",
     price: 55,
-    category: "Breakfast",
+    category: "breakfast",
     image: "assets/images/avocado-toast.jpg",
     ingredients: { bread: 2, avocado: 1, tomato: 1 }
   },
