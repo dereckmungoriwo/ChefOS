@@ -1,16 +1,16 @@
-// In menu.js, change the first lines:
 /* =========================
    CHEFOS POS - MENU & CART MANAGEMENT
 ========================= */
 const menuDiv = document.getElementById("menu");
 let cart = JSON.parse(localStorage.getItem("chefos_cart")) || [];
 let inventory = JSON.parse(localStorage.getItem("chefos_inventory")) || {};
-let currentCategory = "breakfast"; // Changed from "Breakfast" to match HTML data-category values
+let currentCategory = "breakfast"; // Match HTML data-category values
 
 /* =========================
    DOM READY
 ========================= */
 document.addEventListener('DOMContentLoaded', function() {
+  console.log("DOM loaded, initializing ChefOS POS...");
   initializePage();
   setupEventListeners();
 });
@@ -19,30 +19,14 @@ document.addEventListener('DOMContentLoaded', function() {
    INITIALIZE PAGE
 ========================= */
 function initializePage() {
-  console.log("Initializing page..."); // Debug log
+  console.log("Initializing page...");
   
-  // Initialize category tabs from HTML instead of creating them
+  // Setup existing category tabs from HTML
   setupCategoryTabsFromHTML();
   setupSidebarCategoryLinks();
-  renderMenu(); // This should render the menu
+  renderMenu();
   renderCartSummary();
   updateCurrentOrderDisplay();
-}
-
-/* =========================
-   SETUP CATEGORY TABS FROM HTML
-========================= */
-function setupCategoryTabsFromHTML() {
-  const categoryTabs = document.querySelectorAll('.category-tab');
-  console.log(`Found ${categoryTabs.length} category tabs`); // Debug log
-  
-  categoryTabs.forEach(tab => {
-    tab.addEventListener('click', function() {
-      const category = this.getAttribute('data-category');
-      console.log(`Category tab clicked: ${category}`); // Debug log
-      switchCategory(category);
-    });
-  });
 }
 
 /* =========================
@@ -55,7 +39,7 @@ function setupEventListeners() {
     placeOrderBtn.addEventListener('click', placeOrder);
   }
   
-  // Theme toggle (from new HTML)
+  // Theme toggle
   const themeToggle = document.getElementById('themeToggle');
   if (themeToggle) {
     themeToggle.addEventListener('change', function() {
@@ -68,6 +52,36 @@ function setupEventListeners() {
       }
     });
   }
+}
+
+/* =========================
+   SETUP CATEGORY TABS FROM HTML
+========================= */
+function setupCategoryTabsFromHTML() {
+  const categoryTabs = document.querySelectorAll('.category-tab');
+  console.log(`Found ${categoryTabs.length} category tabs`);
+  
+  categoryTabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      const category = this.getAttribute('data-category');
+      console.log(`Category tab clicked: ${category}`);
+      switchCategory(category);
+    });
+  });
+}
+
+/* =========================
+   SETUP SIDEBAR CATEGORY LINKS
+========================= */
+function setupSidebarCategoryLinks() {
+  document.querySelectorAll('.sidebar .category-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const category = this.getAttribute('data-category');
+      console.log(`Sidebar category clicked: ${category}`);
+      switchCategory(category);
+    });
+  });
 }
 
 /* =========================
@@ -106,115 +120,11 @@ function addToCart(item) {
 }
 
 /* =========================
-   CREATE CATEGORY TABS (FOR MAIN MENU AREA)
-========================= */
-function createCategoryTabs() {
-  const menuArea = document.querySelector(".menu-area");
-  if (!menuArea) return;
-  
-  const h2 = menuArea.querySelector("h2");
-  if (!h2) return;
-  
-  // Group items by category and count them
-  const categories = {};
-  menuItems.forEach(item => {
-    if (!categories[item.category]) {
-      categories[item.category] = 0;
-    }
-    categories[item.category]++;
-  });
-
-  // Create tabs container if it doesn't exist
-  let tabsContainer = menuArea.querySelector('.category-tabs');
-  if (!tabsContainer) {
-    tabsContainer = document.createElement("div");
-    tabsContainer.className = "category-tabs";
-    h2.after(tabsContainer);
-  }
-
-  // Clear existing tabs
-  tabsContainer.innerHTML = '';
-
-  // Create tabs for each category
-  Object.keys(categories).forEach(categoryName => {
-    const tab = document.createElement("button");
-    tab.className = `category-tab ${categoryName === currentCategory ? 'active' : ''}`;
-    tab.setAttribute('data-category', categoryName);
-    tab.textContent = categoryName;
-    tab.addEventListener("click", () => switchCategory(categoryName));
-    tabsContainer.appendChild(tab);
-  });
-}
-
-/* =========================
-   SETUP SIDEBAR CATEGORY LINKS
-========================= */
-function setupSidebarCategoryLinks() {
-  document.querySelectorAll('.sidebar .nav-links a[href^="#"]').forEach(link => {
-    link.addEventListener('click', function(e) {
-      e.preventDefault();
-      const category = this.getAttribute('href').replace('#', '');
-      switchCategory(category);
-    });
-  });
-}
-
-/* =========================
-   INITIALIZE SIDEBAR CATEGORIES
-========================= */
-function initSidebarCategories() {
-  const sidebarNav = document.querySelector('.sidebar-nav .nav-links');
-  if (!sidebarNav) return;
-  
-  // Get unique categories from menu items
-  const categories = [...new Set(menuItems.map(item => item.category))];
-  
-  // Check if category links already exist
-  const existingCategoryLinks = sidebarNav.querySelectorAll('a[href^="#"]');
-  if (existingCategoryLinks.length > 0) return; // Already initialized
-  
-  // Create category section if it doesn't exist
-  let categorySection = document.querySelector('.nav-section:nth-child(3)');
-  if (!categorySection) {
-    categorySection = document.createElement('div');
-    categorySection.className = 'nav-section';
-    categorySection.innerHTML = '<h3>Categories</h3><ul class="nav-links"></ul>';
-    document.querySelector('.sidebar-nav').appendChild(categorySection);
-  }
-  
-  const categoryList = categorySection.querySelector('.nav-links');
-  
-  // Add category links
-  categories.forEach(category => {
-    const li = document.createElement('li');
-    const link = document.createElement('a');
-    link.href = `#${category}`;
-    
-    // Set icon based on category
-    let icon = 'fa-utensils';
-    if (category === 'Breakfast') icon = 'fa-sun';
-    if (category === 'Main Course') icon = 'fa-hamburger';
-    if (category === 'Salads') icon = 'fa-leaf';
-    if (category === 'Desserts') icon = 'fa-ice-cream';
-    
-    link.innerHTML = `<i class="fas ${icon}"></i> ${category}`;
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      switchCategory(category);
-    });
-    
-    li.appendChild(link);
-    categoryList.appendChild(li);
-  });
-}
-
-/* =========================
    SWITCH CATEGORY
 ========================= */
 function switchCategory(categoryName) {
   currentCategory = categoryName;
-  
-  console.log(`Switching to category: ${categoryName}`); // Debug log
+  console.log(`Switching to category: ${categoryName}`);
   
   // Update active tab in main menu area
   document.querySelectorAll('.category-tab').forEach(tab => {
@@ -227,8 +137,9 @@ function switchCategory(categoryName) {
   // Update active link in sidebar
   document.querySelectorAll('.nav-links a').forEach(link => {
     link.classList.remove('active');
-    if (link.getAttribute('href') === `#${categoryName}` || 
-        link.getAttribute('data-category') === categoryName) {
+    const linkCategory = link.getAttribute('data-category') || 
+                         link.getAttribute('href')?.replace('#', '');
+    if (linkCategory === categoryName) {
       link.classList.add('active');
     }
   });
@@ -245,40 +156,55 @@ function renderMenu() {
     return;
   }
   
-  console.log(`Rendering category: ${currentCategory}`); // Debug log
+  console.log(`Rendering category: ${currentCategory}`);
   
-  // Filter items by current category - fix case sensitivity
-  const categoryItems = menuItems.filter(item => 
-    item.category.toLowerCase() === currentCategory.toLowerCase()
-  );
+  // Map menu item categories to match HTML data-category values
+  const categoryMap = {
+    'Breakfast': 'breakfast',
+    'Main Course': 'main',
+    'Salads': 'salads',
+    'Desserts': 'desserts'
+    // Note: 'Drinks' category not in menuItems.js yet
+  };
+  
+  // Filter items by current category
+  const categoryItems = menuItems.filter(item => {
+    const itemCategory = categoryMap[item.category] || item.category.toLowerCase();
+    return itemCategory === currentCategory;
+  });
 
-  console.log(`Found ${categoryItems.length} items for category ${currentCategory}`); // Debug log
+  console.log(`Found ${categoryItems.length} items for category ${currentCategory}`);
   
   // Clear menu
   menuDiv.innerHTML = "";
 
   if (categoryItems.length === 0) {
-    menuDiv.innerHTML = `<p style="text-align: center; color: var(--gray); padding: 40px;">
-      No items found for ${currentCategory} category
-    </p>`;
+    menuDiv.innerHTML = `<div class="no-items-message">
+      <i class="fas fa-utensils" style="font-size: 48px; margin-bottom: 15px; color: var(--gray);"></i>
+      <p>No items found for ${currentCategory} category</p>
+    </div>`;
     return;
   }
 
-  // Render all items for the category (not limited to 6)
+  // Render all items for the category
   categoryItems.forEach(item => {
     const available = canMakeItem(item);
     const itemDiv = document.createElement("div");
     itemDiv.className = "menu-item";
     
-    // Use Font Awesome icon if image doesn't exist
-    let imageHTML = `<div class="item-image-placeholder"><i class="fas fa-utensils"></i></div>`;
-    
-    // Try to use image if available
-    if (item.image && item.image.startsWith('assets/images/')) {
+    // Use image if available, otherwise placeholder
+    let imageHTML = '';
+    if (item.image) {
       imageHTML = `
         <div class="menu-item-image">
           <img src="${item.image}" alt="${item.name}" 
                onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\"item-image-placeholder\"><i class=\"fas fa-utensils\"></i></div>';">
+        </div>
+      `;
+    } else {
+      imageHTML = `
+        <div class="item-image-placeholder">
+          <i class="fas fa-utensils"></i>
         </div>
       `;
     }
@@ -290,7 +216,7 @@ function renderMenu() {
         <p>${item.description}</p>
         <div class="price">R${item.price.toFixed(2)}</div>
         <button ${available ? "" : "disabled"}>
-          ${available ? "ADD TO ORDER" : "OUT OF STOCK"}
+          <i class="fas fa-plus"></i> ${available ? "ADD TO ORDER" : "OUT OF STOCK"}
         </button>
       </div>
     `;
@@ -315,7 +241,13 @@ function updateCurrentOrderDisplay() {
   cartContainer.innerHTML = "";
   
   if (cart.length === 0) {
-    cartContainer.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 20px;">No items added yet</p>';
+    cartContainer.innerHTML = `
+      <div class="empty-cart-message">
+        <i class="fas fa-shopping-cart" style="font-size: 48px; margin-bottom: 15px; color: var(--gray);"></i>
+        <p>No items added yet</p>
+        <small>Click on menu items to add them to your order</small>
+      </div>
+    `;
     return;
   }
   
@@ -331,7 +263,7 @@ function updateCurrentOrderDisplay() {
         <button class="qty-decrease" data-index="${index}">-</button>
         <span class="qty">${item.qty}</span>
         <button class="qty-increase" data-index="${index}">+</button>
-        <button class="qty-remove" data-index="${index}" style="background: #e74c3c; margin-left: 10px;">×</button>
+        <button class="qty-remove" data-index="${index}" title="Remove item">×</button>
       </div>
     `;
     
@@ -466,129 +398,3 @@ function updateInventoryForOrder(order) {
   
   localStorage.setItem("chefos_inventory", JSON.stringify(inventory));
 }
-
-/* =========================
-   EXPORT FUNCTIONS (FOR OTHER FILES)
-========================= */
-// These functions can be called from other JS files if needed
-window.ChefOS = window.ChefOS || {};
-window.ChefOS.Menu = {
-  getCart: () => cart,
-  getInventory: () => inventory,
-  refreshMenu: () => renderMenu(),
-  refreshCart: () => {
-    renderCartSummary();
-    updateCurrentOrderDisplay();
-  }
-};
-
-/* =========================
-   RENDER MENU BY CATEGORY WITH CATEGORY ICONS
-========================= */
-function renderMenu() {
-  if (!menuDiv) return;
-  
-  // Filter items by current category
-  const categoryItems = menuItems.filter(item => item.category === currentCategory);
-
-  // Clear menu
-  menuDiv.innerHTML = "";
-
-  // Get category icon mapping
-  const categoryIcons = {
-    'Breakfast': 'fa-sun',
-    'Main Course': 'fa-utensils',
-    'Salads': 'fa-leaf',
-    'Desserts': 'fa-ice-cream',
-    'Drinks': 'fa-glass-whiskey'
-  };
-
-  // Get category colors for badges
-  const categoryColors = {
-    'Breakfast': '#e67e22',
-    'Main Course': '#e74c3c',
-    'Salads': '#27ae60',
-    'Desserts': '#9b59b6',
-    'Drinks': '#3498db'
-  };
-
-  // Render items in 2 rows × 3 columns grid (6 items max)
-  categoryItems.slice(0, 6).forEach(item => {
-    const available = canMakeItem(item);
-    const itemDiv = document.createElement("div");
-    itemDiv.className = `menu-item category-${item.category.toLowerCase().replace(' ', '-')}`;
-    
-    // Get icon for this category
-    const categoryIcon = categoryIcons[item.category] || 'fa-utensils';
-    const categoryColor = categoryColors[item.category] || var(--primary);
-    
-    // Use real image if available, otherwise placeholder with category icon
-    let imageHTML = '';
-    if (item.image && item.image !== 'assets/images/placeholder.jpg') {
-      imageHTML = `
-        <div class="menu-item-image">
-          <img src="${item.image}" alt="${item.name}" onerror="this.onerror=null; this.parentElement.className='menu-item-image placeholder'; this.parentElement.innerHTML='<i class=\"fas ${categoryIcon}\"></i>';" />
-          <div class="category-badge">
-            <i class="fas ${categoryIcon}"></i>
-          </div>
-        </div>
-      `;
-    } else {
-      imageHTML = `
-        <div class="menu-item-image placeholder" style="background: linear-gradient(135deg, ${categoryColor}, ${categoryColor}99);">
-          <i class="fas ${categoryIcon}"></i>
-          <div class="category-badge">
-            <i class="fas ${categoryIcon}"></i>
-          </div>
-        </div>
-      `;
-    }
-    
-    itemDiv.innerHTML = `
-      ${imageHTML}
-      <div class="menu-item-content">
-        <h4>${item.name}</h4>
-        <p>${item.description}</p>
-        <div class="price">R${item.price.toFixed(2)}</div>
-        <button ${available ? "" : "disabled"}>
-          <i class="fas fa-plus"></i> ${available ? "ADD TO ORDER" : "OUT OF STOCK"}
-        </button>
-      </div>
-    `;
-    
-    // Add event listener for Add button
-    const addButton = itemDiv.querySelector("button");
-    if (available) {
-      addButton.addEventListener("click", () => addToCart(item));
-    }
-    
-    menuDiv.appendChild(itemDiv);
-  });
-}
-
-// Handle sidebar category clicks
-document.querySelectorAll('.category-link').forEach(link => {
-  link.addEventListener('click', function(e) {
-    e.preventDefault();
-    const category = this.getAttribute('data-category');
-    
-    // Switch to that category
-    if (window.switchCategory) {
-      window.switchCategory(category);
-    }
-    
-    // Update active states
-    document.querySelectorAll('.category-link').forEach(l => {
-      l.classList.remove('active');
-    });
-    this.classList.add('active');
-    
-    // Also update the category tabs
-    document.querySelectorAll('.category-tab').forEach(tab => {
-      tab.classList.remove('active');
-      if (tab.getAttribute('data-category') === category) {
-        tab.classList.add('active');
-      }
-    });
-  });
-});
