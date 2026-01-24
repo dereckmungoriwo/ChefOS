@@ -1,7 +1,55 @@
+/* =========================
+   CHEFOS POS - MENU & CART MANAGEMENT
+========================= */
 const menuDiv = document.getElementById("menu");
 let cart = JSON.parse(localStorage.getItem("chefos_cart")) || [];
 let inventory = JSON.parse(localStorage.getItem("chefos_inventory")) || {};
 let currentCategory = "Breakfast"; // Default category
+
+/* =========================
+   DOM READY
+========================= */
+document.addEventListener('DOMContentLoaded', function() {
+  initializePage();
+  setupEventListeners();
+});
+
+/* =========================
+   INITIALIZE PAGE
+========================= */
+function initializePage() {
+  createCategoryTabs();
+  setupSidebarCategoryLinks();
+  initSidebarCategories();
+  renderMenu();
+  renderCartSummary();
+  updateCurrentOrderDisplay();
+}
+
+/* =========================
+   SETUP EVENT LISTENERS
+========================= */
+function setupEventListeners() {
+  // Place Order button
+  const placeOrderBtn = document.getElementById('placeOrder');
+  if (placeOrderBtn) {
+    placeOrderBtn.addEventListener('click', placeOrder);
+  }
+  
+  // Theme toggle (from new HTML)
+  const themeToggle = document.getElementById('themeToggle');
+  if (themeToggle) {
+    themeToggle.addEventListener('change', function() {
+      if (this.checked) {
+        document.body.classList.add('dark-theme');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.body.classList.remove('dark-theme');
+        localStorage.setItem('theme', 'light');
+      }
+    });
+  }
+}
 
 /* =========================
    INVENTORY CHECK
@@ -20,6 +68,7 @@ function addToCart(item) {
     alert("Insufficient ingredients.");
     return;
   }
+  
   const existing = cart.find(c => c.id === item.id);
   if (existing) {
     existing.qty += 1;
@@ -31,16 +80,21 @@ function addToCart(item) {
       qty: 1
     });
   }
+  
   localStorage.setItem("chefos_cart", JSON.stringify(cart));
   renderCartSummary();
+  updateCurrentOrderDisplay();
 }
 
 /* =========================
-   CREATE CATEGORY TABS
+   CREATE CATEGORY TABS (FOR MAIN MENU AREA)
 ========================= */
 function createCategoryTabs() {
   const menuArea = document.querySelector(".menu-area");
+  if (!menuArea) return;
+  
   const h2 = menuArea.querySelector("h2");
+  if (!h2) return;
   
   // Group items by category and count them
   const categories = {};
@@ -51,26 +105,88 @@ function createCategoryTabs() {
     categories[item.category]++;
   });
 
-  // Define category order
-  const categoryOrder = ["Breakfast", "Main Course", "Salads", "Desserts"];
+  // Create tabs container if it doesn't exist
+  let tabsContainer = menuArea.querySelector('.category-tabs');
+  if (!tabsContainer) {
+    tabsContainer = document.createElement("div");
+    tabsContainer.className = "category-tabs";
+    h2.after(tabsContainer);
+  }
 
-  // Create tabs container
-  const tabsContainer = document.createElement("div");
-  tabsContainer.className = "category-tabs";
+  // Clear existing tabs
+  tabsContainer.innerHTML = '';
 
-  // Create tabs
-  categoryOrder.forEach(categoryName => {
-    if (categories[categoryName]) {
-      const tab = document.createElement("button");
-      tab.className = `category-tab ${categoryName === currentCategory ? 'active' : ''}`;
-      tab.innerHTML = `${categoryName} <span class="item-count">(${categories[categoryName]})</span>`;
-      tab.addEventListener("click", () => switchCategory(categoryName));
-      tabsContainer.appendChild(tab);
-    }
+  // Create tabs for each category
+  Object.keys(categories).forEach(categoryName => {
+    const tab = document.createElement("button");
+    tab.className = `category-tab ${categoryName === currentCategory ? 'active' : ''}`;
+    tab.setAttribute('data-category', categoryName);
+    tab.textContent = categoryName;
+    tab.addEventListener("click", () => switchCategory(categoryName));
+    tabsContainer.appendChild(tab);
   });
+}
 
-  // Insert tabs after h2
-  h2.after(tabsContainer);
+/* =========================
+   SETUP SIDEBAR CATEGORY LINKS
+========================= */
+function setupSidebarCategoryLinks() {
+  document.querySelectorAll('.sidebar .nav-links a[href^="#"]').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const category = this.getAttribute('href').replace('#', '');
+      switchCategory(category);
+    });
+  });
+}
+
+/* =========================
+   INITIALIZE SIDEBAR CATEGORIES
+========================= */
+function initSidebarCategories() {
+  const sidebarNav = document.querySelector('.sidebar-nav .nav-links');
+  if (!sidebarNav) return;
+  
+  // Get unique categories from menu items
+  const categories = [...new Set(menuItems.map(item => item.category))];
+  
+  // Check if category links already exist
+  const existingCategoryLinks = sidebarNav.querySelectorAll('a[href^="#"]');
+  if (existingCategoryLinks.length > 0) return; // Already initialized
+  
+  // Create category section if it doesn't exist
+  let categorySection = document.querySelector('.nav-section:nth-child(3)');
+  if (!categorySection) {
+    categorySection = document.createElement('div');
+    categorySection.className = 'nav-section';
+    categorySection.innerHTML = '<h3>Categories</h3><ul class="nav-links"></ul>';
+    document.querySelector('.sidebar-nav').appendChild(categorySection);
+  }
+  
+  const categoryList = categorySection.querySelector('.nav-links');
+  
+  // Add category links
+  categories.forEach(category => {
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${category}`;
+    
+    // Set icon based on category
+    let icon = 'fa-utensils';
+    if (category === 'Breakfast') icon = 'fa-sun';
+    if (category === 'Main Course') icon = 'fa-hamburger';
+    if (category === 'Salads') icon = 'fa-leaf';
+    if (category === 'Desserts') icon = 'fa-ice-cream';
+    
+    link.innerHTML = `<i class="fas ${icon}"></i> ${category}`;
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchCategory(category);
+    });
+    
+    li.appendChild(link);
+    categoryList.appendChild(li);
+  });
 }
 
 /* =========================
@@ -79,15 +195,22 @@ function createCategoryTabs() {
 function switchCategory(categoryName) {
   currentCategory = categoryName;
   
-  // Update active tab
-  document.querySelectorAll(".category-tab").forEach(tab => {
-    tab.classList.remove("active");
-    if (tab.textContent.includes(categoryName)) {
-      tab.classList.add("active");
+  // Update active tab in main menu area
+  document.querySelectorAll('.category-tab').forEach(tab => {
+    tab.classList.remove('active');
+    if (tab.getAttribute('data-category') === categoryName) {
+      tab.classList.add('active');
     }
   });
-
-  // Render menu for selected category
+  
+  // Update active link in sidebar
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === `#${categoryName}`) {
+      link.classList.add('active');
+    }
+  });
+  
   renderMenu();
 }
 
@@ -95,6 +218,8 @@ function switchCategory(categoryName) {
    RENDER MENU BY CATEGORY
 ========================= */
 function renderMenu() {
+  if (!menuDiv) return;
+  
   // Filter items by current category
   const categoryItems = menuItems.filter(item => item.category === currentCategory);
 
@@ -107,8 +232,11 @@ function renderMenu() {
     const itemDiv = document.createElement("div");
     itemDiv.className = "menu-item";
     
+    // Use Font Awesome icon if image doesn't exist
+    let imageHTML = `<div class="item-image-placeholder"><i class="fas fa-utensils"></i></div>`;
+    
     itemDiv.innerHTML = `
-      <img src="${item.image}" alt="${item.name}" />
+      ${imageHTML}
       <div class="menu-item-content">
         <h4>${item.name}</h4>
         <p>${item.description}</p>
@@ -119,9 +247,10 @@ function renderMenu() {
       </div>
     `;
     
+    // Add event listener for Add button
+    const addButton = itemDiv.querySelector("button");
     if (available) {
-      itemDiv.querySelector("button")
-        .addEventListener("click", () => addToCart(item));
+      addButton.addEventListener("click", () => addToCart(item));
     }
     
     menuDiv.appendChild(itemDiv);
@@ -129,7 +258,93 @@ function renderMenu() {
 }
 
 /* =========================
-   CART SUMMARY (POS PANEL)
+   UPDATE CURRENT ORDER DISPLAY
+========================= */
+function updateCurrentOrderDisplay() {
+  const cartContainer = document.getElementById("cart");
+  if (!cartContainer) return;
+  
+  cartContainer.innerHTML = "";
+  
+  if (cart.length === 0) {
+    cartContainer.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 20px;">No items added yet</p>';
+    return;
+  }
+  
+  cart.forEach((item, index) => {
+    const cartRow = document.createElement("div");
+    cartRow.className = "cart-row";
+    cartRow.innerHTML = `
+      <div class="item-info">
+        <div class="item-name">${item.name}</div>
+        <div class="item-price">R${item.price.toFixed(2)} each</div>
+      </div>
+      <div class="qty-controls">
+        <button class="qty-decrease" data-index="${index}">-</button>
+        <span class="qty">${item.qty}</span>
+        <button class="qty-increase" data-index="${index}">+</button>
+        <button class="qty-remove" data-index="${index}" style="background: #e74c3c; margin-left: 10px;">×</button>
+      </div>
+    `;
+    
+    cartContainer.appendChild(cartRow);
+  });
+  
+  // Add event listeners for quantity controls
+  cartContainer.querySelectorAll('.qty-decrease').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const index = parseInt(e.target.getAttribute('data-index'));
+      updateQuantity(index, -1);
+    });
+  });
+  
+  cartContainer.querySelectorAll('.qty-increase').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const index = parseInt(e.target.getAttribute('data-index'));
+      updateQuantity(index, 1);
+    });
+  });
+  
+  cartContainer.querySelectorAll('.qty-remove').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const index = parseInt(e.target.getAttribute('data-index'));
+      removeItem(index);
+    });
+  });
+}
+
+/* =========================
+   UPDATE ITEM QUANTITY
+========================= */
+function updateQuantity(index, change) {
+  if (cart[index]) {
+    cart[index].qty += change;
+    
+    // Remove item if quantity reaches 0
+    if (cart[index].qty <= 0) {
+      cart.splice(index, 1);
+    }
+    
+    localStorage.setItem("chefos_cart", JSON.stringify(cart));
+    renderCartSummary();
+    updateCurrentOrderDisplay();
+  }
+}
+
+/* =========================
+   REMOVE ITEM FROM CART
+========================= */
+function removeItem(index) {
+  if (cart[index]) {
+    cart.splice(index, 1);
+    localStorage.setItem("chefos_cart", JSON.stringify(cart));
+    renderCartSummary();
+    updateCurrentOrderDisplay();
+  }
+}
+
+/* =========================
+   CART SUMMARY (TOTAL)
 ========================= */
 function renderCartSummary() {
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
@@ -140,8 +355,81 @@ function renderCartSummary() {
 }
 
 /* =========================
-   INITIALIZE PAGE
+   PLACE ORDER
 ========================= */
-createCategoryTabs();
-renderMenu();
-renderCartSummary();
+function placeOrder() {
+  if (cart.length === 0) {
+    alert("Cart is empty!");
+    return;
+  }
+  
+  const tableNumber = document.getElementById('tableNumber').value;
+  if (!tableNumber) {
+    alert("Please enter a table number!");
+    return;
+  }
+  
+  // Create order object
+  const order = {
+    id: Date.now(),
+    table: parseInt(tableNumber),
+    items: [...cart],
+    total: cart.reduce((sum, item) => sum + item.price * item.qty, 0),
+    timestamp: new Date().toISOString(),
+    status: 'pending'
+  };
+  
+  // Get existing orders
+  const orders = JSON.parse(localStorage.getItem('chefos_orders')) || [];
+  orders.push(order);
+  localStorage.setItem('chefos_orders', JSON.stringify(orders));
+  
+  // Update inventory
+  updateInventoryForOrder(order);
+  
+  // Clear cart
+  cart = [];
+  localStorage.removeItem('chefos_cart');
+  
+  // Reset UI
+  renderCartSummary();
+  updateCurrentOrderDisplay();
+  renderMenu();
+  document.getElementById('tableNumber').value = '';
+  
+  // Show success message
+  alert(`Order #${order.id} sent to kitchen for Table ${tableNumber}!`);
+}
+
+/* =========================
+   UPDATE INVENTORY AFTER ORDER
+========================= */
+function updateInventoryForOrder(order) {
+  let inventory = JSON.parse(localStorage.getItem("chefos_inventory"));
+  
+  order.items.forEach(item => {
+    const menuItem = menuItems.find(m => m.id === item.id);
+    if (menuItem) {
+      Object.entries(menuItem.ingredients).forEach(([ingredient, qty]) => {
+        inventory[ingredient] -= qty * item.qty;
+      });
+    }
+  });
+  
+  localStorage.setItem("chefos_inventory", JSON.stringify(inventory));
+}
+
+/* =========================
+   EXPORT FUNCTIONS (FOR OTHER FILES)
+========================= */
+// These functions can be called from other JS files if needed
+window.ChefOS = window.ChefOS || {};
+window.ChefOS.Menu = {
+  getCart: () => cart,
+  getInventory: () => inventory,
+  refreshMenu: () => renderMenu(),
+  refreshCart: () => {
+    renderCartSummary();
+    updateCurrentOrderDisplay();
+  }
+};
