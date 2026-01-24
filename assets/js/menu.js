@@ -1,10 +1,11 @@
+// In menu.js, change the first lines:
 /* =========================
    CHEFOS POS - MENU & CART MANAGEMENT
 ========================= */
 const menuDiv = document.getElementById("menu");
 let cart = JSON.parse(localStorage.getItem("chefos_cart")) || [];
 let inventory = JSON.parse(localStorage.getItem("chefos_inventory")) || {};
-let currentCategory = "Breakfast"; // Default category
+let currentCategory = "breakfast"; // Changed from "Breakfast" to match HTML data-category values
 
 /* =========================
    DOM READY
@@ -18,12 +19,30 @@ document.addEventListener('DOMContentLoaded', function() {
    INITIALIZE PAGE
 ========================= */
 function initializePage() {
-  createCategoryTabs();
+  console.log("Initializing page..."); // Debug log
+  
+  // Initialize category tabs from HTML instead of creating them
+  setupCategoryTabsFromHTML();
   setupSidebarCategoryLinks();
-  initSidebarCategories();
-  renderMenu();
+  renderMenu(); // This should render the menu
   renderCartSummary();
   updateCurrentOrderDisplay();
+}
+
+/* =========================
+   SETUP CATEGORY TABS FROM HTML
+========================= */
+function setupCategoryTabsFromHTML() {
+  const categoryTabs = document.querySelectorAll('.category-tab');
+  console.log(`Found ${categoryTabs.length} category tabs`); // Debug log
+  
+  categoryTabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      const category = this.getAttribute('data-category');
+      console.log(`Category tab clicked: ${category}`); // Debug log
+      switchCategory(category);
+    });
+  });
 }
 
 /* =========================
@@ -195,6 +214,8 @@ function initSidebarCategories() {
 function switchCategory(categoryName) {
   currentCategory = categoryName;
   
+  console.log(`Switching to category: ${categoryName}`); // Debug log
+  
   // Update active tab in main menu area
   document.querySelectorAll('.category-tab').forEach(tab => {
     tab.classList.remove('active');
@@ -206,7 +227,8 @@ function switchCategory(categoryName) {
   // Update active link in sidebar
   document.querySelectorAll('.nav-links a').forEach(link => {
     link.classList.remove('active');
-    if (link.getAttribute('href') === `#${categoryName}`) {
+    if (link.getAttribute('href') === `#${categoryName}` || 
+        link.getAttribute('data-category') === categoryName) {
       link.classList.add('active');
     }
   });
@@ -218,22 +240,48 @@ function switchCategory(categoryName) {
    RENDER MENU BY CATEGORY
 ========================= */
 function renderMenu() {
-  if (!menuDiv) return;
+  if (!menuDiv) {
+    console.error("Menu div not found!");
+    return;
+  }
   
-  // Filter items by current category
-  const categoryItems = menuItems.filter(item => item.category === currentCategory);
+  console.log(`Rendering category: ${currentCategory}`); // Debug log
+  
+  // Filter items by current category - fix case sensitivity
+  const categoryItems = menuItems.filter(item => 
+    item.category.toLowerCase() === currentCategory.toLowerCase()
+  );
 
+  console.log(`Found ${categoryItems.length} items for category ${currentCategory}`); // Debug log
+  
   // Clear menu
   menuDiv.innerHTML = "";
 
-  // Render items in 2 rows × 3 columns grid (6 items max)
-  categoryItems.slice(0, 6).forEach(item => {
+  if (categoryItems.length === 0) {
+    menuDiv.innerHTML = `<p style="text-align: center; color: var(--gray); padding: 40px;">
+      No items found for ${currentCategory} category
+    </p>`;
+    return;
+  }
+
+  // Render all items for the category (not limited to 6)
+  categoryItems.forEach(item => {
     const available = canMakeItem(item);
     const itemDiv = document.createElement("div");
     itemDiv.className = "menu-item";
     
     // Use Font Awesome icon if image doesn't exist
     let imageHTML = `<div class="item-image-placeholder"><i class="fas fa-utensils"></i></div>`;
+    
+    // Try to use image if available
+    if (item.image && item.image.startsWith('assets/images/')) {
+      imageHTML = `
+        <div class="menu-item-image">
+          <img src="${item.image}" alt="${item.name}" 
+               onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\"item-image-placeholder\"><i class=\"fas fa-utensils\"></i></div>';">
+        </div>
+      `;
+    }
     
     itemDiv.innerHTML = `
       ${imageHTML}
@@ -242,7 +290,7 @@ function renderMenu() {
         <p>${item.description}</p>
         <div class="price">R${item.price.toFixed(2)}</div>
         <button ${available ? "" : "disabled"}>
-          ${available ? "ADD" : "Out of Stock"}
+          ${available ? "ADD TO ORDER" : "OUT OF STOCK"}
         </button>
       </div>
     `;
