@@ -517,3 +517,30 @@ function renderMenu() {
     menuDiv.appendChild(itemDiv);
   });
 }
+
+// Handle sidebar category clicks
+document.querySelectorAll('.category-link').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    const category = this.getAttribute('data-category');
+    
+    // Switch to that category
+    if (window.switchCategory) {
+      window.switchCategory(category);
+    }
+    
+    // Update active states
+    document.querySelectorAll('.category-link').forEach(l => {
+      l.classList.remove('active');
+    });
+    this.classList.add('active');
+    
+    // Also update the category tabs
+    document.querySelectorAll('.category-tab').forEach(tab => {
+      tab.classList.remove('active');
+      if (tab.getAttribute('data-category') === category) {
+        tab.classList.add('active');
+      }
+    });
+  });
+});
