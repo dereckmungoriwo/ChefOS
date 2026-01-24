@@ -81,7 +81,7 @@
     <!-- TOP BAR -->
     <div class="top-bar">
       <div class="time-display" id="currentTime">
-        Tuesday, July 16 2024 | 2:30 PM
+        Loading time...
       </div>
       <div class="user-info">
         <div class="user-avatar">DM</div>
@@ -95,45 +95,64 @@
     <!-- POS LAYOUT -->
     <main class="pos-layout">
       <section class="menu-area">
-        <h2>Menu</h2>
+        <h2><i class="fas fa-utensils"></i> Menu</h2>
         
         <!-- Category Tabs -->
         <div class="category-tabs">
-          <button class="category-tab active" data-category="breakfast">Breakfast</button>
-          <button class="category-tab" data-category="main">Main Course</button>
-          <button class="category-tab" data-category="salads">Salads</button>
-          <button class="category-tab" data-category="desserts">Desserts</button>
-          <button class="category-tab" data-category="drinks">Drinks</button>
+          <button class="category-tab active" data-category="breakfast">
+            <i class="fas fa-sun"></i> Breakfast
+          </button>
+          <button class="category-tab" data-category="main">
+            <i class="fas fa-utensils"></i> Main Course
+          </button>
+          <button class="category-tab" data-category="salads">
+            <i class="fas fa-leaf"></i> Salads
+          </button>
+          <button class="category-tab" data-category="desserts">
+            <i class="fas fa-ice-cream"></i> Desserts
+          </button>
+          <button class="category-tab" data-category="drinks">
+            <i class="fas fa-glass-whiskey"></i> Drinks
+          </button>
         </div>
         
         <!-- Menu Grid -->
-        <div id="menu"></div>
+        <div id="menu" class="menu-grid">
+          <!-- Menu items will be loaded here by JavaScript -->
+        </div>
       </section>
 
       <aside class="order-area">
-        <h2>Current Order</h2>
-        <div id="cart"></div>
+        <h2><i class="fas fa-shopping-cart"></i> Current Order</h2>
+        <div id="cart" class="cart-items">
+          <!-- Order items will appear here -->
+        </div>
         
         <div class="order-summary">
           <h3 id="total">Total: R0.00</h3>
           
-          <label for="tableNumber">Table Number</label>
+          <label for="tableNumber">
+            <i class="fas fa-chair"></i> Table Number
+          </label>
           <input id="tableNumber" type="number" min="1" placeholder="Enter table number" />
           
-          <button id="placeOrder">Send to Kitchen</button>
+          <button id="placeOrder" class="place-order-btn">
+            <i class="fas fa-paper-plane"></i> Send to Kitchen
+          </button>
         </div>
       </aside>
     </main>
   </div>
 </div>
 
+<!-- JavaScript files in correct order -->
 <script src="assets/js/menuItems.js"></script>
 <script src="assets/js/cart.js"></script>
 <script src="assets/js/inventory.js"></script>
 <script src="assets/js/kitchen.js"></script>
 <script src="assets/js/menu.js"></script>
- 
-<!-- ADD THIS NEW SCRIPT FOR THEME TOGGLE -->
+
+<!-- Theme toggle and time script -->
 <script>
   // Theme Toggle
   const themeToggle = document.getElementById('themeToggle');
@@ -174,37 +193,6 @@
   // Update time immediately and every minute
   updateTime();
   setInterval(updateTime, 60000);
-  
-  // Category tabs functionality
-  document.querySelectorAll('.category-tab').forEach(tab => {
-    tab.addEventListener('click', function() {
-      // Remove active class from all tabs
-      document.querySelectorAll('.category-tab').forEach(t => {
-        t.classList.remove('active');
-      });
-      // Add active class to clicked tab
-      this.classList.add('active');
-      
-      // In a real app, you would filter menu items here
-      // For now, we'll just show an alert
-      const category = this.getAttribute('data-category');
-      console.log(`Switched to ${category} category`);
-    });
-  });
-  
-  // Sidebar navigation active state
-  document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('click', function(e) {
-      if (this.getAttribute('href') === '#') {
-        e.preventDefault();
-      }
-      
-      document.querySelectorAll('.nav-links a').forEach(l => {
-        l.classList.remove('active');
-      });
-      this.classList.add('active');
-    });
-  });
 </script>
 </body>
 </html>
