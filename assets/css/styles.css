@@ -1731,17 +1731,3 @@ button:disabled {
   border-color: var(--primary);
 }
 
-/* ================== REMOVE ALL DEBUG/EMERGENCY STYLES ================== */
-/* Remove these if they exist in your CSS */
-.debug-border,
-[style*="border: 2px solid green"],
-[style*="border: 2px solid blue"],
-[style*="border: 2px solid red"] {
-  border: 1px solid var(--gray-light) !important;
-}
-
-/* Remove emergency background colors */
-[style*="background: linear-gradient(135deg, #e74c3c"],
-[style*="background: linear-gradient(135deg, #3498db"] {
-  background: linear-gradient(135deg, var(--primary-light), var(--primary)) !important;
-}
