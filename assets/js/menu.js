@@ -433,3 +433,87 @@ window.ChefOS.Menu = {
     updateCurrentOrderDisplay();
   }
 };
+
+/* =========================
+   RENDER MENU BY CATEGORY WITH CATEGORY ICONS
+========================= */
+function renderMenu() {
+  if (!menuDiv) return;
+  
+  // Filter items by current category
+  const categoryItems = menuItems.filter(item => item.category === currentCategory);
+
+  // Clear menu
+  menuDiv.innerHTML = "";
+
+  // Get category icon mapping
+  const categoryIcons = {
+    'Breakfast': 'fa-sun',
+    'Main Course': 'fa-utensils',
+    'Salads': 'fa-leaf',
+    'Desserts': 'fa-ice-cream',
+    'Drinks': 'fa-glass-whiskey'
+  };
+
+  // Get category colors for badges
+  const categoryColors = {
+    'Breakfast': '#e67e22',
+    'Main Course': '#e74c3c',
+    'Salads': '#27ae60',
+    'Desserts': '#9b59b6',
+    'Drinks': '#3498db'
+  };
+
+  // Render items in 2 rows × 3 columns grid (6 items max)
+  categoryItems.slice(0, 6).forEach(item => {
+    const available = canMakeItem(item);
+    const itemDiv = document.createElement("div");
+    itemDiv.className = `menu-item category-${item.category.toLowerCase().replace(' ', '-')}`;
+    
+    // Get icon for this category
+    const categoryIcon = categoryIcons[item.category] || 'fa-utensils';
+    const categoryColor = categoryColors[item.category] || var(--primary);
+    
+    // Use real image if available, otherwise placeholder with category icon
+    let imageHTML = '';
+    if (item.image && item.image !== 'assets/images/placeholder.jpg') {
+      imageHTML = `
+        <div class="menu-item-image">
+          <img src="${item.image}" alt="${item.name}" onerror="this.onerror=null; this.parentElement.className='menu-item-image placeholder'; this.parentElement.innerHTML='<i class=\"fas ${categoryIcon}\"></i>';" />
+          <div class="category-badge">
+            <i class="fas ${categoryIcon}"></i>
+          </div>
+        </div>
+      `;
+    } else {
+      imageHTML = `
+        <div class="menu-item-image placeholder" style="background: linear-gradient(135deg, ${categoryColor}, ${categoryColor}99);">
+          <i class="fas ${categoryIcon}"></i>
+          <div class="category-badge">
+            <i class="fas ${categoryIcon}"></i>
+          </div>
+        </div>
+      `;
+    }
+    
+    itemDiv.innerHTML = `
+      ${imageHTML}
+      <div class="menu-item-content">
+        <h4>${item.name}</h4>
+        <p>${item.description}</p>
+        <div class="price">R${item.price.toFixed(2)}</div>
+        <button ${available ? "" : "disabled"}>
+          <i class="fas fa-plus"></i> ${available ? "ADD TO ORDER" : "OUT OF STOCK"}
+        </button>
+      </div>
+    `;
+    
+    // Add event listener for Add button
+    const addButton = itemDiv.querySelector("button");
+    if (available) {
+      addButton.addEventListener("click", () => addToCart(item));
+    }
+    
+    menuDiv.appendChild(itemDiv);
+  });
+}
