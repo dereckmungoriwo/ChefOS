@@ -320,3 +320,26 @@ function initInventory() {
   }
 }
 initInventory();
+
+/* =========================
+   CHEFOS MENU DATA
+========================= */
+const menuItems = [
+  // ... keep all your menu items as they are ...
+];
+
+/* =========================
+   CHEFOS INVENTORY
+========================= */
+const defaultInventory = {
+  // ... keep your inventory data ...
+};
+
+/* =========================
+   INVENTORY INITIALIZATION
+========================= */
+// REMOVE this line: function initInventory() { ... }
+// initInventory(); // REMOVE this call too
+
+// Instead, just export the default inventory
+console.log("Menu items loaded:", menuItems.length);
