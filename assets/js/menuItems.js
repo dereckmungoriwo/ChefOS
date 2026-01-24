@@ -8,7 +8,7 @@ const menuItems = [
     name: "Classic Pancakes",
     description: "Fluffy pancakes with maple syrup",
     price: 65,
-    category: "breakfast",
+    category: "Breakfast",
     image: "assets/images/pancakes.jpg",
     ingredients: { flour: 2, eggs: 2, milk: 1, butter: 1 }
   },
@@ -17,7 +17,7 @@ const menuItems = [
     name: "Eggs Benedict",
     description: "Poached eggs with hollandaise",
     price: 95,
-    category: "breakfast",
+    category: "Breakfast",
     image: "assets/images/eggs-benedict.jpg",
     ingredients: { eggs: 2, muffin: 1, ham: 1, hollandaise: 1 }
   },
@@ -26,7 +26,7 @@ const menuItems = [
     name: "Breakfast Burrito",
     description: "Eggs, bacon, cheese in tortilla",
     price: 75,
-    category: "breakfast",
+    category: "Breakfast",
     image: "assets/images/breakfast-burrito.jpg",
     ingredients: { eggs: 2, tortilla: 1, bacon: 2, cheese: 1 }
   },
@@ -35,7 +35,7 @@ const menuItems = [
     name: "French Toast",
     description: "Golden brioche with berries",
     price: 70,
-    category: "breakfast",
+    category: "Breakfast",
     image: "assets/images/french-toast.jpg",
     ingredients: { bread: 2, eggs: 2, milk: 1, berries: 1 }
   },
@@ -44,7 +44,7 @@ const menuItems = [
     name: "Veggie Omelette",
     description: "Three eggs with vegetables",
     price: 60,
-    category: "breakfast",
+    category: "Breakfast",
     image: "assets/images/omelette.jpg",
     ingredients: { eggs: 3, vegetables: 2, cheese: 1 }
   },
@@ -53,7 +53,7 @@ const menuItems = [
     name: "Avocado Toast",
     description: "Smashed avocado on sourdough",
     price: 55,
-    category: "breakfast",
+    category: "Breakfast",
     image: "assets/images/avocado-toast.jpg",
     ingredients: { bread: 2, avocado: 1, tomato: 1 }
   },
@@ -224,6 +224,62 @@ const menuItems = [
     category: "Desserts",
     image: "assets/images/apple-pie.jpg",
     ingredients: { apples: 3, pastry: 1, ice_cream: 1, cinnamon: 1 }
+  },
+
+  // DRINKS CATEGORY (Added - 6 items)
+  {
+    id: "cappuccino",
+    name: "Cappuccino",
+    description: "Freshly brewed Italian coffee",
+    price: 35,
+    category: "Drinks",
+    image: "assets/images/cappuccino.jpg",
+    ingredients: { coffee: 1, milk: 1, sugar: 1 }
+  },
+  {
+    id: "fresh_juice",
+    name: "Fresh Orange Juice",
+    description: "Freshly squeezed orange juice",
+    price: 25,
+    category: "Drinks",
+    image: "assets/images/orange-juice.jpg",
+    ingredients: { oranges: 3 }
+  },
+  {
+    id: "iced_tea",
+    name: "Iced Tea",
+    description: "Refreshing lemon iced tea",
+    price: 20,
+    category: "Drinks",
+    image: "assets/images/iced-tea.jpg",
+    ingredients: { tea: 1, lemon: 1, sugar: 1, ice: 1 }
+  },
+  {
+    id: "smoothie",
+    name: "Berry Smoothie",
+    description: "Mixed berries with yogurt",
+    price: 40,
+    category: "Drinks",
+    image: "assets/images/smoothie.jpg",
+    ingredients: { berries: 2, yogurt: 1, honey: 1 }
+  },
+  {
+    id: "cola",
+    name: "Coca Cola",
+    description: "Classic cola drink",
+    price: 15,
+    category: "Drinks",
+    image: "assets/images/cola.jpg",
+    ingredients: { cola: 1, ice: 1 }
+  },
+  {
+    id: "mineral_water",
+    name: "Mineral Water",
+    description: "Sparkling mineral water",
+    price: 10,
+    category: "Drinks",
+    image: "assets/images/water.jpg",
+    ingredients: { water: 1 }
   }
 ];
 
@@ -248,7 +304,11 @@ const defaultInventory = {
   // Dessert ingredients
   chocolate: 15, ice_cream: 10, cream_cheese: 8, graham_cracker: 10,
   sugar: 20, mascarpone: 6, ladyfingers: 15, coffee: 10, cocoa: 8,
-  apples: 15, pastry: 10, cinnamon: 8, vanilla: 6
+  apples: 15, pastry: 10, cinnamon: 8, vanilla: 6,
+  
+  // Drink ingredients (added)
+  coffee: 20, milk: 25, oranges: 30, tea: 15, yogurt: 12, 
+  honey: 8, cola: 20, water: 50, ice: 100
 };
 
 /* =========================
