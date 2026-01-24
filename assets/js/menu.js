@@ -1,276 +1,277 @@
 /* =========================
    CHEFOS POS - MENU & CART MANAGEMENT
+   SIMPLE WORKING VERSION
 ========================= */
-const menuDiv = document.getElementById("menu");
-// REMOVE these duplicate lines:
-// let cart = JSON.parse(localStorage.getItem("chefos_cart")) || [];
-// let inventory = JSON.parse(localStorage.getItem("chefos_inventory")) || {};
 
-// Use the cart and inventory from menuItems.js instead
-let currentCategory = "breakfast"; // Match HTML data-category values
+console.log("=== MENU.JS LOADED ===");
 
-/* =========================
-   DOM READY
-========================= */
-document.addEventListener('DOMContentLoaded', function() {
-  console.log("DOM loaded, initializing ChefOS POS...");
+// Wait for everything to load
+window.addEventListener('DOMContentLoaded', function() {
+  console.log("Starting ChefOS POS initialization...");
   
-  // Initialize inventory if not already done
-  if (!localStorage.getItem("chefos_inventory")) {
-    localStorage.setItem("chefos_inventory", JSON.stringify(defaultInventory));
-  }
-  
-  initializePage();
-  setupEventListeners();
+  // Initialize with a slight delay to ensure everything is ready
+  setTimeout(initializeSystem, 100);
 });
 
-/* =========================
-   INITIALIZE PAGE
-========================= */
-function initializePage() {
-  console.log("Initializing page...");
+function initializeSystem() {
+  console.log("Initializing system...");
   
-  // Setup existing category tabs from HTML
-  setupCategoryTabsFromHTML();
-  setupSidebarCategoryLinks();
-  renderMenu();
-  renderCartSummary();
-  updateCurrentOrderDisplay();
-}
-
-/* =========================
-   GET CART FUNCTION
-========================= */
-function getCart() {
-  return JSON.parse(localStorage.getItem("chefos_cart")) || [];
-}
-
-/* =========================
-   GET INVENTORY FUNCTION
-========================= */
-function getInventory() {
-  return JSON.parse(localStorage.getItem("chefos_inventory")) || {};
-}
-
-/* =========================
-   SETUP EVENT LISTENERS
-========================= */
-function setupEventListeners() {
-  // Place Order button
-  const placeOrderBtn = document.getElementById('placeOrder');
-  if (placeOrderBtn) {
-    placeOrderBtn.addEventListener('click', placeOrder);
+  // Get the menu container
+  const menuDiv = document.getElementById('menu');
+  if (!menuDiv) {
+    console.error("ERROR: Cannot find #menu element!");
+    showError("Cannot find menu container. Please check HTML structure.");
+    return;
   }
   
-  // Theme toggle
-  const themeToggle = document.getElementById('themeToggle');
-  if (themeToggle) {
-    themeToggle.addEventListener('change', function() {
-      if (this.checked) {
-        document.body.classList.add('dark-theme');
-        localStorage.setItem('theme', 'dark');
-      } else {
-        document.body.classList.remove('dark-theme');
-        localStorage.setItem('theme', 'light');
-      }
-    });
+  console.log("Found menu container:", menuDiv);
+  
+  // Initialize cart
+  if (!localStorage.getItem("chefos_cart")) {
+    localStorage.setItem("chefos_cart", JSON.stringify([]));
   }
+  
+  // Initialize inventory if needed
+  if (!localStorage.getItem("chefos_inventory")) {
+    localStorage.setItem("chefos_inventory", JSON.stringify({
+      flour: 20, eggs: 30, milk: 15, butter: 10, bread: 20,
+      beef_patty: 10, chicken: 12, lettuce: 20, tomato: 15,
+      coffee: 20, sugar: 20, water: 50
+    }));
+  }
+  
+  // Setup category tabs
+  setupCategoryTabs();
+  
+  // Setup sidebar links
+  setupSidebarLinks();
+  
+  // Setup order button
+  setupOrderButton();
+  
+  // Load initial menu (breakfast)
+  loadMenu('breakfast');
+  
+  // Update cart display
+  updateCartDisplay();
+  
+  console.log("System initialization complete!");
 }
 
-/* =========================
-   SETUP CATEGORY TABS FROM HTML
-========================= */
-function setupCategoryTabsFromHTML() {
-  const categoryTabs = document.querySelectorAll('.category-tab');
-  console.log(`Found ${categoryTabs.length} category tabs`);
+function setupCategoryTabs() {
+  const tabs = document.querySelectorAll('.category-tab');
+  console.log(`Found ${tabs.length} category tabs`);
   
-  categoryTabs.forEach(tab => {
+  tabs.forEach(tab => {
     tab.addEventListener('click', function() {
+      // Remove active class from all tabs
+      tabs.forEach(t => t.classList.remove('active'));
+      // Add active to clicked tab
+      this.classList.add('active');
+      
       const category = this.getAttribute('data-category');
-      console.log(`Category tab clicked: ${category}`);
-      switchCategory(category);
+      console.log(`Loading category: ${category}`);
+      loadMenu(category);
     });
   });
 }
 
-/* =========================
-   SETUP SIDEBAR CATEGORY LINKS
-========================= */
-function setupSidebarCategoryLinks() {
-  document.querySelectorAll('.sidebar .category-link').forEach(link => {
+function setupSidebarLinks() {
+  document.querySelectorAll('.category-link').forEach(link => {
     link.addEventListener('click', function(e) {
       e.preventDefault();
       const category = this.getAttribute('data-category');
       console.log(`Sidebar category clicked: ${category}`);
-      switchCategory(category);
+      loadMenu(category);
+      
+      // Update active tab
+      document.querySelectorAll('.category-tab').forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.getAttribute('data-category') === category) {
+          tab.classList.add('active');
+        }
+      });
     });
   });
 }
 
-/* =========================
-   INVENTORY CHECK
-========================= */
-function canMakeItem(item) {
-  const inventory = getInventory();
-  return Object.entries(item.ingredients).every(
-    ([ingredient, qty]) => inventory[ingredient] >= qty
-  );
-}
-
-/* =========================
-   ADD ITEM TO ORDER
-========================= */
-function addToCart(item) {
-  if (!canMakeItem(item)) {
-    alert("Insufficient ingredients.");
-    return;
-  }
-  
-  let cart = getCart();
-  const existing = cart.find(c => c.id === item.id);
-  
-  if (existing) {
-    existing.qty += 1;
-  } else {
-    cart.push({
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      qty: 1
+function setupOrderButton() {
+  const orderBtn = document.getElementById('placeOrder');
+  if (orderBtn) {
+    orderBtn.addEventListener('click', function() {
+      const cart = JSON.parse(localStorage.getItem("chefos_cart")) || [];
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+      }
+      
+      const tableNumber = document.getElementById('tableNumber').value;
+      if (!tableNumber) {
+        alert("Please enter a table number!");
+        return;
+      }
+      
+      alert(`Order sent to kitchen for Table ${tableNumber}!`);
+      localStorage.setItem("chefos_cart", JSON.stringify([]));
+      updateCartDisplay();
     });
   }
-  
-  localStorage.setItem("chefos_cart", JSON.stringify(cart));
-  renderCartSummary();
-  updateCurrentOrderDisplay();
 }
 
-/* =========================
-   SWITCH CATEGORY
-========================= */
-function switchCategory(categoryName) {
-  currentCategory = categoryName;
-  console.log(`Switching to category: ${categoryName}`);
+function loadMenu(category) {
+  console.log(`Loading menu for category: ${category}`);
   
-  // Update active tab in main menu area
-  document.querySelectorAll('.category-tab').forEach(tab => {
-    tab.classList.remove('active');
-    if (tab.getAttribute('data-category') === categoryName) {
-      tab.classList.add('active');
-    }
-  });
+  const menuDiv = document.getElementById('menu');
+  if (!menuDiv) return;
   
-  // Update active link in sidebar
-  document.querySelectorAll('.nav-links a').forEach(link => {
-    link.classList.remove('active');
-    const linkCategory = link.getAttribute('data-category') || 
-                         link.getAttribute('href')?.replace('#', '');
-    if (linkCategory === categoryName) {
-      link.classList.add('active');
-    }
-  });
-  
-  renderMenu();
-}
-
-/* =========================
-   RENDER MENU BY CATEGORY
-========================= */
-function renderMenu() {
-  if (!menuDiv) {
-    console.error("Menu div not found!");
-    return;
-  }
-  
-  console.log(`Rendering category: ${currentCategory}`);
-  
-  // Map menu item categories to match HTML data-category values
-  const categoryMap = {
-    'Breakfast': 'breakfast',
-    'Main Course': 'main',
-    'Salads': 'salads',
-    'Desserts': 'desserts',
-    'Drinks': 'drinks'
+  // Menu data - simplified version
+  const menuData = {
+    breakfast: [
+      { id: 1, name: "Classic Pancakes", description: "Fluffy pancakes with maple syrup", price: 65, icon: "fa-pancakes" },
+      { id: 2, name: "Eggs Benedict", description: "Poached eggs with hollandaise", price: 95, icon: "fa-egg" },
+      { id: 3, name: "Breakfast Burrito", description: "Eggs, bacon, cheese in tortilla", price: 75, icon: "fa-burrito" },
+      { id: 4, name: "French Toast", description: "Golden brioche with berries", price: 70, icon: "fa-bread-slice" },
+      { id: 5, name: "Veggie Omelette", description: "Three eggs with vegetables", price: 60, icon: "fa-egg" },
+      { id: 6, name: "Avocado Toast", description: "Smashed avocado on sourdough", price: 55, icon: "fa-avocado" }
+    ],
+    main: [
+      { id: 7, name: "Beef Burger", description: "Grilled beef with cheese", price: 85, icon: "fa-hamburger" },
+      { id: 8, name: "Grilled Salmon", description: "Atlantic salmon with vegetables", price: 145, icon: "fa-fish" },
+      { id: 9, name: "Chicken Alfredo", description: "Creamy pasta with grilled chicken", price: 110, icon: "fa-utensils" },
+      { id: 10, name: "Ribeye Steak", description: "12oz ribeye with mashed potatoes", price: 185, icon: "fa-steak" },
+      { id: 11, name: "BBQ Ribs", description: "Slow-cooked ribs with coleslaw", price: 165, icon: "fa-drumstick" },
+      { id: 12, name: "Fish & Chips", description: "Beer-battered fish with fries", price: 95, icon: "fa-fish" }
+    ],
+    salads: [
+      { id: 13, name: "Caesar Salad", description: "Romaine with parmesan & croutons", price: 75, icon: "fa-leaf" },
+      { id: 14, name: "Greek Salad", description: "Feta, olives, cucumber, tomato", price: 70, icon: "fa-leaf" },
+      { id: 15, name: "Caprese Salad", description: "Mozzarella, tomato, basil", price: 80, icon: "fa-leaf" },
+      { id: 16, name: "Cobb Salad", description: "Chicken, bacon, egg, avocado", price: 95, icon: "fa-leaf" },
+      { id: 17, name: "Quinoa Power Bowl", description: "Quinoa with roasted vegetables", price: 85, icon: "fa-leaf" },
+      { id: 18, name: "Asian Chicken Salad", description: "Grilled chicken with sesame dressing", price: 90, icon: "fa-leaf" }
+    ],
+    desserts: [
+      { id: 19, name: "Chocolate Lava Cake", description: "Warm cake with molten center", price: 65, icon: "fa-cake" },
+      { id: 20, name: "New York Cheesecake", description: "Creamy cheesecake with berries", price: 70, icon: "fa-cheese" },
+      { id: 21, name: "Classic Tiramisu", description: "Coffee-flavored Italian dessert", price: 75, icon: "fa-mug-hot" },
+      { id: 22, name: "Fudge Brownie", description: "Warm brownie with ice cream", price: 55, icon: "fa-cookie" },
+      { id: 23, name: "Crème Brûlée", description: "Vanilla custard with caramel", price: 70, icon: "fa-ice-cream" },
+      { id: 24, name: "Apple Pie", description: "Classic pie with vanilla ice cream", price: 60, icon: "fa-pie" }
+    ],
+    drinks: [
+      { id: 25, name: "Cappuccino", description: "Freshly brewed Italian coffee", price: 35, icon: "fa-coffee" },
+      { id: 26, name: "Fresh Orange Juice", description: "Freshly squeezed orange juice", price: 25, icon: "fa-glass-whiskey" },
+      { id: 27, name: "Iced Tea", description: "Refreshing lemon iced tea", price: 20, icon: "fa-glass-whiskey" },
+      { id: 28, name: "Berry Smoothie", description: "Mixed berries with yogurt", price: 40, icon: "fa-glass-whiskey" },
+      { id: 29, name: "Coca Cola", description: "Classic cola drink", price: 15, icon: "fa-glass-whiskey" },
+      { id: 30, name: "Mineral Water", description: "Sparkling mineral water", price: 10, icon: "fa-glass-whiskey" }
+    ]
   };
   
-  // Filter items by current category
-  const categoryItems = menuItems.filter(item => {
-    const itemCategory = categoryMap[item.category] || item.category.toLowerCase();
-    return itemCategory === currentCategory;
-  });
-
-  console.log(`Found ${categoryItems.length} items for category ${currentCategory}`);
+  // Get items for selected category
+  const items = menuData[category] || [];
   
-  // Clear menu
-  menuDiv.innerHTML = "";
-
-  if (categoryItems.length === 0) {
-    menuDiv.innerHTML = `<div class="no-items-message">
-      <i class="fas fa-utensils" style="font-size: 48px; margin-bottom: 15px; color: var(--gray);"></i>
-      <p>No items found for ${currentCategory} category</p>
-    </div>`;
+  if (items.length === 0) {
+    menuDiv.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #666;">
+        <i class="fas fa-utensils" style="font-size: 48px; margin-bottom: 20px; opacity: 0.5;"></i>
+        <p>No items found for ${category} category</p>
+      </div>
+    `;
     return;
   }
-
-  // Render all items for the category
-  categoryItems.forEach(item => {
-    const available = canMakeItem(item);
-    const itemDiv = document.createElement("div");
-    itemDiv.className = "menu-item";
+  
+  // Clear menu
+  menuDiv.innerHTML = '';
+  
+  // Add items to menu
+  items.forEach(item => {
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'menu-item';
     
-    // Use image if available, otherwise placeholder
-    let imageHTML = '';
-    if (item.image) {
-      imageHTML = `
-        <div class="menu-item-image">
-          <img src="${item.image}" alt="${item.name}" 
-               onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\"item-image-placeholder\"><i class=\"fas fa-utensils\"></i></div>';">
-        </div>
-      `;
-    } else {
-      imageHTML = `
-        <div class="item-image-placeholder">
-          <i class="fas fa-utensils"></i>
-        </div>
-      `;
-    }
+    // Category colors
+    const colors = {
+      breakfast: '#e67e22',
+      main: '#e74c3c',
+      salads: '#27ae60',
+      desserts: '#9b59b6',
+      drinks: '#3498db'
+    };
+    
+    const color = colors[category] || '#1e6f5c';
     
     itemDiv.innerHTML = `
-      ${imageHTML}
+      <div class="menu-item-image" style="background: linear-gradient(135deg, ${color}, ${color}99);">
+        <i class="fas ${item.icon || 'fa-utensils'}"></i>
+      </div>
       <div class="menu-item-content">
         <h4>${item.name}</h4>
         <p>${item.description}</p>
         <div class="price">R${item.price.toFixed(2)}</div>
-        <button ${available ? "" : "disabled"}>
-          <i class="fas fa-plus"></i> ${available ? "ADD TO ORDER" : "OUT OF STOCK"}
+        <button onclick="addToCart(${item.id}, '${item.name}', ${item.price})">
+          <i class="fas fa-plus"></i> ADD TO ORDER
         </button>
       </div>
     `;
     
-    // Add event listener for Add button
-    const addButton = itemDiv.querySelector("button");
-    if (available) {
-      addButton.addEventListener("click", () => addToCart(item));
-    }
-    
     menuDiv.appendChild(itemDiv);
   });
+  
+  console.log(`Loaded ${items.length} items for ${category}`);
 }
 
-/* =========================
-   UPDATE CURRENT ORDER DISPLAY
-========================= */
-function updateCurrentOrderDisplay() {
-  const cartContainer = document.getElementById("cart");
-  if (!cartContainer) return;
+// Make addToCart available globally
+window.addToCart = function(id, name, price) {
+  console.log(`Adding to cart: ${name}`);
   
-  const cart = getCart();
-  cartContainer.innerHTML = "";
+  let cart = JSON.parse(localStorage.getItem("chefos_cart")) || [];
   
+  // Check if item already in cart
+  const existingItem = cart.find(item => item.id === id);
+  if (existingItem) {
+    existingItem.quantity += 1;
+  } else {
+    cart.push({
+      id: id,
+      name: name,
+      price: price,
+      quantity: 1
+    });
+  }
+  
+  localStorage.setItem("chefos_cart", JSON.stringify(cart));
+  updateCartDisplay();
+  
+  // Show feedback
+  const button = event.target.closest('button');
+  if (button) {
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-check"></i> ADDED!';
+    button.style.background = '#27ae60';
+    
+    setTimeout(() => {
+      button.innerHTML = originalText;
+      button.style.background = '';
+    }, 1000);
+  }
+};
+
+function updateCartDisplay() {
+  const cart = JSON.parse(localStorage.getItem("chefos_cart")) || [];
+  const cartContainer = document.getElementById('cart');
+  const totalElement = document.getElementById('total');
+  
+  if (!cartContainer || !totalElement) return;
+  
+  // Calculate total
+  const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  totalElement.innerHTML = `<span>Total</span><span>R${total.toFixed(2)}</span>`;
+  
+  // Update cart display
   if (cart.length === 0) {
     cartContainer.innerHTML = `
-      <div class="empty-cart-message">
-        <i class="fas fa-shopping-cart" style="font-size: 48px; margin-bottom: 15px; color: var(--gray);"></i>
+      <div style="text-align: center; padding: 40px 20px; color: #666;">
+        <i class="fas fa-shopping-cart" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
         <p>No items added yet</p>
         <small>Click on menu items to add them to your order</small>
       </div>
@@ -278,153 +279,66 @@ function updateCurrentOrderDisplay() {
     return;
   }
   
+  let cartHTML = '';
   cart.forEach((item, index) => {
-    const cartRow = document.createElement("div");
-    cartRow.className = "cart-row";
-    cartRow.innerHTML = `
-      <div class="item-info">
-        <div class="item-name">${item.name}</div>
-        <div class="item-price">R${item.price.toFixed(2)} each</div>
-      </div>
-      <div class="qty-controls">
-        <button class="qty-decrease" data-index="${index}">-</button>
-        <span class="qty">${item.qty}</span>
-        <button class="qty-increase" data-index="${index}">+</button>
-        <button class="qty-remove" data-index="${index}" title="Remove item">×</button>
+    cartHTML += `
+      <div class="cart-row">
+        <div class="item-info">
+          <div class="item-name">${item.name}</div>
+          <div class="item-price">R${item.price.toFixed(2)} each</div>
+        </div>
+        <div class="qty-controls">
+          <button onclick="updateCartQuantity(${index}, -1)">-</button>
+          <span class="qty">${item.quantity}</span>
+          <button onclick="updateCartQuantity(${index}, 1)">+</button>
+          <button onclick="removeFromCart(${index})" style="background: #e74c3c;">×</button>
+        </div>
       </div>
     `;
-    
-    cartContainer.appendChild(cartRow);
   });
   
-  // Add event listeners for quantity controls
-  cartContainer.querySelectorAll('.qty-decrease').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const index = parseInt(e.target.getAttribute('data-index'));
-      updateQuantity(index, -1);
-    });
-  });
-  
-  cartContainer.querySelectorAll('.qty-increase').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const index = parseInt(e.target.getAttribute('data-index'));
-      updateQuantity(index, 1);
-    });
-  });
-  
-  cartContainer.querySelectorAll('.qty-remove').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const index = parseInt(e.target.getAttribute('data-index'));
-      removeItem(index);
-    });
-  });
+  cartContainer.innerHTML = cartHTML;
 }
 
-/* =========================
-   UPDATE ITEM QUANTITY
-========================= */
-function updateQuantity(index, change) {
-  let cart = getCart();
+window.updateCartQuantity = function(index, change) {
+  let cart = JSON.parse(localStorage.getItem("chefos_cart")) || [];
+  
   if (cart[index]) {
-    cart[index].qty += change;
+    cart[index].quantity += change;
     
-    // Remove item if quantity reaches 0
-    if (cart[index].qty <= 0) {
+    if (cart[index].quantity <= 0) {
       cart.splice(index, 1);
     }
     
     localStorage.setItem("chefos_cart", JSON.stringify(cart));
-    renderCartSummary();
-    updateCurrentOrderDisplay();
+    updateCartDisplay();
   }
-}
+};
 
-/* =========================
-   REMOVE ITEM FROM CART
-========================= */
-function removeItem(index) {
-  let cart = getCart();
+window.removeFromCart = function(index) {
+  let cart = JSON.parse(localStorage.getItem("chefos_cart")) || [];
+  
   if (cart[index]) {
     cart.splice(index, 1);
     localStorage.setItem("chefos_cart", JSON.stringify(cart));
-    renderCartSummary();
-    updateCurrentOrderDisplay();
+    updateCartDisplay();
+  }
+};
+
+function showError(message) {
+  const menuDiv = document.getElementById('menu');
+  if (menuDiv) {
+    menuDiv.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: #fee; border: 2px solid #e74c3c; border-radius: 10px; margin: 20px;">
+        <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #e74c3c; margin-bottom: 20px;"></i>
+        <h3 style="color: #c0392b;">Error Loading Menu</h3>
+        <p>${message}</p>
+        <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
+          Reload Page
+        </button>
+      </div>
+    `;
   }
 }
 
-/* =========================
-   CART SUMMARY (TOTAL)
-========================= */
-function renderCartSummary() {
-  const cart = getCart();
-  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const totalEl = document.getElementById("total");
-  if (totalEl) {
-    totalEl.innerHTML = `<span>Total</span><span>R${total.toFixed(2)}</span>`;
-  }
-}
-
-/* =========================
-   PLACE ORDER
-========================= */
-function placeOrder() {
-  const cart = getCart();
-  if (cart.length === 0) {
-    alert("Cart is empty!");
-    return;
-  }
-  
-  const tableNumber = document.getElementById('tableNumber').value;
-  if (!tableNumber) {
-    alert("Please enter a table number!");
-    return;
-  }
-  
-  // Create order object
-  const order = {
-    id: Date.now(),
-    table: parseInt(tableNumber),
-    items: [...cart],
-    total: cart.reduce((sum, item) => sum + item.price * item.qty, 0),
-    timestamp: new Date().toISOString(),
-    status: 'pending'
-  };
-  
-  // Get existing orders
-  const orders = JSON.parse(localStorage.getItem('chefos_orders')) || [];
-  orders.push(order);
-  localStorage.setItem('chefos_orders', JSON.stringify(orders));
-  
-  // Update inventory
-  updateInventoryForOrder(order);
-  
-  // Clear cart
-  localStorage.removeItem('chefos_cart');
-  
-  // Reset UI
-  renderCartSummary();
-  updateCurrentOrderDisplay();
-  renderMenu();
-  document.getElementById('tableNumber').value = '';
-  
-  // Show success message
-  alert(`Order #${order.id} sent to kitchen for Table ${tableNumber}!`);
-}
-
-/* =========================
-   UPDATE INVENTORY AFTER ORDER
-========================= */
-function updateInventoryForOrder(order) {
-  let inventory = getInventory();
-  
-  order.items.forEach(item => {
-    const menuItem = menuItems.find(m => m.id === item.id);
-    if (menuItem) {
-      Object.entries(menuItem.ingredients).forEach(([ingredient, qty]) => {
-        inventory[ingredient] -= qty * item.qty;
-      });
-    }
-  });
-  
-  localStorage.setItem("chefos_inventory", JSON.stringify(inventory));
-}
+console.log("Menu.js setup complete, waiting for DOM...");
