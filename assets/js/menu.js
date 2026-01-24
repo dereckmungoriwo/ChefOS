@@ -1,9 +1,9 @@
 /* =========================
    CHEFOS POS - MENU & CART MANAGEMENT
-   SIMPLE WORKING VERSION
+   USING YOUR IMAGES FROM menuItems.js
 ========================= */
 
-console.log("=== MENU.JS LOADED ===");
+console.log("=== CHEFOS POS LOADING ===");
 
 // Wait for everything to load
 window.addEventListener('DOMContentLoaded', function() {
@@ -24,7 +24,17 @@ function initializeSystem() {
     return;
   }
   
-  console.log("Found menu container:", menuDiv);
+  console.log("Found menu container");
+  
+  // Check if menuItems.js loaded correctly
+  if (typeof menuItems === 'undefined') {
+    console.error("menuItems.js not loaded! Using fallback data.");
+    showError("Menu data not loaded. Using fallback menu.");
+    useFallbackMenu();
+    return;
+  }
+  
+  console.log(`Menu items loaded: ${menuItems.length} items`);
   
   // Initialize cart
   if (!localStorage.getItem("chefos_cart")) {
@@ -32,12 +42,9 @@ function initializeSystem() {
   }
   
   // Initialize inventory if needed
-  if (!localStorage.getItem("chefos_inventory")) {
-    localStorage.setItem("chefos_inventory", JSON.stringify({
-      flour: 20, eggs: 30, milk: 15, butter: 10, bread: 20,
-      beef_patty: 10, chicken: 12, lettuce: 20, tomato: 15,
-      coffee: 20, sugar: 20, water: 50
-    }));
+  if (!localStorage.getItem("chefos_inventory") && typeof defaultInventory !== 'undefined') {
+    localStorage.setItem("chefos_inventory", JSON.stringify(defaultInventory));
+    console.log("Inventory initialized from default");
   }
   
   // Setup category tabs
@@ -124,61 +131,27 @@ function loadMenu(category) {
   const menuDiv = document.getElementById('menu');
   if (!menuDiv) return;
   
-  // Menu data - simplified version
-  const menuData = {
-    breakfast: [
-      { id: 1, name: "Classic Pancakes", description: "Fluffy pancakes with maple syrup", price: 65, icon: "fa-pancakes" },
-      { id: 2, name: "Eggs Benedict", description: "Poached eggs with hollandaise", price: 95, icon: "fa-egg" },
-      { id: 3, name: "Breakfast Burrito", description: "Eggs, bacon, cheese in tortilla", price: 75, icon: "fa-burrito" },
-      { id: 4, name: "French Toast", description: "Golden brioche with berries", price: 70, icon: "fa-bread-slice" },
-      { id: 5, name: "Veggie Omelette", description: "Three eggs with vegetables", price: 60, icon: "fa-egg" },
-      { id: 6, name: "Avocado Toast", description: "Smashed avocado on sourdough", price: 55, icon: "fa-avocado" }
-    ],
-    main: [
-      { id: 7, name: "Beef Burger", description: "Grilled beef with cheese", price: 85, icon: "fa-hamburger" },
-      { id: 8, name: "Grilled Salmon", description: "Atlantic salmon with vegetables", price: 145, icon: "fa-fish" },
-      { id: 9, name: "Chicken Alfredo", description: "Creamy pasta with grilled chicken", price: 110, icon: "fa-utensils" },
-      { id: 10, name: "Ribeye Steak", description: "12oz ribeye with mashed potatoes", price: 185, icon: "fa-steak" },
-      { id: 11, name: "BBQ Ribs", description: "Slow-cooked ribs with coleslaw", price: 165, icon: "fa-drumstick" },
-      { id: 12, name: "Fish & Chips", description: "Beer-battered fish with fries", price: 95, icon: "fa-fish" }
-    ],
-    salads: [
-      { id: 13, name: "Caesar Salad", description: "Romaine with parmesan & croutons", price: 75, icon: "fa-leaf" },
-      { id: 14, name: "Greek Salad", description: "Feta, olives, cucumber, tomato", price: 70, icon: "fa-leaf" },
-      { id: 15, name: "Caprese Salad", description: "Mozzarella, tomato, basil", price: 80, icon: "fa-leaf" },
-      { id: 16, name: "Cobb Salad", description: "Chicken, bacon, egg, avocado", price: 95, icon: "fa-leaf" },
-      { id: 17, name: "Quinoa Power Bowl", description: "Quinoa with roasted vegetables", price: 85, icon: "fa-leaf" },
-      { id: 18, name: "Asian Chicken Salad", description: "Grilled chicken with sesame dressing", price: 90, icon: "fa-leaf" }
-    ],
-    desserts: [
-      { id: 19, name: "Chocolate Lava Cake", description: "Warm cake with molten center", price: 65, icon: "fa-cake" },
-      { id: 20, name: "New York Cheesecake", description: "Creamy cheesecake with berries", price: 70, icon: "fa-cheese" },
-      { id: 21, name: "Classic Tiramisu", description: "Coffee-flavored Italian dessert", price: 75, icon: "fa-mug-hot" },
-      { id: 22, name: "Fudge Brownie", description: "Warm brownie with ice cream", price: 55, icon: "fa-cookie" },
-      { id: 23, name: "Crème Brûlée", description: "Vanilla custard with caramel", price: 70, icon: "fa-ice-cream" },
-      { id: 24, name: "Apple Pie", description: "Classic pie with vanilla ice cream", price: 60, icon: "fa-pie" }
-    ],
-    drinks: [
-      { id: 25, name: "Cappuccino", description: "Freshly brewed Italian coffee", price: 35, icon: "fa-coffee" },
-      { id: 26, name: "Fresh Orange Juice", description: "Freshly squeezed orange juice", price: 25, icon: "fa-glass-whiskey" },
-      { id: 27, name: "Iced Tea", description: "Refreshing lemon iced tea", price: 20, icon: "fa-glass-whiskey" },
-      { id: 28, name: "Berry Smoothie", description: "Mixed berries with yogurt", price: 40, icon: "fa-glass-whiskey" },
-      { id: 29, name: "Coca Cola", description: "Classic cola drink", price: 15, icon: "fa-glass-whiskey" },
-      { id: 30, name: "Mineral Water", description: "Sparkling mineral water", price: 10, icon: "fa-glass-whiskey" }
-    ]
+  // Map HTML category names to menuItems.js category names
+  const categoryMap = {
+    'breakfast': 'Breakfast',
+    'main': 'Main Course',
+    'salads': 'Salads',
+    'desserts': 'Desserts',
+    'drinks': 'Drinks'
   };
   
-  // Get items for selected category
-  const items = menuData[category] || [];
+  const menuCategory = categoryMap[category] || category;
+  
+  // Filter items by category
+  let items = [];
+  if (typeof menuItems !== 'undefined') {
+    items = menuItems.filter(item => item.category === menuCategory);
+    console.log(`Found ${items.length} items in ${menuCategory} category`);
+  }
   
   if (items.length === 0) {
-    menuDiv.innerHTML = `
-      <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #666;">
-        <i class="fas fa-utensils" style="font-size: 48px; margin-bottom: 20px; opacity: 0.5;"></i>
-        <p>No items found for ${category} category</p>
-      </div>
-    `;
-    return;
+    console.warn(`No items found for category: ${menuCategory}, using fallback`);
+    items = getFallbackItems(category);
   }
   
   // Clear menu
@@ -189,26 +162,52 @@ function loadMenu(category) {
     const itemDiv = document.createElement('div');
     itemDiv.className = 'menu-item';
     
-    // Category colors
+    // Get category color for fallback
     const colors = {
-      breakfast: '#e67e22',
-      main: '#e74c3c',
-      salads: '#27ae60',
-      desserts: '#9b59b6',
-      drinks: '#3498db'
+      'breakfast': '#e67e22',
+      'main': '#e74c3c',
+      'salads': '#27ae60',
+      'desserts': '#9b59b6',
+      'drinks': '#3498db'
     };
     
     const color = colors[category] || '#1e6f5c';
     
+    // Get icon based on category
+    const icons = {
+      'breakfast': 'fa-sun',
+      'main': 'fa-utensils',
+      'salads': 'fa-leaf',
+      'desserts': 'fa-ice-cream',
+      'drinks': 'fa-glass-whiskey'
+    };
+    
+    const icon = icons[category] || 'fa-utensils';
+    
+    // Use item image if available, otherwise use placeholder with category color
+    let imageHTML = '';
+    if (item.image) {
+      imageHTML = `
+        <div class="menu-item-image">
+          <img src="${item.image}" alt="${item.name}" 
+               onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\"image-fallback\" style=\"background: linear-gradient(135deg, ${color}, ${color}99);\"><i class=\"fas ${icon}\"></i></div>';">
+        </div>
+      `;
+    } else {
+      imageHTML = `
+        <div class="image-fallback" style="background: linear-gradient(135deg, ${color}, ${color}99);">
+          <i class="fas ${icon}"></i>
+        </div>
+      `;
+    }
+    
     itemDiv.innerHTML = `
-      <div class="menu-item-image" style="background: linear-gradient(135deg, ${color}, ${color}99);">
-        <i class="fas ${item.icon || 'fa-utensils'}"></i>
-      </div>
+      ${imageHTML}
       <div class="menu-item-content">
         <h4>${item.name}</h4>
         <p>${item.description}</p>
         <div class="price">R${item.price.toFixed(2)}</div>
-        <button onclick="addToCart(${item.id}, '${item.name}', ${item.price})">
+        <button onclick="addToCart('${item.id}', '${item.name}', ${item.price})">
           <i class="fas fa-plus"></i> ADD TO ORDER
         </button>
       </div>
@@ -217,7 +216,7 @@ function loadMenu(category) {
     menuDiv.appendChild(itemDiv);
   });
   
-  console.log(`Loaded ${items.length} items for ${category}`);
+  console.log(`Displayed ${items.length} items for ${category}`);
 }
 
 // Make addToCart available globally
@@ -270,8 +269,8 @@ function updateCartDisplay() {
   // Update cart display
   if (cart.length === 0) {
     cartContainer.innerHTML = `
-      <div style="text-align: center; padding: 40px 20px; color: #666;">
-        <i class="fas fa-shopping-cart" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
+      <div class="empty-cart">
+        <i class="fas fa-shopping-cart"></i>
         <p>No items added yet</p>
         <small>Click on menu items to add them to your order</small>
       </div>
@@ -291,7 +290,7 @@ function updateCartDisplay() {
           <button onclick="updateCartQuantity(${index}, -1)">-</button>
           <span class="qty">${item.quantity}</span>
           <button onclick="updateCartQuantity(${index}, 1)">+</button>
-          <button onclick="removeFromCart(${index})" style="background: #e74c3c;">×</button>
+          <button onclick="removeFromCart(${index})" class="remove-btn">×</button>
         </div>
       </div>
     `;
@@ -325,17 +324,57 @@ window.removeFromCart = function(index) {
   }
 };
 
+// Fallback functions in case menuItems.js doesn't load
+function useFallbackMenu() {
+  console.log("Using fallback menu system");
+  setupCategoryTabs();
+  setupSidebarLinks();
+  setupOrderButton();
+  loadMenu('breakfast');
+  updateCartDisplay();
+}
+
+function getFallbackItems(category) {
+  const fallbackData = {
+    breakfast: [
+      { id: 'pancakes_fb', name: "Classic Pancakes", description: "Fluffy pancakes with maple syrup", price: 65, image: "assets/images/pancakes.jpg" },
+      { id: 'eggs_fb', name: "Eggs Benedict", description: "Poached eggs with hollandaise", price: 95, image: "assets/images/eggs-benedict.jpg" },
+      { id: 'burrito_fb', name: "Breakfast Burrito", description: "Eggs, bacon, cheese in tortilla", price: 75, image: "assets/images/breakfast-burrito.jpg" }
+    ],
+    main: [
+      { id: 'burger_fb', name: "Beef Burger", description: "Grilled beef with cheese", price: 85, image: "assets/images/burger.jpg" },
+      { id: 'salmon_fb', name: "Grilled Salmon", description: "Atlantic salmon with vegetables", price: 145, image: "assets/images/salmon.jpg" },
+      { id: 'pasta_fb', name: "Chicken Alfredo", description: "Creamy pasta with grilled chicken", price: 110, image: "assets/images/pasta.jpg" }
+    ],
+    salads: [
+      { id: 'caesar_fb', name: "Caesar Salad", description: "Romaine with parmesan & croutons", price: 75, image: "assets/images/caesar-salad.jpg" },
+      { id: 'greek_fb', name: "Greek Salad", description: "Feta, olives, cucumber, tomato", price: 70, image: "assets/images/greek-salad.jpg" },
+      { id: 'caprese_fb', name: "Caprese Salad", description: "Mozzarella, tomato, basil", price: 80, image: "assets/images/caprese-salad.jpg" }
+    ],
+    desserts: [
+      { id: 'cake_fb', name: "Chocolate Lava Cake", description: "Warm cake with molten center", price: 65, image: "assets/images/chocolate-cake.jpg" },
+      { id: 'cheesecake_fb', name: "New York Cheesecake", description: "Creamy cheesecake with berries", price: 70, image: "assets/images/cheesecake.jpg" },
+      { id: 'tiramisu_fb', name: "Classic Tiramisu", description: "Coffee-flavored Italian dessert", price: 75, image: "assets/images/tiramisu.jpg" }
+    ],
+    drinks: [
+      { id: 'coffee_fb', name: "Cappuccino", description: "Freshly brewed Italian coffee", price: 35, image: "assets/images/cappuccino.jpg" },
+      { id: 'juice_fb', name: "Fresh Orange Juice", description: "Freshly squeezed orange juice", price: 25, image: "assets/images/orange-juice.jpg" },
+      { id: 'smoothie_fb', name: "Berry Smoothie", description: "Mixed berries with yogurt", price: 40, image: "assets/images/smoothie.jpg" }
+    ]
+  };
+  
+  return fallbackData[category] || [];
+}
+
 function showError(message) {
   const menuDiv = document.getElementById('menu');
   if (menuDiv) {
     menuDiv.innerHTML = `
-      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: #fee; border: 2px solid #e74c3c; border-radius: 10px; margin: 20px;">
-        <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #e74c3c; margin-bottom: 20px;"></i>
-        <h3 style="color: #c0392b;">Error Loading Menu</h3>
+      <div class="error-message">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3>Error Loading Menu</h3>
         <p>${message}</p>
-        <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
-          Reload Page
-        </button>
+        <button onclick="location.reload()">Reload Page</button>
       </div>
     `;
   }
