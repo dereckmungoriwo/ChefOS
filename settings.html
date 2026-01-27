@@ -10,7 +10,6 @@
 <body>
   <div class="app-container">
     <aside class="sidebar">
-      <!-- Same sidebar as pos.html -->
       <div class="sidebar-header">
         <h1><i class="fas fa-utensils"></i> ChefOS POS</h1>
       </div>
@@ -35,7 +34,6 @@
         </div>
       </div>
       
-      <!-- Settings Panel -->
       <div class="settings-panel">
         <div class="theme-toggle">
           <span><i class="fas fa-moon"></i> Dark Mode</span>
@@ -46,7 +44,6 @@
         </div>
       </div>
       
-      <!-- Help Center -->
       <div class="help-center">
         <h4><i class="fas fa-life-ring"></i> Help Center</h4>
         <div class="contact-info">
@@ -107,52 +104,64 @@
     </div>
   </div>
 
-  <script>
-    // Theme toggle
-    const themeToggle = document.getElementById('themeToggle');
-    const themeToggleMain = document.getElementById('themeToggleMain');
-    const currentTime = document.getElementById('currentTime');
-    
-    // Check for saved theme
-    if (localStorage.getItem('theme') === 'dark') {
-      document.body.classList.add('dark-theme');
-      if (themeToggle) themeToggle.checked = true;
-      if (themeToggleMain) themeToggleMain.checked = true;
-    }
-    
-    // Theme toggle event
-    function toggleTheme() {
-      if (this.checked) {
-        document.body.classList.add('dark-theme');
-        localStorage.setItem('theme', 'dark');
-      } else {
-        document.body.classList.remove('dark-theme');
-        localStorage.setItem('theme', 'light');
-      }
-    }
-    
-    if (themeToggle) themeToggle.addEventListener('change', toggleTheme);
-    if (themeToggleMain) themeToggleMain.addEventListener('change', toggleTheme);
-    
-    // Update time
-    function updateTime() {
-      const now = new Date();
-      const options = { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-      };
-      if (currentTime) {
-        currentTime.textContent = now.toLocaleDateString('en-US', options);
-      }
-    }
-    
-    updateTime();
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const body = document.body;
+  const themeToggle = document.getElementById("themeToggle");
+  const themeToggleMain = document.getElementById("themeToggleMain");
+  const currentTime = document.getElementById("currentTime");
+
+  const STORAGE_KEY = "chefos_theme";
+
+  function applySavedTheme() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    const isDark = saved === "dark";
+
+    body.classList.toggle("dark-theme", isDark);
+
+    if (themeToggle) themeToggle.checked = isDark;
+    if (themeToggleMain) themeToggleMain.checked = isDark;
+  }
+
+  function handleThemeToggle(e) {
+    const isDark = e.target.checked;
+
+    body.classList.toggle("dark-theme", isDark);
+    localStorage.setItem(STORAGE_KEY, isDark ? "dark" : "light");
+
+    if (themeToggle && themeToggle !== e.target) themeToggle.checked = isDark;
+    if (themeToggleMain && themeToggleMain !== e.target) themeToggleMain.checked = isDark;
+  }
+
+  if (themeToggle) themeToggle.addEventListener("change", handleThemeToggle);
+  if (themeToggleMain) themeToggleMain.addEventListener("change", handleThemeToggle);
+
+  applySavedTheme();
+
+  function updateTime() {
+    if (!currentTime) return;
+    const now = new Date();
+    currentTime.textContent = now.toLocaleString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true
+    });
+  }
+
+  updateTime();
+
+  if (!window.clockIntervalSet) {
+    window.clockIntervalSet = true;
     setInterval(updateTime, 60000);
-  </script>
+  }
+
+});
+</script>
+
 </body>
 </html>
