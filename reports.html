@@ -35,7 +35,8 @@
           </ul>
         </div>
       </div>
-
+      
+      <!-- HELP CENTER -->
       <div class="help-center">
         <h4><i class="fas fa-life-ring"></i> Help Center</h4>
         <div class="contact-info">
@@ -51,6 +52,7 @@
 
     <!-- MAIN CONTENT -->
     <div class="main-content">
+      <!-- TOP BAR -->
       <div class="top-bar">
         <div class="time-display" id="currentTime"></div>
         <div class="user-info">
@@ -62,5 +64,1364 @@
         </div>
       </div>
 
-      <!-- 🔧 FIX: internal scroll containment -->
-      <div class="insights-container" style="flex:1; min-height:0; overflow:auto;">
+      <!-- INSIGHTS CONTAINER -->
+      <div class="insights-container">
+        <!-- DATE RANGE SELECTOR -->
+        <div class="date-range-selector">
+          <h2><i class="fas fa-chart-line"></i> Business Insights</h2>
+          <div class="date-controls">
+            <button class="date-btn active" data-range="today">Today</button>
+            <button class="date-btn" data-range="week">This Week</button>
+            <button class="date-btn" data-range="month">This Month</button>
+            <button class="date-btn" data-range="year">This Year</button>
+            <div class="custom-range">
+              <input type="date" id="startDate">
+              <span>to</span>
+              <input type="date" id="endDate">
+              <button id="applyCustomRange">Apply</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- KEY METRICS -->
+        <div class="key-metrics">
+          <div class="metric-card revenue">
+            <div class="metric-icon">
+              <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <div class="metric-info">
+              <h3 id="totalRevenue">R0.00</h3>
+              <p>Total Revenue</p>
+              <div class="metric-change" id="revenueChange">
+                <i class="fas fa-arrow-up"></i> 0%
+              </div>
+            </div>
+          </div>
+          
+          <div class="metric-card orders">
+            <div class="metric-icon">
+              <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="metric-info">
+              <h3 id="totalOrders">0</h3>
+              <p>Total Orders</p>
+              <div class="metric-change" id="ordersChange">
+                <i class="fas fa-arrow-up"></i> 0%
+              </div>
+            </div>
+          </div>
+          
+          <div class="metric-card average">
+            <div class="metric-icon">
+              <i class="fas fa-receipt"></i>
+            </div>
+            <div class="metric-info">
+              <h3 id="averageOrder">R0.00</h3>
+              <p>Average Order</p>
+              <div class="metric-change" id="averageChange">
+                <i class="fas fa-arrow-up"></i> 0%
+              </div>
+            </div>
+          </div>
+          
+          <div class="metric-card tables">
+            <div class="metric-icon">
+              <i class="fas fa-utensils"></i>
+            </div>
+            <div class="metric-info">
+              <h3 id="busiestTable">N/A</h3>
+              <p>Busiest Table</p>
+              <div class="metric-change">
+                <span id="tableOrders">0 orders</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHARTS ROW -->
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3><i class="fas fa-chart-bar"></i> Revenue Trend</h3>
+              <select id="revenueChartType">
+                <option value="line">Line Chart</option>
+                <option value="bar">Bar Chart</option>
+              </select>
+            </div>
+            <div class="chart-container">
+              <canvas id="revenueChart"></canvas>
+            </div>
+          </div>
+          
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3><i class="fas fa-chart-pie"></i> Sales by Category</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="categoryChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- TOP SELLING ITEMS -->
+        <div class="top-items-section">
+          <div class="section-header">
+            <h3><i class="fas fa-star"></i> Top Selling Items</h3>
+            <select id="topItemsPeriod">
+              <option value="today">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+            </select>
+          </div>
+          <div class="top-items-list" id="topItemsList">
+            <!-- Top items will be loaded here -->
+          </div>
+        </div>
+
+        <!-- SALES TABLE -->
+        <div class="sales-table-section">
+          <div class="section-header">
+            <h3><i class="fas fa-table"></i> Detailed Sales Report</h3>
+            <button class="export-btn" id="exportBtn">
+              <i class="fas fa-download"></i> Export Report
+            </button>
+          </div>
+          <div class="sales-table-container">
+            <table class="sales-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Order ID</th>
+                  <th>Table</th>
+                  <th>Items</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Duration</th>
+                </tr>
+              </thead>
+              <tbody id="salesTableBody">
+                <!-- Sales data will be loaded here -->
+              </tbody>
+            </table>
+            
+            <div id="no-sales" style="display: none; text-align: center; padding: 40px;">
+              <i class="fas fa-chart-line fa-3x" style="color: var(--gray);"></i>
+              <h3 style="margin: 20px 0 10px; color: var(--gray);">No Sales Data</h3>
+              <p style="color: var(--gray);">Sales data will appear here once orders are placed.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUMMARY CARDS -->
+        <div class="summary-cards">
+          <div class="summary-card peak-hours">
+            <h4><i class="fas fa-clock"></i> Peak Hours</h4>
+            <div class="peak-list" id="peakHours">
+              <!-- Peak hours will be loaded here -->
+            </div>
+          </div>
+          
+          <div class="summary-card popular-tables">
+            <h4><i class="fas fa-table"></i> Popular Tables</h4>
+            <div class="table-list" id="popularTables">
+              <!-- Popular tables will be loaded here -->
+            </div>
+          </div>
+          
+          <div class="summary-card low-stock">
+            <h4><i class="fas fa-exclamation-triangle"></i> Low Stock Alert</h4>
+            <div class="stock-list" id="lowStockItems">
+              <!-- Low stock items will be loaded here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPORT MODAL -->
+  <div id="reportModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-file-export"></i> Export Report</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="export-options">
+          <div class="option-card">
+            <i class="fas fa-file-excel"></i>
+            <h4>Excel Format</h4>
+            <p>Download as .xlsx file</p>
+            <button class="export-format-btn" data-format="excel">
+              <i class="fas fa-download"></i> Export
+            </button>
+          </div>
+          
+          <div class="option-card">
+            <i class="fas fa-file-pdf"></i>
+            <h4>PDF Format</h4>
+            <p>Download as .pdf file</p>
+            <button class="export-format-btn" data-format="pdf">
+              <i class="fas fa-download"></i> Export
+            </button>
+          </div>
+          
+          <div class="option-card">
+            <i class="fas fa-file-csv"></i>
+            <h4>CSV Format</h4>
+            <p>Download as .csv file</p>
+            <button class="export-format-btn" data-format="csv">
+              <i class="fas fa-download"></i> Export
+            </button>
+          </div>
+        </div>
+        
+        <div class="date-range-summary">
+          <h4>Report Period</h4>
+          <p id="reportPeriod">Today</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const dateButtons = document.querySelectorAll('.date-btn');
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+    const applyCustomRangeBtn = document.getElementById('applyCustomRange');
+    const exportBtn = document.getElementById('exportBtn');
+    const topItemsPeriodSelect = document.getElementById('topItemsPeriod');
+    const revenueChartTypeSelect = document.getElementById('revenueChartType');
+    const reportModal = document.getElementById('reportModal');
+    const modalCloseButtons = document.querySelectorAll('.modal-close');
+    
+    // Chart instances
+    let revenueChart = null;
+    let categoryChart = null;
+    
+    // Current date range
+    let currentRange = 'today';
+    let startDate = new Date();
+    let endDate = new Date();
+    
+    // Set default dates
+    startDateInput.valueAsDate = new Date();
+    endDateInput.valueAsDate = new Date();
+    
+    /* =========================
+       INITIALIZE PAGE
+    ========================= */
+    document.addEventListener('DOMContentLoaded', () => {
+      updateTime();
+      loadReportData();
+      initializeCharts();
+      
+      // Update every minute for time display
+      setInterval(updateTime, 60000);
+    });
+    
+    /* =========================
+       UPDATE TIME
+    ========================= */
+    function updateTime() {
+      const now = new Date();
+      const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      };
+      const timeEl = document.getElementById('currentTime');
+      if (timeEl) {
+        timeEl.textContent = now.toLocaleDateString('en-US', options);
+      }
+    }
+    
+    /* =========================
+       SET DATE RANGE
+    ========================= */
+    function setDateRange(range) {
+      currentRange = range;
+      const today = new Date();
+      
+      // Update date buttons active state
+      dateButtons.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-range') === range) {
+          btn.classList.add('active');
+        }
+      });
+      
+      // Set date range based on selection
+      switch(range) {
+        case 'today':
+          startDate = new Date(today);
+          endDate = new Date(today);
+          break;
+        case 'week':
+          startDate = new Date(today);
+          startDate.setDate(today.getDate() - 7);
+          endDate = new Date(today);
+          break;
+        case 'month':
+          startDate = new Date(today);
+          startDate.setMonth(today.getMonth() - 1);
+          endDate = new Date(today);
+          break;
+        case 'year':
+          startDate = new Date(today);
+          startDate.setFullYear(today.getFullYear() - 1);
+          endDate = new Date(today);
+          break;
+      }
+      
+      // Update date inputs
+      startDateInput.valueAsDate = startDate;
+      endDateInput.valueAsDate = endDate;
+      
+      // Reload data with new range
+      loadReportData();
+    }
+    
+    /* =========================
+       LOAD REPORT DATA
+    ========================= */
+    function loadReportData() {
+      const orders = JSON.parse(localStorage.getItem('chefos_orders')) || [];
+      
+      // Filter orders by date range
+      const filteredOrders = orders.filter(order => {
+        const orderDate = new Date(order.timestamp);
+        return orderDate >= startDate && orderDate <= endDate;
+      });
+      
+      // Calculate metrics
+      calculateMetrics(filteredOrders);
+      
+      // Update top items
+      updateTopItems(filteredOrders);
+      
+      // Update sales table
+      updateSalesTable(filteredOrders);
+      
+      // Update charts
+      updateCharts(filteredOrders);
+      
+      // Update summary cards
+      updateSummaryCards(filteredOrders);
+    }
+    
+    /* =========================
+       CALCULATE METRICS
+    ========================= */
+    function calculateMetrics(orders) {
+      // Total revenue
+      const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+      document.getElementById('totalRevenue').textContent = `R${totalRevenue.toFixed(2)}`;
+      
+      // Total orders
+      document.getElementById('totalOrders').textContent = orders.length;
+      
+      // Average order value
+      const averageOrder = orders.length > 0 ? totalRevenue / orders.length : 0;
+      document.getElementById('averageOrder').textContent = `R${averageOrder.toFixed(2)}`;
+      
+      // Find busiest table
+      const tableCounts = {};
+      orders.forEach(order => {
+        tableCounts[order.table] = (tableCounts[order.table] || 0) + 1;
+      });
+      
+      let busiestTable = 'N/A';
+      let maxOrders = 0;
+      Object.entries(tableCounts).forEach(([table, count]) => {
+        if (count > maxOrders) {
+          maxOrders = count;
+          busiestTable = table;
+        }
+      });
+      
+      document.getElementById('busiestTable').textContent = `Table ${busiestTable}`;
+      document.getElementById('tableOrders').textContent = `${maxOrders} orders`;
+      
+      // Calculate changes (simplified - in real app, compare with previous period)
+      const revenueChange = orders.length > 0 ? 12.5 : 0;
+      const ordersChange = orders.length > 0 ? 8.3 : 0;
+      const averageChange = orders.length > 0 ? 4.2 : 0;
+      
+      document.getElementById('revenueChange').innerHTML = 
+        `<i class="fas fa-arrow-up"></i> ${revenueChange}%`;
+      document.getElementById('ordersChange').innerHTML = 
+        `<i class="fas fa-arrow-up"></i> ${ordersChange}%`;
+      document.getElementById('averageChange').innerHTML = 
+        `<i class="fas fa-arrow-up"></i> ${averageChange}%`;
+    }
+    
+    /* =========================
+       UPDATE TOP ITEMS
+    ========================= */
+    function updateTopItems(orders) {
+      // Count item sales
+      const itemSales = {};
+      orders.forEach(order => {
+        order.items.forEach(item => {
+          if (!itemSales[item.name]) {
+            itemSales[item.name] = {
+              quantity: 0,
+              revenue: 0
+            };
+          }
+          itemSales[item.name].quantity += item.qty;
+          itemSales[item.name].revenue += item.price * item.qty;
+        });
+      });
+      
+      // Convert to array and sort by quantity
+      const topItems = Object.entries(itemSales)
+        .map(([name, data]) => ({
+          name,
+          quantity: data.quantity,
+          revenue: data.revenue
+        }))
+        .sort((a, b) => b.quantity - a.quantity)
+        .slice(0, 5);
+      
+      // Update UI
+      const topItemsList = document.getElementById('topItemsList');
+      topItemsList.innerHTML = '';
+      
+      if (topItems.length === 0) {
+        topItemsList.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-utensils"></i>
+            <p>No sales data for this period</p>
+          </div>
+        `;
+        return;
+      }
+      
+      topItems.forEach((item, index) => {
+        const itemCard = document.createElement('div');
+        itemCard.className = 'top-item-card';
+        itemCard.innerHTML = `
+          <div class="item-rank">${index + 1}</div>
+          <div class="item-info">
+            <h4>${item.name}</h4>
+            <p>${item.quantity} sold • R${item.revenue.toFixed(2)} revenue</p>
+          </div>
+          <div class="item-stats">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${(item.quantity / topItems[0].quantity) * 100}%"></div>
+            </div>
+          </div>
+        `;
+        topItemsList.appendChild(itemCard);
+      });
+    }
+    
+    /* =========================
+       UPDATE SALES TABLE
+    ========================= */
+    function updateSalesTable(orders) {
+      const salesTableBody = document.getElementById('salesTableBody');
+      const noSalesMessage = document.getElementById('no-sales');
+      
+      salesTableBody.innerHTML = '';
+      
+      if (orders.length === 0) {
+        noSalesMessage.style.display = 'block';
+        return;
+      }
+      
+      noSalesMessage.style.display = 'none';
+      
+      // Sort by date (newest first)
+      orders.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      
+      // Populate table
+      orders.forEach(order => {
+        const orderDate = new Date(order.timestamp);
+        const dateString = orderDate.toLocaleDateString();
+        const timeString = orderDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        // Calculate duration (simplified)
+        const duration = '45 min'; // In real app, calculate from timestamps
+        
+        // Status badge
+        let statusBadge = '';
+        switch(order.status) {
+          case 'pending':
+            statusBadge = '<span class="status-badge status-pending">Pending</span>';
+            break;
+          case 'preparing':
+            statusBadge = '<span class="status-badge status-preparing">Preparing</span>';
+            break;
+          case 'ready':
+            statusBadge = '<span class="status-badge status-ready">Ready</span>';
+            break;
+          case 'completed':
+            statusBadge = '<span class="status-badge" style="background: #28a745;">Completed</span>';
+            break;
+        }
+        
+        // Count total items
+        const totalItems = order.items.reduce((sum, item) => sum + item.qty, 0);
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${dateString}<br><small>${timeString}</small></td>
+          <td>#${order.id}</td>
+          <td>Table ${order.table}</td>
+          <td>${totalItems} items</td>
+          <td><strong>R${order.total.toFixed(2)}</strong></td>
+          <td>${statusBadge}</td>
+          <td>${duration}</td>
+        `;
+        salesTableBody.appendChild(row);
+      });
+    }
+    
+    /* =========================
+       INITIALIZE CHARTS
+    ========================= */
+    function initializeCharts() {
+      // Revenue Chart
+      const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+      revenueChart = new Chart(revenueCtx, {
+        type: 'line',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [{
+            label: 'Revenue',
+            data: [1200, 1900, 1500, 2300, 2900, 3400, 2800],
+            borderColor: '#1e6f5c',
+            backgroundColor: 'rgba(30, 111, 92, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return 'R' + value;
+                }
+              }
+            }
+          }
+        }
+      });
+      
+      // Category Chart
+      const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+      categoryChart = new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Breakfast', 'Main Course', 'Salads', 'Desserts', 'Drinks'],
+          datasets: [{
+            data: [25, 35, 15, 15, 10],
+            backgroundColor: [
+              '#1e6f5c',
+              '#28a085',
+              '#ffc107',
+              '#e74c3c',
+              '#007bff'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+    }
+    
+    /* =========================
+       UPDATE CHARTS
+    ========================= */
+    function updateCharts(orders) {
+      // Update revenue chart based on selected type
+      const chartType = revenueChartTypeSelect.value;
+      revenueChart.config.type = chartType;
+      
+      // In a real app, update data based on orders
+      // This is sample data
+      revenueChart.update();
+      categoryChart.update();
+    }
+    
+    /* =========================
+       UPDATE SUMMARY CARDS
+    ========================= */
+    function updateSummaryCards(orders) {
+      // Peak Hours
+      const hourCounts = {};
+      orders.forEach(order => {
+        const hour = new Date(order.timestamp).getHours();
+        hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+      });
+      
+      const peakHours = Object.entries(hourCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([hour, count]) => ({
+          hour: `${hour}:00`,
+          orders: count
+        }));
+      
+      const peakHoursEl = document.getElementById('peakHours');
+      peakHoursEl.innerHTML = peakHours.length > 0 
+        ? peakHours.map(p => `
+            <div class="peak-hour">
+              <span>${p.hour}</span>
+              <span>${p.orders} orders</span>
+            </div>
+          `).join('')
+        : '<p class="empty-text">No data</p>';
+      
+      // Popular Tables
+      const tableCounts = {};
+      orders.forEach(order => {
+        tableCounts[order.table] = (tableCounts[order.table] || 0) + 1;
+      });
+      
+      const popularTables = Object.entries(tableCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([table, count]) => ({ table, count }));
+      
+      const popularTablesEl = document.getElementById('popularTables');
+      popularTablesEl.innerHTML = popularTables.length > 0 
+        ? popularTables.map(t => `
+            <div class="popular-table">
+              <span>Table ${t.table}</span>
+              <span>${t.count} orders</span>
+            </div>
+          `).join('')
+        : '<p class="empty-text">No data</p>';
+      
+      // Low Stock Items (from inventory)
+      const inventory = JSON.parse(localStorage.getItem('chefos_inventory_detailed')) || [];
+      const lowStock = inventory
+        .filter(item => item.currentStock <= item.minStock)
+        .slice(0, 3);
+      
+      const lowStockEl = document.getElementById('lowStockItems');
+      lowStockEl.innerHTML = lowStock.length > 0 
+        ? lowStock.map(item => `
+            <div class="low-stock-item">
+              <span>${item.name}</span>
+              <span>${item.currentStock} ${item.unit} left</span>
+            </div>
+          `).join('')
+        : '<p class="empty-text">All items in stock</p>';
+    }
+    
+    /* =========================
+       EXPORT REPORT
+    ========================= */
+    function exportReport(format) {
+      // In a real app, this would generate and download the file
+      // For now, we'll simulate it
+      
+      let message = '';
+      switch(format) {
+        case 'excel':
+          message = 'Excel report is being generated...';
+          break;
+        case 'pdf':
+          message = 'PDF report is being generated...';
+          break;
+        case 'csv':
+          message = 'CSV file is being downloaded...';
+          break;
+      }
+      
+      alert(`${message}\n\nIn a production system, this would generate a ${format.toUpperCase()} file.`);
+      
+      // Close modal
+      reportModal.style.display = 'none';
+    }
+    
+    /* =========================
+       EVENT LISTENERS
+    ========================= */
+    // Date range buttons
+    dateButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        setDateRange(btn.getAttribute('data-range'));
+      });
+    });
+    
+    // Custom date range
+    applyCustomRangeBtn.addEventListener('click', () => {
+      const start = new Date(startDateInput.value);
+      const end = new Date(endDateInput.value);
+      
+      if (start > end) {
+        alert('Start date must be before end date');
+        return;
+      }
+      
+      startDate = start;
+      endDate = end;
+      currentRange = 'custom';
+      
+      // Update button states
+      dateButtons.forEach(btn => btn.classList.remove('active'));
+      
+      loadReportData();
+    });
+    
+    // Export button
+    exportBtn.addEventListener('click', () => {
+      // Update report period text
+      const periodText = currentRange === 'custom' 
+        ? `${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}`
+        : currentRange.charAt(0).toUpperCase() + currentRange.slice(1);
+      
+      document.getElementById('reportPeriod').textContent = periodText;
+      reportModal.style.display = 'flex';
+    });
+    
+    // Export format buttons
+    document.querySelectorAll('.export-format-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        exportReport(btn.getAttribute('data-format'));
+      });
+    });
+    
+    // Top items period change
+    topItemsPeriodSelect.addEventListener('change', loadReportData);
+    
+    // Chart type change
+    revenueChartTypeSelect.addEventListener('change', () => {
+      loadReportData();
+    });
+    
+    // Modal close
+    modalCloseButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        reportModal.style.display = 'none';
+      });
+    });
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+      if (event.target === reportModal) {
+        reportModal.style.display = 'none';
+      }
+    });
+    
+    // Initialize with today's data
+    setDateRange('today');
+  </script>
+
+  <style>
+    /* Additional CSS for insights page */
+    .date-range-selector {
+      background: var(--white);
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-light);
+    }
+    
+    .date-range-selector h2 {
+      color: var(--primary);
+      margin: 0 0 20px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .date-controls {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    .date-btn {
+      padding: 10px 20px;
+      border: 1px solid var(--gray-light);
+      background: var(--white);
+      color: var(--gray);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    
+    .date-btn:hover,
+    .date-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    .custom-range {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .custom-range input {
+      padding: 8px 12px;
+      border: 1px solid var(--gray-light);
+      border-radius: 6px;
+      font-size: 14px;
+      background: var(--white);
+      color: var(--dark);
+    }
+    
+    .custom-range button {
+      padding: 8px 15px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    .key-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .metric-card {
+      background: var(--white);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-light);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      transition: var(--transition);
+    }
+    
+    .metric-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .metric-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+    }
+    
+    .revenue .metric-icon { background: linear-gradient(135deg, #1e6f5c, #28a085); }
+    .orders .metric-icon { background: linear-gradient(135deg, #007bff, #0056b3); }
+    .average .metric-icon { background: linear-gradient(135deg, #ffc107, #e0a800); }
+    .tables .metric-icon { background: linear-gradient(135deg, #6c757d, #495057); }
+    
+    .metric-info h3 {
+      margin: 0 0 5px 0;
+      font-size: 28px;
+      color: var(--dark);
+    }
+    
+    .metric-info p {
+      margin: 0;
+      color: var(--gray);
+      font-size: 14px;
+    }
+    
+    .metric-change {
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #28a745;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .charts-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .chart-card {
+      background: var(--white);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-light);
+    }
+    
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .chart-header h3 {
+      margin: 0;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+    }
+    
+    .chart-header select {
+      padding: 8px 15px;
+      border: 1px solid var(--gray-light);
+      border-radius: 6px;
+      background: var(--white);
+      color: var(--dark);
+      font-size: 14px;
+    }
+    
+    .chart-container {
+      height: 300px;
+      position: relative;
+    }
+    
+    .top-items-section,
+    .sales-table-section {
+      background: var(--white);
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-light);
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .section-header h3 {
+      margin: 0;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+    }
+    
+    .section-header select {
+      padding: 8px 15px;
+      border: 1px solid var(--gray-light);
+      border-radius: 6px;
+      background: var(--white);
+      color: var(--dark);
+      font-size: 14px;
+    }
+    
+    .export-btn {
+      padding: 10px 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+    
+    .export-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+    
+    .top-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .top-item-card {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      background: var(--light);
+      border-radius: 10px;
+      border: 1px solid var(--gray-light);
+    }
+    
+    .item-rank {
+      width: 35px;
+      height: 35px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 15px;
+    }
+    
+    .item-info {
+      flex: 1;
+    }
+    
+    .item-info h4 {
+      margin: 0 0 5px 0;
+      font-size: 16px;
+      color: var(--dark);
+    }
+    
+    .item-info p {
+      margin: 0;
+      color: var(--gray);
+      font-size: 13px;
+    }
+    
+    .item-stats {
+      width: 150px;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--gray-light);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--primary-light));
+      border-radius: 4px;
+    }
+    
+    .sales-table-container {
+      overflow-x: auto;
+    }
+    
+    .sales-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .sales-table th {
+      background: var(--primary);
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .sales-table td {
+      padding: 15px;
+      border-bottom: 1px solid var(--gray-light);
+      vertical-align: middle;
+    }
+    
+    .sales-table tr:hover {
+      background: var(--light);
+    }
+    
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .summary-card {
+      background: var(--white);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-light);
+    }
+    
+    .summary-card h4 {
+      margin: 0 0 20px 0;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+    }
+    
+    .peak-hour,
+    .popular-table,
+    .low-stock-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--gray-light);
+    }
+    
+    .peak-hour:last-child,
+    .popular-table:last-child,
+    .low-stock-item:last-child {
+      border-bottom: none;
+    }
+    
+    .empty-text {
+      text-align: center;
+      color: var(--gray);
+      font-style: italic;
+      padding: 20px 0;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    
+    .empty-state i {
+      font-size: 48px;
+      color: var(--gray);
+      margin-bottom: 15px;
+    }
+    
+    .empty-state p {
+      color: var(--gray);
+      margin: 0;
+    }
+    
+    /* EXPORT MODAL */
+    .export-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .option-card {
+      background: var(--light);
+      border-radius: 10px;
+      padding: 25px;
+      text-align: center;
+      border: 1px solid var(--gray-light);
+      transition: var(--transition);
+    }
+    
+    .option-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .option-card i {
+      font-size: 48px;
+      color: var(--primary);
+      margin-bottom: 15px;
+    }
+    
+    .option-card h4 {
+      margin: 0 0 10px 0;
+      color: var(--dark);
+    }
+    
+    .option-card p {
+      margin: 0 0 15px 0;
+      color: var(--gray);
+      font-size: 14px;
+    }
+    
+    .export-format-btn {
+      padding: 10px 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+    
+    .export-format-btn:hover {
+      background: var(--primary-dark);
+    }
+    
+    .date-range-summary {
+      background: var(--light);
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+    }
+    
+    .date-range-summary h4 {
+      margin: 0 0 10px 0;
+      color: var(--dark);
+    }
+    
+    .date-range-summary p {
+      margin: 0;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 18px;
+    }
+    
+    /* MODAL STYLES */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-content {
+      background: var(--white);
+      border-radius: 15px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .modal-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--gray-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-header h3 {
+      margin: 0;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--gray);
+    }
+    
+    .modal-body {
+      padding: 20px;
+    }
+    
+    /* RESPONSIVE */
+    @media (max-width: 1200px) {
+      .charts-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .date-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .custom-range {
+        margin-left: 0;
+        margin-top: 10px;
+      }
+      
+      .key-metrics {
+        grid-template-columns: 1fr;
+      }
+      
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      
+      .summary-cards {
+        grid-template-columns: 1fr;
+      }
+      
+      .export-options {
+        grid-template-columns: 1fr;
+      }
+      
+      .sales-table {
+        min-width: 800px;
+      }
+      
+      .modal-content {
+        width: 95%;
+        margin: 10px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .metric-card {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .metric-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+      }
+      
+      .top-item-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+      }
+      
+      .item-rank {
+        margin-right: 0;
+      }
+      
+      .item-stats {
+        width: 100%;
+      }
+    }
+  </style>
+</body>
+</html>
