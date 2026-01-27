@@ -1,174 +1,106 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ChefOS Line - KDS</title>
-  <link rel="stylesheet" href="assets/css/styles.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-  <div class="app-container">
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <h1><i class="fas fa-utensils"></i> ChefOS Line</h1>
-      </div>
-      
-      <div class="sidebar-nav">
-        <div class="nav-section">
-          <h3>Kitchen Display</h3>
-          <ul class="nav-links">
-            <li><a href="pos.html"><i class="fas fa-cash-register"></i> POS</a></li>
-            <li><a href="orders.html"><i class="fas fa-list"></i> Orders</a></li>
-            <li><a href="kds.html" class="active"><i class="fas fa-utensils"></i> ChefOS Line</a></li>
-          </ul>
-        </div>
-      </div>
-    </aside>
+<script>
+function loadOrders() {
+  const orders = JSON.parse(localStorage.getItem('chefos_orders')) || [];
 
-    <div class="main-content">
-      <div class="top-bar">
-        <div class="time-display" id="currentTime"></div>
-        <div class="user-info">
-          <div class="user-avatar">CH</div>
-          <div>
-            <div style="font-weight: 600;">Chef</div>
-            <div style="font-size: 14px; color: var(--gray);">Kitchen Staff</div>
-          </div>
-        </div>
-      </div>
+  const pendingCol = document.getElementById('pending-orders');
+  const preparingCol = document.getElementById('preparing-orders');
+  const readyCol = document.getElementById('ready-orders');
 
-      <div class="kds-container">
-        <h2><i class="fas fa-utensils"></i> Active Orders</h2>
-        
-        <div class="kds-columns">
-          <div class="kds-column">
-            <h3><i class="fas fa-clock"></i> Pending</h3>
-            <div id="pending-orders">
-              <!-- Orders will be loaded here -->
-            </div>
-          </div>
-          
-          <div class="kds-column">
-            <h3><i class="fas fa-fire"></i> Preparing</h3>
-            <div id="preparing-orders">
-              <!-- Orders will be loaded here -->
-            </div>
-          </div>
-          
-          <div class="kds-column">
-            <h3><i class="fas fa-check-circle"></i> Ready</h3>
-            <div id="ready-orders">
-              <!-- Orders will be loaded here -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  pendingCol.innerHTML = '';
+  preparingCol.innerHTML = '';
+  readyCol.innerHTML = '';
 
-  <script>
-    // Load orders from localStorage
-    function loadOrders() {
-      const orders = JSON.parse(localStorage.getItem('chefos_orders')) || [];
-      
-      // Clear all columns
-      document.getElementById('pending-orders').innerHTML = '';
-      document.getElementById('preparing-orders').innerHTML = '';
-      document.getElementById('ready-orders').innerHTML = '';
-      
-      if (orders.length === 0) {
-        document.getElementById('pending-orders').innerHTML = 
-          '<div class="text-center p-20"><i class="fas fa-inbox fa-3x" style="color: var(--gray);"></i><p class="mt-20">No active orders</p></div>';
-        return;
-      }
-      
-      // Sort by timestamp (oldest first)
-      orders.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-      
-      // Display orders in respective columns
-      orders.forEach(order => {
-        const orderCard = document.createElement('div');
-        orderCard.className = `order-card ${order.status}`;
-        orderCard.innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <strong>#${order.id}</strong>
-            <span class="status-badge status-${order.status}">${order.status.toUpperCase()}</span>
-          </div>
-          <div style="font-size: 14px; margin-bottom: 10px;">
-            <div><i class="fas fa-table"></i> Table ${order.table}</div>
-            <div><i class="fas fa-clock"></i> ${new Date(order.timestamp).toLocaleTimeString()}</div>
-          </div>
-          <div style="font-size: 13px; border-top: 1px solid var(--gray-light); padding-top: 10px;">
-            ${order.items.map(item => `<div>${item.qty}x ${item.name}</div>`).join('')}
-          </div>
-          <div style="margin-top: 10px; display: flex; gap: 10px;">
-            ${order.status === 'pending' ? 
-              '<button class="mark-preparing" data-id="' + order.id + '" style="background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Start</button>' : ''}
-            ${order.status === 'preparing' ? 
-              '<button class="mark-ready" data-id="' + order.id + '" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Ready</button>' : ''}
-          </div>
-        `;
-        
-        // Add to appropriate column
-        if (order.status === 'pending') {
-          document.getElementById('pending-orders').appendChild(orderCard);
-        } else if (order.status === 'preparing') {
-          document.getElementById('preparing-orders').appendChild(orderCard);
-        } else if (order.status === 'ready') {
-          document.getElementById('ready-orders').appendChild(orderCard);
-        }
-      });
-    }
-    
-    // Update order status
-    document.addEventListener('click', function(e) {
-      if (e.target.classList.contains('mark-preparing')) {
-        const orderId = parseInt(e.target.getAttribute('data-id'));
-        updateOrderStatus(orderId, 'preparing');
-      }
-      
-      if (e.target.classList.contains('mark-ready')) {
-        const orderId = parseInt(e.target.getAttribute('data-id'));
-        updateOrderStatus(orderId, 'ready');
-      }
-    });
-    
-    function updateOrderStatus(orderId, newStatus) {
-      let orders = JSON.parse(localStorage.getItem('chefos_orders')) || [];
-      const orderIndex = orders.findIndex(o => o.id === orderId);
-      
-      if (orderIndex !== -1) {
-        orders[orderIndex].status = newStatus;
-        localStorage.setItem('chefos_orders', JSON.stringify(orders));
-        loadOrders();
-      }
-    }
-    
-    // Load orders every 5 seconds
-    loadOrders();
-    setInterval(loadOrders, 5000);
-    
-    // Update time
-    function updateTime() {
-      const now = new Date();
-      const options = { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-      };
-      const timeEl = document.getElementById('currentTime');
-      if (timeEl) {
-        timeEl.textContent = now.toLocaleDateString('en-US', options);
-      }
-    }
-    
-    updateTime();
-    setInterval(updateTime, 60000);
-  </script>
-</body>
-</html>
+  if (orders.length === 0) {
+    pendingCol.innerHTML =
+      '<div class="text-center p-20"><i class="fas fa-inbox fa-3x" style="color: var(--gray);"></i><p class="mt-20">No active orders</p></div>';
+    return;
+  }
+
+  // Sort oldest first
+  orders.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+  orders.forEach(order => {
+    const status = (order.status || '').toLowerCase();
+    if (!['pending','preparing','ready'].includes(status)) return;
+
+    const orderCard = document.createElement('div');
+    orderCard.className = `order-card ${status}`;
+
+    const time = new Date(order.timestamp);
+    const timeDisplay = isNaN(time) ? '--:--' : time.toLocaleTimeString();
+
+    orderCard.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <strong>#${order.id}</strong>
+        <span class="status-badge status-${status}">${status.toUpperCase()}</span>
+      </div>
+      <div style="font-size:14px;margin-bottom:10px;">
+        <div><i class="fas fa-table"></i> Table ${order.table}</div>
+        <div><i class="fas fa-clock"></i> ${timeDisplay}</div>
+      </div>
+      <div style="font-size:13px;border-top:1px solid var(--gray-light);padding-top:10px;">
+        ${(order.items || []).map(item => `<div>${item.qty}x ${item.name}</div>`).join('')}
+      </div>
+      <div style="margin-top:10px;display:flex;gap:10px;">
+        ${status === 'pending'
+          ? `<button class="mark-preparing" data-id="${order.id}" style="background:var(--primary);color:white;border:none;padding:8px 15px;border-radius:5px;cursor:pointer;">Start</button>`
+          : ''}
+        ${status === 'preparing'
+          ? `<button class="mark-ready" data-id="${order.id}" style="background:#28a745;color:white;border:none;padding:8px 15px;border-radius:5px;cursor:pointer;">Ready</button>`
+          : ''}
+      </div>
+    `;
+
+    if (status === 'pending') pendingCol.appendChild(orderCard);
+    if (status === 'preparing') preparingCol.appendChild(orderCard);
+    if (status === 'ready') readyCol.appendChild(orderCard);
+  });
+}
+
+document.addEventListener('click', function(e) {
+  const id = e.target.dataset.id;
+  if (!id) return;
+
+  if (e.target.classList.contains('mark-preparing')) {
+    updateOrderStatus(id, 'preparing');
+  }
+
+  if (e.target.classList.contains('mark-ready')) {
+    updateOrderStatus(id, 'ready');
+  }
+});
+
+function updateOrderStatus(orderId, newStatus) {
+  let orders = JSON.parse(localStorage.getItem('chefos_orders')) || [];
+  const index = orders.findIndex(o => o.id === orderId);
+  if (index === -1) return;
+
+  orders[index].status = newStatus;
+  localStorage.setItem('chefos_orders', JSON.stringify(orders));
+  loadOrders();
+}
+
+/* SAFE INTERVALS */
+if (!window.kdsIntervalSet) {
+  window.kdsIntervalSet = true;
+  loadOrders();
+  setInterval(loadOrders, 5000);
+}
+
+/* TIME DISPLAY */
+function updateTime() {
+  const now = new Date();
+  const options = {
+    weekday:'long', year:'numeric', month:'long', day:'numeric',
+    hour:'2-digit', minute:'2-digit', hour12:true
+  };
+  const el = document.getElementById('currentTime');
+  if (el) el.textContent = now.toLocaleDateString('en-US', options);
+}
+
+updateTime();
+if (!window.timeIntervalSet) {
+  window.timeIntervalSet = true;
+  setInterval(updateTime, 60000);
+}
+</script>
