@@ -6,19 +6,20 @@ const historyDiv = document.getElementById("orderHistory");
    LOAD DATA
 ========================= */
 function getOrders() {
-  return JSON.parse(localStorage.getItem("chefos_orders")) || [];
+  const orders = JSON.parse(localStorage.getItem("chefos_orders")) || [];
+  return Array.isArray(orders) ? orders : [];
 }
 
 /* =========================
    RENDER SALES METRICS
 ========================= */
 function renderSales(orders) {
-  if (orders.length === 0) {
+  if (!orders.length) {
     salesDiv.innerHTML = "<p>No sales data yet.</p>";
     return;
   }
 
-  const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
+  const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
 
   salesDiv.innerHTML = `
     <p><strong>Total Orders:</strong> ${orders.length}</p>
@@ -32,11 +33,13 @@ function renderSales(orders) {
 ========================= */
 function renderTopItems(orders) {
   topItemsDiv.innerHTML = "";
-
   let itemCount = {};
 
   orders.forEach(order => {
+    if (!order.items) return;
+
     order.items.forEach(item => {
+      if (!item.name || !item.qty) return;
       itemCount[item.name] = (itemCount[item.name] || 0) + item.qty;
     });
   });
@@ -45,7 +48,7 @@ function renderTopItems(orders) {
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5);
 
-  if (sortedItems.length === 0) {
+  if (!sortedItems.length) {
     topItemsDiv.innerHTML = "<p>No item data yet.</p>";
     return;
   }
@@ -63,28 +66,25 @@ function renderTopItems(orders) {
 function renderHistory(orders) {
   historyDiv.innerHTML = "";
 
-  if (orders.length === 0) {
+  if (!orders.length) {
     historyDiv.innerHTML = "<p>No orders recorded.</p>";
     return;
   }
 
-  orders
-    .slice()
-    .reverse() // newest first
-    .forEach(order => {
-      const div = document.createElement("div");
-      div.className = "menu-item";
+  orders.slice().reverse().forEach(order => {
+    const div = document.createElement("div");
+    div.className = "menu-item";
 
-      div.innerHTML = `
-        <h3>Ticket ${order.id}</h3>
-        <p><strong>Table:</strong> ${order.table}</p>
-        <p><strong>Total:</strong> R${order.total.toFixed(2)}</p>
-        <p><strong>Status:</strong> ${order.status}</p>
-        <p><strong>Time:</strong> ${order.timestamp}</p>
-      `;
+    div.innerHTML = `
+      <h3>Ticket ${order.id}</h3>
+      <p><strong>Table:</strong> ${order.table || "N/A"}</p>
+      <p><strong>Total:</strong> R${(order.total || 0).toFixed(2)}</p>
+      <p><strong>Status:</strong> ${order.status || "Unknown"}</p>
+      <p><strong>Time:</strong> ${order.timestamp || ""}</p>
+    `;
 
-      historyDiv.appendChild(div);
-    });
+    historyDiv.appendChild(div);
+  });
 }
 
 /* =========================
