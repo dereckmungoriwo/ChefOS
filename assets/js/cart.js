@@ -10,6 +10,8 @@ let total = 0;
    RENDER CART
 ========================= */
 function renderCart() {
+  if (!cartDiv || !totalDiv) return;
+
   cartDiv.innerHTML = "";
   total = 0;
 
@@ -18,7 +20,7 @@ function renderCart() {
     row.className = "cart-row";
 
     row.innerHTML = `
-      <p>${item.name} - R${item.price.toFixed(2)}</p>
+      <p>${item.name} - R${Number(item.price).toFixed(2)}</p>
       <div class="qty-controls">
         <button data-index="${index}" class="decrease">-</button>
         <span>${item.qty}</span>
@@ -27,7 +29,7 @@ function renderCart() {
     `;
 
     cartDiv.appendChild(row);
-    total += item.price * item.qty;
+    total += Number(item.price) * item.qty;
   });
 
   totalDiv.textContent = `Total: R${total.toFixed(2)}`;
@@ -36,24 +38,26 @@ function renderCart() {
 /* =========================
    UPDATE QUANTITY
 ========================= */
-cartDiv.addEventListener("click", (e) => {
-  const index = e.target.dataset.index;
-  if (index === undefined) return;
+if (cartDiv) {
+  cartDiv.addEventListener("click", (e) => {
+    const index = e.target.dataset.index;
+    if (index === undefined) return;
 
-  if (e.target.classList.contains("increase")) {
-    cart[index].qty += 1;
-  }
-
-  if (e.target.classList.contains("decrease")) {
-    if (cart[index].qty > 1) {
-      cart[index].qty -= 1;
-    } else {
-      cart.splice(index, 1);
+    if (e.target.classList.contains("increase")) {
+      cart[index].qty += 1;
     }
-  }
 
-  saveCart();
-});
+    if (e.target.classList.contains("decrease")) {
+      if (cart[index].qty > 1) {
+        cart[index].qty -= 1;
+      } else {
+        cart.splice(index, 1);
+      }
+    }
+
+    saveCart();
+  });
+}
 
 /* =========================
    SAVE CART
@@ -64,15 +68,19 @@ function saveCart() {
 }
 
 /* =========================
-   INVENTORY DEDUCTION
+   INVENTORY DEDUCTION (SAFE)
 ========================= */
 function deductInventory(orderItems) {
+  if (!window.menuItems) return;
+
   orderItems.forEach(orderItem => {
     const menuItem = menuItems.find(m => m.id === orderItem.id);
-    if (!menuItem) return;
+    if (!menuItem || !menuItem.ingredients) return;
 
     Object.entries(menuItem.ingredients).forEach(([ingredient, qty]) => {
+      if (inventory[ingredient] == null) inventory[ingredient] = 0;
       inventory[ingredient] -= qty * orderItem.qty;
+      if (inventory[ingredient] < 0) inventory[ingredient] = 0;
     });
   });
 
@@ -80,40 +88,44 @@ function deductInventory(orderItems) {
 }
 
 /* =========================
-   PLACE ORDER
+   PLACE ORDER (SYSTEM FIX)
 ========================= */
-placeOrderBtn.addEventListener("click", () => {
-  if (cart.length === 0) {
-    alert("Cart is empty.");
-    return;
-  }
+if (placeOrderBtn) {
+  placeOrderBtn.addEventListener("click", () => {
+    if (cart.length === 0) {
+      alert("Cart is empty.");
+      return;
+    }
 
-  let orders = JSON.parse(localStorage.getItem("chefos_orders")) || [];
+    let orders = JSON.parse(localStorage.getItem("chefos_orders")) || [];
 
-  const tableNumber =
-    document.getElementById("tableNumber").value || "Takeaway";
+    const tableNumber =
+      document.getElementById("tableNumber")?.value || "Takeaway";
 
-  const order = {
-    id: "T" + Date.now(),          // Ticket ID
-    items: cart,
-    total: total,
-    status: "Pending",
-    table: tableNumber,
-    timestamp: new Date().toLocaleTimeString()
-  };
+    // 🔧 clone items to avoid reference wipe
+    const orderItems = cart.map(item => ({ ...item }));
 
-  orders.push(order);
+    const order = {
+      id: "T" + Date.now(),
+      items: orderItems,
+      total: total,
+      status: "pending",          // 🔧 lowercase for system match
+      table: tableNumber,
+      timestamp: new Date().toISOString() // 🔧 full date for reports
+    };
 
-  localStorage.setItem("chefos_orders", JSON.stringify(orders));
+    orders.push(order);
+    localStorage.setItem("chefos_orders", JSON.stringify(orders));
 
-  deductInventory(cart);
+    deductInventory(orderItems);
 
-  localStorage.removeItem("chefos_cart");
-  cart = [];
+    cart = [];
+    saveCart(); // 🔧 keeps UI synced
 
-  alert("Order sent to kitchen!");
-  window.location.href = "kds.html";
-});
+    alert("Order sent to kitchen!");
+    window.location.href = "kds.html";
+  });
+}
 
 /* =========================
    INIT
