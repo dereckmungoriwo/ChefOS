@@ -1,68 +1,129 @@
-const inventoryDiv = document.getElementById("inventory");
-
-let inventory = JSON.parse(localStorage.getItem("chefos_inventory")) || {};
+const ordersDiv = document.getElementById("orders");
 
 /* =========================
-   RENDER INVENTORY
+   LOAD ORDERS (SYSTEM KEY)
 ========================= */
-function renderInventory() {
-  inventoryDiv.innerHTML = "";
+function getOrders() {
+  return JSON.parse(localStorage.getItem("chefos_orders")) || [];
+}
 
-  Object.entries(inventory).forEach(([ingredient, qty]) => {
-    const row = document.createElement("div");
-    row.className = "cart-row";
+/* =========================
+   SAVE ORDERS
+========================= */
+function saveOrders(orders) {
+  localStorage.setItem("chefos_orders", JSON.stringify(orders));
+}
 
-    const isLow = qty <= 3;
+/* =========================
+   STATUS TRANSITIONS
+========================= */
+function updateStatus(orderId, newStatus) {
+  let orders = getOrders();
 
-    row.innerHTML = `
-      <p>
-        <strong>${formatName(ingredient)}</strong>
-        <span class="${isLow ? "low-stock" : ""}">(${qty})</span>
-      </p>
-      <div class="qty-controls">
-        <button data-item="${ingredient}" class="decrease">-</button>
-        <button data-item="${ingredient}" class="increase">+</button>
+  orders = orders.map(order => {
+    if (String(order.id) === String(orderId)) {
+      const status = (order.status || "new").toLowerCase();
+
+      if ((status === "new" || status === "pending") && newStatus === "preparing") {
+        order.status = "preparing";
+      } else if (status === "preparing" && newStatus === "ready") {
+        order.status = "ready";
+      }
+    }
+    return order;
+  });
+
+  saveOrders(orders);
+  renderOrders();
+}
+
+/* =========================
+   COMPLETE ORDER
+========================= */
+function completeOrder(orderId) {
+  let orders = getOrders();
+  orders = orders.filter(order => String(order.id) !== String(orderId));
+  saveOrders(orders);
+  renderOrders();
+}
+
+/* =========================
+   RENDER ORDERS
+========================= */
+function renderOrders() {
+  if (!ordersDiv) return;
+
+  const orders = getOrders();
+  ordersDiv.innerHTML = "";
+
+  if (!orders.length) {
+    ordersDiv.innerHTML = "<p>No active orders.</p>";
+    return;
+  }
+
+  orders.forEach(order => {
+    const status = (order.status || "new").toLowerCase();
+
+    const orderDiv = document.createElement("div");
+    orderDiv.className = `order-box status-${status}`;
+
+    const itemsList = (order.items || [])
+      .map(item => `<li>${item.qty} × ${item.name}</li>`)
+      .join("");
+
+    orderDiv.innerHTML = `
+      <h3>Ticket ${order.id}</h3>
+      <p><strong>Table:</strong> ${order.table || "N/A"}</p>
+      <p><strong>Time:</strong> ${order.timestamp || "--:--"}</p>
+      <ul>${itemsList || "<li>No items</li>"}</ul>
+      <p><strong>Total:</strong> R${Number(order.total || 0).toFixed(2)}</p>
+      <span class="badge badge-${status}">${status.toUpperCase()}</span>
+      <div class="kitchen-actions">
+        ${(status === "new" || status === "pending")
+          ? `<button data-id="${order.id}" class="prep-btn">Start Prep</button>`
+          : ""}
+        ${status === "preparing"
+          ? `<button data-id="${order.id}" class="ready-btn">Mark Ready</button>`
+          : ""}
+        ${status === "ready"
+          ? `<button data-id="${order.id}" class="complete-btn">Complete</button>`
+          : ""}
       </div>
     `;
 
-    inventoryDiv.appendChild(row);
+    ordersDiv.appendChild(orderDiv);
   });
 }
 
 /* =========================
-   FORMAT LABELS
+   BUTTON HANDLING
 ========================= */
-function formatName(name) {
-  return name.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+if (ordersDiv) {
+  ordersDiv.addEventListener("click", (e) => {
+    const id = e.target.dataset.id;
+    if (!id) return;
+
+    if (e.target.classList.contains("prep-btn")) {
+      updateStatus(id, "preparing");
+    }
+    if (e.target.classList.contains("ready-btn")) {
+      updateStatus(id, "ready");
+    }
+    if (e.target.classList.contains("complete-btn")) {
+      completeOrder(id);
+    }
+  });
 }
 
 /* =========================
-   UPDATE STOCK
+   AUTO REFRESH
 ========================= */
-inventoryDiv.addEventListener("click", (e) => {
-  const item = e.target.dataset.item;
-  if (!item) return;
-
-  if (e.target.classList.contains("increase")) {
-    inventory[item] += 1;
-  }
-
-  if (e.target.classList.contains("decrease")) {
-    if (inventory[item] > 0) inventory[item] -= 1;
-  }
-
-  saveInventory();
-});
-
-/* =========================
-   SAVE INVENTORY
-========================= */
-function saveInventory() {
-  localStorage.setItem("chefos_inventory", JSON.stringify(inventory));
-  renderInventory();
+if (!window.ordersIntervalSet) {
+  window.ordersIntervalSet = true;
+  setInterval(renderOrders, 3000);
 }
 
 /* =========================
    INIT
 ========================= */
-renderInventory();
+renderOrders();
