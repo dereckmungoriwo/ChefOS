@@ -4,7 +4,8 @@ const ordersDiv = document.getElementById("orders");
    LOAD ORDERS (SYSTEM KEY)
 ========================= */
 function getOrders() {
-  return JSON.parse(localStorage.getItem("chefos_orders")) || [];
+  const orders = JSON.parse(localStorage.getItem("chefos_orders")) || [];
+  return Array.isArray(orders) ? orders : [];
 }
 
 /* =========================
@@ -15,18 +16,21 @@ function saveOrders(orders) {
 }
 
 /* =========================
-   STATUS TRANSITIONS
+   STATUS TRANSITIONS (FIXED)
 ========================= */
 function updateStatus(orderId, newStatus) {
   let orders = getOrders();
 
   orders = orders.map(order => {
-    if (order.id === orderId) {
-      const status = (order.status || '').toLowerCase();
+    if (String(order.id) === String(orderId)) {
+      const status = (order.status || "new").toLowerCase();
 
-      if (status === "pending" && newStatus === "preparing") {
+      // Allow NEW or PENDING to move to PREPARING
+      if ((status === "new" || status === "pending") && newStatus === "preparing") {
         order.status = "preparing";
-      } else if (status === "preparing" && newStatus === "ready") {
+      }
+      // PREPARING → READY
+      else if (status === "preparing" && newStatus === "ready") {
         order.status = "ready";
       }
     }
@@ -42,7 +46,7 @@ function updateStatus(orderId, newStatus) {
 ========================= */
 function completeOrder(orderId) {
   let orders = getOrders();
-  orders = orders.filter(order => order.id !== orderId);
+  orders = orders.filter(order => String(order.id) !== String(orderId));
   saveOrders(orders);
   renderOrders();
 }
@@ -56,13 +60,13 @@ function renderOrders() {
   const orders = getOrders();
   ordersDiv.innerHTML = "";
 
-  if (orders.length === 0) {
+  if (!orders.length) {
     ordersDiv.innerHTML = "<p>No active orders.</p>";
     return;
   }
 
   orders.forEach(order => {
-    const status = (order.status || '').toLowerCase();
+    const status = (order.status || "new").toLowerCase();
     const time = new Date(order.timestamp);
     const timeDisplay = isNaN(time) ? "--:--" : time.toLocaleTimeString();
 
@@ -75,13 +79,13 @@ function renderOrders() {
 
     orderDiv.innerHTML = `
       <h3>Ticket ${order.id}</h3>
-      <p><strong>Table:</strong> ${order.table}</p>
+      <p><strong>Table:</strong> ${order.table || "N/A"}</p>
       <p><strong>Time:</strong> ${timeDisplay}</p>
-      <ul>${itemsList}</ul>
+      <ul>${itemsList || "<li>No items</li>"}</ul>
       <p><strong>Total:</strong> R${Number(order.total || 0).toFixed(2)}</p>
       <span class="badge badge-${status}">${status.toUpperCase()}</span>
       <div class="kitchen-actions">
-        ${status === "pending"
+        ${(status === "new" || status === "pending")
           ? `<button data-id="${order.id}" class="prep-btn">Start Prep</button>`
           : ""}
         ${status === "preparing"
