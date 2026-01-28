@@ -1313,12 +1313,18 @@ input[type="number"]:focus {
 .time-display {
   background: var(--primary);
   color: white;
+  display: flex;
+  align-items: center;
   padding: 8px 14px;
   border-radius: 30px;
-  font-weight: 700;
+  gap: 8px;
+  font-weight: 600;
   box-shadow: 0 3px 8px rgba(30,111,92,0.3);
 }
 
 .time-display::before {
   content: '🕐';
+  font-size: 18px;
 }
+
+
