@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ChefOS Line - KDS</title>
+  <title>ChefOS Line - Kitchen Display</title>
   <link rel="stylesheet" href="assets/css/styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   <div class="app-container">
+    <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <h1><i class="fas fa-utensils"></i> ChefOS Line</h1>
@@ -16,140 +17,108 @@
       
       <div class="sidebar-nav">
         <div class="nav-section">
-          <h3>Kitchen Display</h3>
+          <h3>Menu</h3>
           <ul class="nav-links">
             <li><a href="pos.html"><i class="fas fa-cash-register"></i> POS</a></li>
             <li><a href="orders.html"><i class="fas fa-list"></i> Orders</a></li>
             <li><a href="kds.html" class="active"><i class="fas fa-utensils"></i> ChefOS Line</a></li>
           </ul>
         </div>
+        
+        <div class="nav-section">
+          <h3>Management</h3>
+          <ul class="nav-links">
+            <li><a href="inventory.html"><i class="fas fa-boxes"></i> ChefOS Stock</a></li>
+            <li><a href="reports.html"><i class="fas fa-chart-bar"></i> ChefOS Insights</a></li>
+            <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+          </ul>
+        </div>
       </div>
+      
+      <!-- SETTINGS PANEL -->
+      <div class="settings-panel">
+        <div class="theme-toggle">
+          <span><i class="fas fa-moon"></i> Dark Mode</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="themeToggle">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      
+      <!-- HELP CENTER -->
+      <div class="help-center">
+        <h4><i class="fas fa-life-ring"></i> Help Center</h4>
+        <div class="contact-info">
+          <a href="mailto:dereck@dereckmungoriwo.online">
+            <i class="fas fa-envelope"></i> dereck@dereckmungoriwo.online
+          </a>
+          <a href="https://wa.me/27717184048" target="_blank">
+            <i class="fab fa-whatsapp"></i> +27 71 718 4048
+          </a>
+          <div>
+            <i class="fas fa-clock"></i> 24/7 Support
+          </div>
+        </div>
+      </div>
+      
+      <a href="login.html" class="logout-btn">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </a>
     </aside>
 
+    <!-- MAIN CONTENT -->
     <div class="main-content">
+      <!-- TOP BAR -->
       <div class="top-bar">
-        <div class="time-display" id="currentTime"></div>
+        <div class="time-display" id="currentTime">Loading time...</div>
         <div class="user-info">
           <div class="user-avatar">CH</div>
           <div>
-            <div style="font-weight: 600;">Chef</div>
+            <div style="font-weight: 600; color: var(--dark);">Chef</div>
             <div style="font-size: 14px; color: var(--gray);">Kitchen Staff</div>
           </div>
         </div>
       </div>
 
+      <!-- KDS CONTAINER -->
       <div class="kds-container">
-        <h2><i class="fas fa-utensils"></i> Active Orders</h2>
+        <h2><i class="fas fa-fire"></i> Kitchen Display System</h2>
         
-        <div class="kds-columns">
-          <div class="kds-column">
-            <h3><i class="fas fa-clock"></i> Pending</h3>
-            <div id="pending-orders">
-              <!-- Orders will be loaded here -->
-            </div>
-          </div>
-          
-          <div class="kds-column">
-            <h3><i class="fas fa-fire"></i> Preparing</h3>
-            <div id="preparing-orders">
-              <!-- Orders will be loaded here -->
-            </div>
-          </div>
-          
-          <div class="kds-column">
-            <h3><i class="fas fa-check-circle"></i> Ready</h3>
-            <div id="ready-orders">
-              <!-- Orders will be loaded here -->
-            </div>
-          </div>
+        <div id="orders">
+          <!-- Orders will be loaded here by kitchen.js -->
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Load kitchen script -->
+  <script src="assets/js/kitchen.js"></script>
+
+  <!-- Theme toggle and time script -->
   <script>
-    // Load orders from localStorage
-    function loadOrders() {
-      const orders = JSON.parse(localStorage.getItem('chefos_orders')) || [];
-      
-      // Clear all columns
-      document.getElementById('pending-orders').innerHTML = '';
-      document.getElementById('preparing-orders').innerHTML = '';
-      document.getElementById('ready-orders').innerHTML = '';
-      
-      if (orders.length === 0) {
-        document.getElementById('pending-orders').innerHTML = 
-          '<div class="text-center p-20"><i class="fas fa-inbox fa-3x" style="color: var(--gray);"></i><p class="mt-20">No active orders</p></div>';
-        return;
-      }
-      
-      // Sort by timestamp (oldest first)
-      orders.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-      
-      // Display orders in respective columns
-      orders.forEach(order => {
-        const orderCard = document.createElement('div');
-        orderCard.className = `order-card ${order.status}`;
-        orderCard.innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <strong>#${order.id}</strong>
-            <span class="status-badge status-${order.status}">${order.status.toUpperCase()}</span>
-          </div>
-          <div style="font-size: 14px; margin-bottom: 10px;">
-            <div><i class="fas fa-table"></i> Table ${order.table}</div>
-            <div><i class="fas fa-clock"></i> ${new Date(order.timestamp).toLocaleTimeString()}</div>
-          </div>
-          <div style="font-size: 13px; border-top: 1px solid var(--gray-light); padding-top: 10px;">
-            ${order.items.map(item => `<div>${item.qty}x ${item.name}</div>`).join('')}
-          </div>
-          <div style="margin-top: 10px; display: flex; gap: 10px;">
-            ${order.status === 'pending' ? 
-              '<button class="mark-preparing" data-id="' + order.id + '" style="background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Start</button>' : ''}
-            ${order.status === 'preparing' ? 
-              '<button class="mark-ready" data-id="' + order.id + '" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Ready</button>' : ''}
-          </div>
-        `;
-        
-        // Add to appropriate column
-        if (order.status === 'pending') {
-          document.getElementById('pending-orders').appendChild(orderCard);
-        } else if (order.status === 'preparing') {
-          document.getElementById('preparing-orders').appendChild(orderCard);
-        } else if (order.status === 'ready') {
-          document.getElementById('ready-orders').appendChild(orderCard);
-        }
-      });
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const currentTime = document.getElementById('currentTime');
+    
+    // Check for saved theme
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark-theme');
+      themeToggle.checked = true;
     }
     
-    // Update order status
-    document.addEventListener('click', function(e) {
-      if (e.target.classList.contains('mark-preparing')) {
-        const orderId = parseInt(e.target.getAttribute('data-id'));
-        updateOrderStatus(orderId, 'preparing');
-      }
-      
-      if (e.target.classList.contains('mark-ready')) {
-        const orderId = parseInt(e.target.getAttribute('data-id'));
-        updateOrderStatus(orderId, 'ready');
+    // Theme toggle event
+    themeToggle.addEventListener('change', function() {
+      if (this.checked) {
+        document.body.classList.add('dark-theme');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.body.classList.remove('dark-theme');
+        localStorage.setItem('theme', 'light');
       }
     });
     
-    function updateOrderStatus(orderId, newStatus) {
-      let orders = JSON.parse(localStorage.getItem('chefos_orders')) || [];
-      const orderIndex = orders.findIndex(o => o.id === orderId);
-      
-      if (orderIndex !== -1) {
-        orders[orderIndex].status = newStatus;
-        localStorage.setItem('chefos_orders', JSON.stringify(orders));
-        loadOrders();
-      }
-    }
-    
-    // Load orders every 5 seconds
-    loadOrders();
-    setInterval(loadOrders, 5000);
-    
-    // Update time
+    // Update time display
     function updateTime() {
       const now = new Date();
       const options = { 
@@ -159,16 +128,15 @@
         day: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
+        second: '2-digit',
         hour12: true
       };
-      const timeEl = document.getElementById('currentTime');
-      if (timeEl) {
-        timeEl.textContent = now.toLocaleDateString('en-US', options);
-      }
+      currentTime.textContent = now.toLocaleDateString('en-US', options);
     }
     
+    // Update time immediately and every second
     updateTime();
-    setInterval(updateTime, 60000);
+    setInterval(updateTime, 1000);
   </script>
 </body>
 </html>
