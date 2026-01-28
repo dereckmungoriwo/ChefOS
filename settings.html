@@ -10,7 +10,6 @@
 <body>
   <div class="app-container">
     <aside class="sidebar">
-      <!-- Same sidebar as pos.html -->
       <div class="sidebar-header">
         <h1><i class="fas fa-utensils"></i> ChefOS POS</h1>
       </div>
@@ -35,7 +34,6 @@
         </div>
       </div>
       
-      <!-- Settings Panel -->
       <div class="settings-panel">
         <div class="theme-toggle">
           <span><i class="fas fa-moon"></i> Dark Mode</span>
@@ -46,13 +44,18 @@
         </div>
       </div>
       
-      <!-- Help Center -->
       <div class="help-center">
         <h4><i class="fas fa-life-ring"></i> Help Center</h4>
         <div class="contact-info">
-          <div><i class="fas fa-envelope"></i> support@chefos.com</div>
-          <div><i class="fas fa-phone"></i> +1 (415) 123-4567</div>
-          <div><i class="fas fa-clock"></i> 24/7 Support</div>
+          <a href="mailto:dereck@dereckmungoriwo.online">
+            <i class="fas fa-envelope"></i> dereck@dereckmungoriwo.online
+          </a>
+          <a href="https://wa.me/27717184048" target="_blank">
+            <i class="fab fa-whatsapp"></i> +27 71 718 4048
+          </a>
+          <div>
+            <i class="fas fa-clock"></i> 24/7 Support
+          </div>
         </div>
       </div>
       
@@ -63,11 +66,11 @@
 
     <div class="main-content">
       <div class="top-bar">
-        <div class="time-display" id="currentTime"></div>
+        <div class="time-display" id="currentTime">Loading time...</div>
         <div class="user-info">
           <div class="user-avatar">DM</div>
           <div>
-            <div style="font-weight: 600;">Derek Mungoriwo</div>
+            <div style="font-weight: 600; color: var(--dark);">Dereck Mungoriwo</div>
             <div style="font-size: 14px; color: var(--gray);">Manager</div>
           </div>
         </div>
@@ -79,7 +82,8 @@
         <div class="settings-grid">
           <div class="setting-card">
             <h3><i class="fas fa-palette"></i> Appearance</h3>
-            <div class="theme-toggle">
+            <p>Customize the look and feel of your POS system</p>
+            <div class="theme-toggle" style="margin-top: 20px;">
               <span>Dark Mode</span>
               <label class="toggle-switch">
                 <input type="checkbox" id="themeToggleMain">
@@ -90,17 +94,52 @@
           
           <div class="setting-card">
             <h3><i class="fas fa-bell"></i> Notifications</h3>
-            <p>Configure order notifications</p>
+            <p>Configure order and system notifications</p>
+            <button class="btn btn-primary" style="margin-top: 20px;" onclick="alert('Notification settings coming soon!')">
+              <i class="fas fa-cog"></i> Configure
+            </button>
           </div>
           
           <div class="setting-card">
             <h3><i class="fas fa-print"></i> Printer Settings</h3>
-            <p>Configure receipt printer</p>
+            <p>Configure receipt and kitchen printers</p>
+            <button class="btn btn-primary" style="margin-top: 20px;" onclick="alert('Printer settings coming soon!')">
+              <i class="fas fa-print"></i> Setup Printer
+            </button>
           </div>
           
           <div class="setting-card">
             <h3><i class="fas fa-database"></i> Data Management</h3>
-            <p>Backup and restore data</p>
+            <p>Backup and restore your POS data</p>
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+              <button class="btn btn-success" onclick="backupData()">
+                <i class="fas fa-download"></i> Backup
+              </button>
+              <button class="btn btn-secondary" onclick="clearData()">
+                <i class="fas fa-trash"></i> Clear All
+              </button>
+            </div>
+          </div>
+          
+          <div class="setting-card">
+            <h3><i class="fas fa-users"></i> User Management</h3>
+            <p>Manage staff accounts and permissions</p>
+            <button class="btn btn-primary" style="margin-top: 20px;" onclick="alert('User management coming soon!')">
+              <i class="fas fa-user-plus"></i> Manage Users
+            </button>
+          </div>
+          
+          <div class="setting-card">
+            <h3><i class="fas fa-life-ring"></i> Support</h3>
+            <p>Get help and contact support</p>
+            <div style="margin-top: 20px;">
+              <a href="mailto:dereck@dereckmungoriwo.online" class="btn btn-primary" style="display: inline-block; text-decoration: none; margin-right: 10px;">
+                <i class="fas fa-envelope"></i> Email Support
+              </a>
+              <a href="https://wa.me/27717184048" target="_blank" class="btn btn-success" style="display: inline-block; text-decoration: none;">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -108,7 +147,7 @@
   </div>
 
   <script>
-    // Theme toggle
+    // Theme Toggle
     const themeToggle = document.getElementById('themeToggle');
     const themeToggleMain = document.getElementById('themeToggleMain');
     const currentTime = document.getElementById('currentTime');
@@ -125,14 +164,59 @@
       if (this.checked) {
         document.body.classList.add('dark-theme');
         localStorage.setItem('theme', 'dark');
+        // Sync both toggles
+        if (themeToggle) themeToggle.checked = true;
+        if (themeToggleMain) themeToggleMain.checked = true;
       } else {
         document.body.classList.remove('dark-theme');
         localStorage.setItem('theme', 'light');
+        // Sync both toggles
+        if (themeToggle) themeToggle.checked = false;
+        if (themeToggleMain) themeToggleMain.checked = false;
       }
     }
     
     if (themeToggle) themeToggle.addEventListener('change', toggleTheme);
     if (themeToggleMain) themeToggleMain.addEventListener('change', toggleTheme);
+    
+    // Backup Data
+    function backupData() {
+      const data = {
+        orders: localStorage.getItem('chefos_orders'),
+        completedOrders: localStorage.getItem('chefos_completed_orders'),
+        inventory: localStorage.getItem('chefos_inventory'),
+        inventoryDetailed: localStorage.getItem('chefos_inventory_detailed'),
+        cart: localStorage.getItem('chefos_cart'),
+        theme: localStorage.getItem('theme'),
+        backupDate: new Date().toISOString()
+      };
+      
+      const dataStr = JSON.stringify(data, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `chefos-backup-${new Date().toISOString().split('T')[0]}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      
+      alert('✅ Data backup downloaded successfully!');
+    }
+    
+    // Clear All Data
+    function clearData() {
+      if (!confirm('⚠️ Are you sure you want to clear ALL data? This cannot be undone!')) return;
+      if (!confirm('⚠️ FINAL WARNING: This will delete all orders, inventory, and settings!')) return;
+      
+      localStorage.removeItem('chefos_orders');
+      localStorage.removeItem('chefos_completed_orders');
+      localStorage.removeItem('chefos_inventory');
+      localStorage.removeItem('chefos_inventory_detailed');
+      localStorage.removeItem('chefos_cart');
+      
+      alert('✅ All data has been cleared!');
+      window.location.reload();
+    }
     
     // Update time
     function updateTime() {
