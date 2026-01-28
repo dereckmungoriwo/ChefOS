@@ -1,100 +1,205 @@
-const salesDiv = document.getElementById("sales");
-const topItemsDiv = document.getElementById("topItems");
-const historyDiv = document.getElementById("orderHistory");
+/* ==========================================
+   CHEFOS MANAGER INSIGHTS — PRODUCTION LOGIC
+========================================== */
 
-/* =========================
-   LOAD DATA
-========================= */
 function getOrders() {
-  const orders = JSON.parse(localStorage.getItem("chefos_orders")) || [];
-  return Array.isArray(orders) ? orders : [];
+  const active = JSON.parse(localStorage.getItem('chefos_orders')) || [];
+  const completed = JSON.parse(localStorage.getItem('chefos_completed_orders')) || [];
+  return [...active, ...completed];
 }
 
-/* =========================
-   RENDER SALES METRICS
-========================= */
-function renderSales(orders) {
-  if (!orders.length) {
-    salesDiv.innerHTML = "<p>No sales data yet.</p>";
-    return;
-  }
-
-  const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
-
-  salesDiv.innerHTML = `
-    <p><strong>Total Orders:</strong> ${orders.length}</p>
-    <p><strong>Total Revenue:</strong> R${totalRevenue.toFixed(2)}</p>
-    <p><strong>Average Order Value:</strong> R${(totalRevenue / orders.length).toFixed(2)}</p>
-  `;
+function parseDate(order) {
+  return new Date(order.fullTimestamp || order.orderTime);
 }
 
-/* =========================
-   TOP SELLING ITEMS
-========================= */
-function renderTopItems(orders) {
-  topItemsDiv.innerHTML = "";
-  let itemCount = {};
+function inRange(date, start, end) {
+  return date >= start && date <= end;
+}
+
+/* ---------- DATA AGGREGATION ENGINE ---------- */
+
+function aggregateData(orders) {
+  const data = {
+    revenue: 0,
+    orders: orders.length,
+    itemsSold: 0,
+    tableStats: {},
+    itemStats: {},
+    categoryStats: {},
+    hourly: Array(24).fill(0),
+    daily: {}
+  };
 
   orders.forEach(order => {
-    if (!order.items) return;
+    data.revenue += order.total;
+
+    const date = parseDate(order);
+    const hour = date.getHours();
+    const dayKey = date.toLocaleDateString();
+
+    data.hourly[hour] += order.total;
+    data.daily[dayKey] = (data.daily[dayKey] || 0) + order.total;
+
+    data.tableStats[order.table] = (data.tableStats[order.table] || 0) + 1;
 
     order.items.forEach(item => {
-      if (!item.name || !item.qty) return;
-      itemCount[item.name] = (itemCount[item.name] || 0) + item.qty;
+      data.itemsSold += item.qty;
+
+      if (!data.itemStats[item.name]) {
+        data.itemStats[item.name] = { qty: 0, revenue: 0 };
+      }
+      data.itemStats[item.name].qty += item.qty;
+      data.itemStats[item.name].revenue += item.qty * item.price;
+
+      const category = item.category || "Other";
+      data.categoryStats[category] = (data.categoryStats[category] || 0) + item.qty;
     });
   });
 
-  const sortedItems = Object.entries(itemCount)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5);
+  return data;
+}
 
-  if (!sortedItems.length) {
-    topItemsDiv.innerHTML = "<p>No item data yet.</p>";
+/* ---------- KPI RENDER ---------- */
+
+function renderKPIs(data) {
+  document.getElementById('totalRevenue').textContent = `R${data.revenue.toFixed(2)}`;
+  document.getElementById('totalOrders').textContent = data.orders;
+  document.getElementById('averageOrder').textContent =
+    `R${data.orders ? (data.revenue / data.orders).toFixed(2) : '0.00'}`;
+
+  const busiest = Object.entries(data.tableStats).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('busiestTable').textContent = busiest ? `Table ${busiest[0]}` : 'N/A';
+  document.getElementById('tableOrders').textContent = busiest ? `${busiest[1]} orders` : '0 orders';
+}
+
+/* ---------- TOP ITEMS ---------- */
+
+function renderTopItems(data) {
+  const list = document.getElementById('topItemsList');
+  list.innerHTML = '';
+
+  const items = Object.entries(data.itemStats)
+    .map(([name, val]) => ({ name, ...val }))
+    .sort((a,b)=>b.qty-a.qty)
+    .slice(0,5);
+
+  if (!items.length) {
+    list.innerHTML = `<div class="empty-state"><p>No sales data</p></div>`;
     return;
   }
 
-  sortedItems.forEach(([name, qty]) => {
-    const p = document.createElement("p");
-    p.textContent = `${name}: ${qty} sold`;
-    topItemsDiv.appendChild(p);
+  items.forEach((item,i)=>{
+    const el = document.createElement('div');
+    el.className='top-item-card';
+    el.innerHTML = `
+      <div class="item-rank">${i+1}</div>
+      <div class="item-info">
+        <h4>${item.name}</h4>
+        <p>${item.qty} sold • R${item.revenue.toFixed(2)}</p>
+      </div>
+      <div class="item-stats">
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:${(item.qty/items[0].qty)*100}%"></div>
+        </div>
+      </div>`;
+    list.appendChild(el);
   });
 }
 
-/* =========================
-   ORDER HISTORY
-========================= */
-function renderHistory(orders) {
-  historyDiv.innerHTML = "";
+/* ---------- CHARTS ---------- */
 
-  if (!orders.length) {
-    historyDiv.innerHTML = "<p>No orders recorded.</p>";
-    return;
-  }
+let revenueChart, categoryChart;
 
-  orders.slice().reverse().forEach(order => {
-    const div = document.createElement("div");
-    div.className = "menu-item";
+function initCharts() {
+  revenueChart = new Chart(document.getElementById('revenueChart'), {
+    type: 'line',
+    data: { labels: [], datasets: [{ label: 'Revenue', data: [] }] }
+  });
 
-    div.innerHTML = `
-      <h3>Ticket ${order.id}</h3>
-      <p><strong>Table:</strong> ${order.table || "N/A"}</p>
-      <p><strong>Total:</strong> R${(order.total || 0).toFixed(2)}</p>
-      <p><strong>Status:</strong> ${order.status || "Unknown"}</p>
-      <p><strong>Time:</strong> ${order.timestamp || ""}</p>
-    `;
-
-    historyDiv.appendChild(div);
+  categoryChart = new Chart(document.getElementById('categoryChart'), {
+    type: 'doughnut',
+    data: { labels: [], datasets: [{ data: [] }] }
   });
 }
 
-/* =========================
-   INIT
-========================= */
-function initDashboard() {
-  const orders = getOrders();
-  renderSales(orders);
-  renderTopItems(orders);
-  renderHistory(orders);
+function updateCharts(data) {
+  const labels = Object.keys(data.daily);
+  const values = Object.values(data.daily);
+
+  revenueChart.data.labels = labels;
+  revenueChart.data.datasets[0].data = values;
+  revenueChart.update();
+
+  categoryChart.data.labels = Object.keys(data.categoryStats);
+  categoryChart.data.datasets[0].data = Object.values(data.categoryStats);
+  categoryChart.update();
 }
 
-initDashboard();
+/* ---------- SUMMARY CARDS ---------- */
+
+function renderSummary(data) {
+  const peak = document.getElementById('peakHours');
+  const topHours = data.hourly
+    .map((v,i)=>({hour:i,val:v}))
+    .sort((a,b)=>b.val-a.val)
+    .slice(0,3);
+
+  peak.innerHTML = topHours.map(h=>`
+    <div class="peak-hour">
+      <span>${h.hour}:00</span>
+      <span>R${h.val.toFixed(0)}</span>
+    </div>`).join('');
+
+  const tables = document.getElementById('popularTables');
+  const topTables = Object.entries(data.tableStats)
+    .sort((a,b)=>b[1]-a[1]).slice(0,3);
+
+  tables.innerHTML = topTables.map(t=>`
+    <div class="popular-table">
+      <span>Table ${t[0]}</span>
+      <span>${t[1]} orders</span>
+    </div>`).join('');
+}
+
+/* ---------- SALES TABLE ---------- */
+
+function renderTable(orders) {
+  const body = document.getElementById('salesTableBody');
+  body.innerHTML = '';
+
+  orders.sort((a,b)=>parseDate(b)-parseDate(a));
+
+  orders.forEach(order=>{
+    const row = document.createElement('tr');
+    const d = parseDate(order);
+
+    row.innerHTML = `
+      <td>${d.toLocaleDateString()}<br><small>${d.toLocaleTimeString()}</small></td>
+      <td>#${order.id.toString().slice(-6)}</td>
+      <td>Table ${order.table}</td>
+      <td>${order.items.reduce((s,i)=>s+i.qty,0)} items</td>
+      <td><strong>R${order.total.toFixed(2)}</strong></td>
+      <td>${order.status}</td>
+      <td>—</td>`;
+    body.appendChild(row);
+  });
+}
+
+/* ---------- MAIN LOAD ---------- */
+
+function loadReportData(startDate, endDate) {
+  const orders = getOrders().filter(o => inRange(parseDate(o), startDate, endDate));
+  const data = aggregateData(orders);
+
+  renderKPIs(data);
+  renderTopItems(data);
+  updateCharts(data);
+  renderSummary(data);
+  renderTable(orders);
+}
+
+/* ---------- INIT ---------- */
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  initCharts();
+});
