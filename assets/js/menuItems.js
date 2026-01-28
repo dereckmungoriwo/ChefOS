@@ -1,8 +1,10 @@
 /* =========================
    CHEFOS MENU DATA
+   Fixed version with proper image paths
 ========================= */
+
 const menuItems = [
-  // BREAKFAST CATEGORY (6 items - 3 top, 3 bottom)
+  // BREAKFAST CATEGORY (6 items - 3x2 grid)
   {
     id: "pancakes",
     name: "Classic Pancakes",
@@ -58,7 +60,7 @@ const menuItems = [
     ingredients: { bread: 2, avocado: 1, tomato: 1 }
   },
 
-  // MAIN COURSE CATEGORY (6 items - 3 top, 3 bottom)
+  // MAIN COURSE CATEGORY (6 items - 3x2 grid)
   {
     id: "burger_beef",
     name: "Beef Burger",
@@ -114,7 +116,7 @@ const menuItems = [
     ingredients: { fish: 1, potato: 2, batter: 1 }
   },
 
-  // SALADS CATEGORY (6 items - 3 top, 3 bottom)
+  // SALADS CATEGORY (6 items - 3x2 grid)
   {
     id: "caesar_salad",
     name: "Caesar Salad",
@@ -170,7 +172,7 @@ const menuItems = [
     ingredients: { chicken: 1, lettuce: 1, carrots: 1, dressing: 1 }
   },
 
-  // DESSERTS CATEGORY (6 items - 3 top, 3 bottom)
+  // DESSERTS CATEGORY (6 items - 3x2 grid)
   {
     id: "chocolate_cake",
     name: "Chocolate Lava Cake",
@@ -226,7 +228,7 @@ const menuItems = [
     ingredients: { apples: 3, pastry: 1, ice_cream: 1, cinnamon: 1 }
   },
 
-  // DRINKS CATEGORY (Added - 6 items)
+  // DRINKS CATEGORY (6 items - 3x2 grid)
   {
     id: "cappuccino",
     name: "Cappuccino",
@@ -306,9 +308,8 @@ const defaultInventory = {
   sugar: 20, mascarpone: 6, ladyfingers: 15, coffee: 10, cocoa: 8,
   apples: 15, pastry: 10, cinnamon: 8, vanilla: 6,
   
-  // Drink ingredients (added)
-  coffee: 20, milk: 25, oranges: 30, tea: 15, yogurt: 12, 
-  honey: 8, cola: 20, water: 50, ice: 100
+  // Drink ingredients
+  oranges: 30, tea: 15, yogurt: 12, honey: 8, cola: 20, water: 50, ice: 100
 };
 
 /* =========================
@@ -319,27 +320,10 @@ function initInventory() {
     localStorage.setItem("chefos_inventory", JSON.stringify(defaultInventory));
   }
 }
+
+// Initialize inventory on load
 initInventory();
 
-/* =========================
-   CHEFOS MENU DATA
-========================= */
-const menuItems = [
-  // ... keep all your menu items as they are ...
-];
-
-/* =========================
-   CHEFOS INVENTORY
-========================= */
-const defaultInventory = {
-  // ... keep your inventory data ...
-};
-
-/* =========================
-   INVENTORY INITIALIZATION
-========================= */
-// REMOVE this line: function initInventory() { ... }
-// initInventory(); // REMOVE this call too
-
-// Instead, just export the default inventory
-console.log("Menu items loaded:", menuItems.length);
+// Log for debugging
+console.log("✅ ChefOS Menu loaded:", menuItems.length, "items");
+console.log("✅ ChefOS Inventory initialized");
