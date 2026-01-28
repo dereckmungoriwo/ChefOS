@@ -4,29 +4,316 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ChefOS Login</title>
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e6f5c 0%, #28a085 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .login-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      max-width: 400px;
+      width: 100%;
+      animation: slideUp 0.5s ease;
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .login-header {
+      background: linear-gradient(135deg, #1e6f5c, #28a085);
+      padding: 40px 30px;
+      text-align: center;
+      color: white;
+    }
+    
+    .login-header i {
+      font-size: 60px;
+      margin-bottom: 15px;
+      color: #ffd700;
+    }
+    
+    .login-header h1 {
+      font-size: 32px;
+      margin-bottom: 5px;
+      font-weight: 700;
+    }
+    
+    .login-header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    .login-body {
+      padding: 40px 30px;
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    input,
+    select {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      background: white;
+    }
+    
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: #1e6f5c;
+      box-shadow: 0 0 0 3px rgba(30, 111, 92, 0.1);
+    }
+    
+    .input-icon {
+      position: relative;
+    }
+    
+    .input-icon i {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6b7280;
+      font-size: 16px;
+    }
+    
+    .input-icon input,
+    .input-icon select {
+      padding-left: 50px;
+    }
+    
+    .login-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #1e6f5c, #28a085);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 12px rgba(30, 111, 92, 0.3);
+    }
+    
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(30, 111, 92, 0.4);
+    }
+    
+    .login-btn:active {
+      transform: translateY(0);
+    }
+    
+    .login-footer {
+      text-align: center;
+      padding: 20px 30px 30px;
+      color: #6b7280;
+      font-size: 13px;
+    }
+    
+    .login-footer a {
+      color: #1e6f5c;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .login-footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .support-info {
+      background: #f4f6f8;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      text-align: center;
+      font-size: 13px;
+      color: #6b7280;
+    }
+    
+    .support-info a {
+      color: #1e6f5c;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .support-info i {
+      margin-right: 5px;
+    }
+    
+    @media (max-width: 480px) {
+      .login-header {
+        padding: 30px 20px;
+      }
+      
+      .login-header h1 {
+        font-size: 26px;
+      }
+      
+      .login-body {
+        padding: 30px 20px;
+      }
+    }
+  </style>
 </head>
-<body class="login-page">
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <i class="fas fa-utensils"></i>
+      <h1>ChefOS POS</h1>
+      <p>Professional Restaurant Management</p>
+    </div>
+    
+    <div class="login-body">
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username">
+            <i class="fas fa-user"></i> Username
+          </label>
+          <div class="input-icon">
+            <i class="fas fa-user"></i>
+            <input type="text" id="username" placeholder="Enter your username" required autofocus>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">
+            <i class="fas fa-lock"></i> Password
+          </label>
+          <div class="input-icon">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="password" placeholder="Enter your password" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="role">
+            <i class="fas fa-user-tag"></i> Role
+          </label>
+          <div class="input-icon">
+            <i class="fas fa-user-tag"></i>
+            <select id="role" required>
+              <option value="manager">Manager</option>
+              <option value="cashier">Cashier</option>
+              <option value="chef">Chef</option>
+            </select>
+          </div>
+        </div>
+        
+        <button type="submit" class="login-btn">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+      </form>
+      
+      <div class="support-info">
+        <div style="margin-bottom: 8px;">
+          <i class="fas fa-life-ring"></i> <strong>Need Help?</strong>
+        </div>
+        <div>
+          <a href="mailto:dereck@dereckmungoriwo.online">
+            <i class="fas fa-envelope"></i> dereck@dereckmungoriwo.online
+          </a>
+        </div>
+        <div style="margin-top: 5px;">
+          <a href="https://wa.me/27717184048" target="_blank">
+            <i class="fab fa-whatsapp"></i> +27 71 718 4048
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="login-footer">
+      © 2025 ChefOS POS. All rights reserved.
+    </div>
+  </div>
 
-<h1>ChefOS Login</h1>
-
-<div class="login-box">
-  <label>Username</label>
-  <input id="username" type="text" />
-
-  <label>Password</label>
-  <input id="password" type="password" />
-
-  <label>Role</label>
-  <select id="role">
-    <option value="cashier">Cashier</option>
-    <option value="chef">Chef</option>
-    <option value="manager">Manager</option>
-  </select>
-
-  <button id="loginBtn">Login</button>
-</div>
-
-<script src="assets/js/login.js"></script>
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const roleSelect = document.getElementById('role');
+    
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+      const role = roleSelect.value;
+      
+      if (!username) {
+        alert('Please enter a username');
+        usernameInput.focus();
+        return;
+      }
+      
+      if (!password) {
+        alert('Please enter a password');
+        passwordInput.focus();
+        return;
+      }
+      
+      // Store user info
+      const user = {
+        username,
+        role,
+        loginTime: new Date().toISOString()
+      };
+      
+      localStorage.setItem('chefos_user', JSON.stringify(user));
+      
+      // Redirect based on role
+      switch (role) {
+        case 'cashier':
+        case 'manager':
+          window.location.href = 'pos.html';
+          break;
+        case 'chef':
+          window.location.href = 'kds.html';
+          break;
+        default:
+          window.location.href = 'pos.html';
+      }
+    });
+  </script>
 </body>
 </html>
