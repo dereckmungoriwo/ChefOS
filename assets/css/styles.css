@@ -1320,5 +1320,5 @@ input[type="number"]:focus {
 }
 
 .time-display::before {
-  content: "⏱";
+  content: '🕐';
 }
