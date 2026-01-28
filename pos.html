@@ -83,20 +83,31 @@
   </aside>
 
   <!-- MAIN CONTENT -->
-  <div class="main-content">
-    <!-- TOP BAR -->
-    <div class="top-bar">
-      <div class="time-display" id="currentTime">
+<main class="main-content">
+
+  <!-- TOP BAR -->
+  <header class="top-bar">
+
+    <div class="header-left">
+      <h2 class="app-title">ChefOS Control Panel</h2>
+      <p class="header-motto">Precision • Speed • Control</p>
+    </div>
+
+    <div class="header-right">
+
+      <!-- Time Display -->
+      <div class="time-display" id="currentTime" aria-live="polite">
         Loading time...
       </div>
+
+      <!-- User Info -->
       <div class="user-info">
-        <div class="user-avatar">DM</div>
-        <div>
-          <div style="font-weight: 600; color: var(--dark);">Dereck Mungoriwo</div>
-          <div style="font-size: 14px; color: var(--gray);">Manager</div>
+        <div class="user-avatar" aria-label="User initials">DM</div>
+        <div class="user-meta">
+          <div class="user-name">Dereck Mungoriwo</div>
+          <div class="user-role">Manager</div>
         </div>
       </div>
-    </div>
 
     <!-- POS LAYOUT -->
     <main class="pos-layout">
