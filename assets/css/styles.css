@@ -1327,4 +1327,19 @@ input[type="number"]:focus {
   font-size: 18px;
 }
 
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
+.header-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
