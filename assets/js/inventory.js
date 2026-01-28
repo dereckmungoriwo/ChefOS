@@ -1329,3 +1329,10 @@ function autoDeductInventory() {
 /* Run deduction every 10s */
 setInterval(autoDeductInventory, 10000);
 
+function checkCriticalStock() {
+  const critical = inventoryData.filter(i => i.currentStock <= 0);
+  if (critical.length > 0) {
+    console.warn("OUT OF STOCK:", critical.map(i => i.name).join(", "));
+  }
+}
+setInterval(checkCriticalStock, 15000);
