@@ -1343,3 +1343,25 @@ input[type="number"]:focus {
   align-items: center;
   gap: 24px;
 }
+
+.top-bar {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Left and right stay in normal flex flow */
+.header-left,
+.header-right {
+  z-index: 1; /* prevents overlap issues */
+}
+
+/* TRUE CENTERING */
+.time-display {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
