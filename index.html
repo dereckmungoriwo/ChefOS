@@ -83,27 +83,20 @@
   </aside>
 
   <!-- MAIN CONTENT -->
-    <main class="main-content">
-      <!-- TOP BAR -->
-  <header class="top-bar">
-    <div class="header-left">
-      <h1 class="app-title">ChefOS Control Panel</h1>
-      <p class="header-motto">Precision • Speed • Control</p>
+  <div class="main-content">
+    <!-- TOP BAR -->
+    <div class="top-bar">
+      <div class="time-display" id="currentTime">
+        Loading time...
+      </div>
+      <div class="user-info">
+        <div class="user-avatar">DM</div>
+        <div>
+          <div style="font-weight: 600; color: var(--dark);">Dereck Mungoriwo</div>
+          <div style="font-size: 14px; color: var(--gray);">Manager</div>
+        </div>
+      </div>
     </div>
-
-    <time class="time-display" id="currentTime" aria-live="polite"></time>
-    
-    <section class="user-info" aria-label="User profile">
-      <div class="user-avatar" role="img" aria-label="Dereck Mungoriwo initials">
-        DM
-      </div>
-      <div class="user-meta">
-        <div class="user-name">Dereck Mungoriwo</div>
-        <div class="user-role">Manager</div>
-      </div>
-    </section>
-  </header>
-</main>
 
     <!-- POS LAYOUT -->
     <main class="pos-layout">
@@ -190,14 +183,14 @@
   function updateTime() {
     const now = new Date();
     const options = { 
-      weekday: 'short', 
+      weekday: 'long', 
       year: 'numeric', 
-      month: 'short', 
+      month: 'long', 
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
-      hour24: true
+      hour12: true
     };
     currentTime.textContent = now.toLocaleDateString('en-US', options);
   }
