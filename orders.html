@@ -35,12 +35,30 @@
         </div>
       </div>
       
+      <!-- SETTINGS PANEL -->
+      <div class="settings-panel">
+        <div class="theme-toggle">
+          <span><i class="fas fa-moon"></i> Dark Mode</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="themeToggle">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      
       <!-- HELP CENTER -->
       <div class="help-center">
         <h4><i class="fas fa-life-ring"></i> Help Center</h4>
         <div class="contact-info">
-          <div><i class="fas fa-envelope"></i> support@chefos.com</div>
-          <div><i class="fas fa-phone"></i> +1 (415) 123-4567</div>
+          <a href="mailto:dereck@dereckmungoriwo.online">
+            <i class="fas fa-envelope"></i> dereck@dereckmungoriwo.online
+          </a>
+          <a href="https://wa.me/27717184048" target="_blank">
+            <i class="fab fa-whatsapp"></i> +27 71 718 4048
+          </a>
+          <div>
+            <i class="fas fa-clock"></i> 24/7 Support
+          </div>
         </div>
       </div>
       
@@ -53,11 +71,11 @@
     <div class="main-content">
       <!-- TOP BAR -->
       <div class="top-bar">
-        <div class="time-display" id="currentTime"></div>
+        <div class="time-display" id="currentTime">Loading time...</div>
         <div class="user-info">
           <div class="user-avatar">DM</div>
           <div>
-            <div style="font-weight: 600;">Derek Mungoriwo</div>
+            <div style="font-weight: 600; color: var(--dark);">Dereck Mungoriwo</div>
             <div style="font-size: 14px; color: var(--gray);">Manager</div>
           </div>
         </div>
@@ -206,48 +224,39 @@
     // Current filter
     let currentFilter = 'all';
     
-    /* =========================
-       LOAD ORDERS
-    ========================= */
     function loadOrders() {
       const orders = JSON.parse(localStorage.getItem('chefos_orders')) || [];
+      const completedOrders = JSON.parse(localStorage.getItem('chefos_completed_orders')) || [];
+      const allOrders = [...orders, ...completedOrders];
       
-      // Update statistics
-      updateOrderStats(orders);
+      updateOrderStats(allOrders);
       
-      // Filter orders
-      let filteredOrders = orders;
+      let filteredOrders = allOrders;
       if (currentFilter !== 'all') {
-        filteredOrders = orders.filter(order => order.status === currentFilter);
+        filteredOrders = allOrders.filter(order => (order.status || '').toLowerCase() === currentFilter);
       }
       
-      // Sort by timestamp (newest first)
-      filteredOrders.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      filteredOrders.sort((a, b) => new Date(b.fullTimestamp || b.orderTime || 0) - new Date(a.fullTimestamp || a.orderTime || 0));
       
-      // Clear table
       ordersList.innerHTML = '';
       
-      // Show/hide no orders message
       if (filteredOrders.length === 0) {
         noOrdersMessage.style.display = 'block';
       } else {
         noOrdersMessage.style.display = 'none';
         
-        // Populate table
         filteredOrders.forEach(order => {
           const row = document.createElement('tr');
           
-          // Format time
-          const orderTime = new Date(order.timestamp);
+          const orderTime = new Date(order.fullTimestamp || order.orderTime || Date.now());
           const timeString = orderTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
           const dateString = orderTime.toLocaleDateString();
           
-          // Count total items
           const totalItems = order.items.reduce((sum, item) => sum + item.qty, 0);
           
-          // Status badge
+          const status = (order.status || 'pending').toLowerCase();
           let statusBadge = '';
-          switch(order.status) {
+          switch(status) {
             case 'pending':
               statusBadge = '<span class="status-badge status-pending">Pending</span>';
               break;
@@ -263,7 +272,7 @@
           }
           
           row.innerHTML = `
-            <td>#${order.id}</td>
+            <td>#${order.id.toString().substring(order.id.toString().length - 6)}</td>
             <td>${order.table}</td>
             <td>${totalItems} items</td>
             <td>R${order.total.toFixed(2)}</td>
@@ -273,7 +282,7 @@
               <button class="action-btn view-btn" data-id="${order.id}">
                 <i class="fas fa-eye"></i> View
               </button>
-              ${order.status === 'ready' ? 
+              ${status === 'ready' ? 
                 `<button class="action-btn complete-btn" data-id="${order.id}">
                   <i class="fas fa-check"></i> Complete
                 </button>` : ''
@@ -284,20 +293,16 @@
           ordersList.appendChild(row);
         });
         
-        // Add event listeners to action buttons
         document.querySelectorAll('.view-btn').forEach(btn => {
-          btn.addEventListener('click', () => viewOrder(parseInt(btn.getAttribute('data-id'))));
+          btn.addEventListener('click', () => viewOrder(btn.getAttribute('data-id')));
         });
         
         document.querySelectorAll('.complete-btn').forEach(btn => {
-          btn.addEventListener('click', () => completeOrder(parseInt(btn.getAttribute('data-id'))));
+          btn.addEventListener('click', () => completeOrder(btn.getAttribute('data-id')));
         });
       }
     }
     
-    /* =========================
-       UPDATE ORDER STATISTICS
-    ========================= */
     function updateOrderStats(orders) {
       const stats = {
         pending: 0,
@@ -307,8 +312,9 @@
       };
       
       orders.forEach(order => {
-        if (stats[order.status] !== undefined) {
-          stats[order.status]++;
+        const status = (order.status || 'pending').toLowerCase();
+        if (stats[status] !== undefined) {
+          stats[status]++;
         }
       });
       
@@ -318,26 +324,24 @@
       completedCountEl.textContent = stats.completed;
     }
     
-    /* =========================
-       VIEW ORDER DETAILS
-    ========================= */
     function viewOrder(orderId) {
       const orders = JSON.parse(localStorage.getItem('chefos_orders')) || [];
-      const order = orders.find(o => o.id === orderId);
+      const completedOrders = JSON.parse(localStorage.getItem('chefos_completed_orders')) || [];
+      const allOrders = [...orders, ...completedOrders];
+      const order = allOrders.find(o => String(o.id) === String(orderId));
       
       if (!order) return;
       
-      // Populate modal
-      document.getElementById('modalOrderId').textContent = `#${order.id}`;
+      document.getElementById('modalOrderId').textContent = `#${orderId}`;
       document.getElementById('modalTable').textContent = order.table;
       
-      const orderTime = new Date(order.timestamp);
+      const orderTime = new Date(order.fullTimestamp || order.orderTime);
       document.getElementById('modalTime').textContent = 
         `${orderTime.toLocaleDateString()} ${orderTime.toLocaleTimeString()}`;
       
-      // Status
+      const status = (order.status || 'pending').toLowerCase();
       let statusText = '';
-      switch(order.status) {
+      switch(status) {
         case 'pending': statusText = '<span class="status-badge status-pending">Pending</span>'; break;
         case 'preparing': statusText = '<span class="status-badge status-preparing">Preparing</span>'; break;
         case 'ready': statusText = '<span class="status-badge status-ready">Ready</span>'; break;
@@ -345,7 +349,6 @@
       }
       document.getElementById('modalStatus').innerHTML = statusText;
       
-      // Items
       const itemsContainer = document.getElementById('modalItems');
       itemsContainer.innerHTML = '';
       order.items.forEach(item => {
@@ -358,43 +361,36 @@
         itemsContainer.appendChild(itemDiv);
       });
       
-      // Total
       document.getElementById('modalTotal').textContent = `R${order.total.toFixed(2)}`;
       
-      // Show modal
       orderModal.style.display = 'flex';
       
-      // Set up modal buttons
       document.getElementById('markComplete').onclick = () => completeOrder(orderId);
       document.getElementById('printReceipt').onclick = () => printReceipt(order);
     }
     
-    /* =========================
-       COMPLETE ORDER
-    ========================= */
     function completeOrder(orderId) {
       let orders = JSON.parse(localStorage.getItem('chefos_orders')) || [];
-      const orderIndex = orders.findIndex(o => o.id === orderId);
+      const orderIndex = orders.findIndex(o => String(o.id) === String(orderId));
       
       if (orderIndex !== -1) {
         orders[orderIndex].status = 'completed';
+        
+        let completedOrders = JSON.parse(localStorage.getItem('chefos_completed_orders')) || [];
+        completedOrders.push(orders[orderIndex]);
+        localStorage.setItem('chefos_completed_orders', JSON.stringify(completedOrders));
+        
+        orders.splice(orderIndex, 1);
         localStorage.setItem('chefos_orders', JSON.stringify(orders));
         
-        // Close modal if open
         orderModal.style.display = 'none';
-        
-        // Reload orders
         loadOrders();
         
         alert(`Order #${orderId} marked as completed!`);
       }
     }
     
-    /* =========================
-       PRINT RECEIPT
-    ========================= */
     function printReceipt(order) {
-      // Create receipt content
       const receiptContent = `
         <div style="font-family: monospace; max-width: 300px; margin: 0 auto;">
           <h2 style="text-align: center;">ChefOS Restaurant</h2>
@@ -402,7 +398,7 @@
           <p style="text-align: center;">
             Order #${order.id}<br>
             Table: ${order.table}<br>
-            ${new Date(order.timestamp).toLocaleString()}
+            ${new Date(order.fullTimestamp || order.orderTime).toLocaleString()}
           </p>
           <hr>
           ${order.items.map(item => `
@@ -421,7 +417,6 @@
         </div>
       `;
       
-      // Open print window
       const printWindow = window.open('', '_blank');
       printWindow.document.write(`
         <html>
@@ -442,42 +437,27 @@
       printWindow.document.close();
     }
     
-    /* =========================
-       FILTER ORDERS
-    ========================= */
     filterButtons.forEach(btn => {
       btn.addEventListener('click', () => {
-        // Update active filter button
         filterButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        
-        // Set current filter
         currentFilter = btn.getAttribute('data-filter');
-        
-        // Reload orders
         loadOrders();
       });
     });
     
-    /* =========================
-       MODAL CLOSE
-    ========================= */
     modalCloseButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         orderModal.style.display = 'none';
       });
     });
     
-    // Close modal when clicking outside
     window.addEventListener('click', (event) => {
       if (event.target === orderModal) {
         orderModal.style.display = 'none';
       }
     });
     
-    /* =========================
-       UPDATE TIME
-    ========================= */
     function updateTime() {
       const now = new Date();
       const options = { 
@@ -495,21 +475,31 @@
       }
     }
     
-    /* =========================
-       INITIALIZE
-    ========================= */
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark-theme');
+      themeToggle.checked = true;
+    }
+    themeToggle.addEventListener('change', function() {
+      if (this.checked) {
+        document.body.classList.add('dark-theme');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.body.classList.remove('dark-theme');
+        localStorage.setItem('theme', 'light');
+      }
+    });
+    
     document.addEventListener('DOMContentLoaded', () => {
       loadOrders();
       updateTime();
-      
-      // Refresh orders every 10 seconds
       setInterval(loadOrders, 10000);
       setInterval(updateTime, 60000);
     });
   </script>
 
   <style>
-    /* Additional CSS for orders page */
     .orders-header {
       display: flex;
       justify-content: space-between;
@@ -658,7 +648,6 @@
       box-shadow: 0 3px 8px rgba(0,0,0,0.1);
     }
     
-    /* MODAL STYLES */
     .modal {
       display: none;
       position: fixed;
@@ -789,7 +778,6 @@
       box-shadow: 0 3px 8px rgba(0,0,0,0.1);
     }
     
-    /* RESPONSIVE */
     @media (max-width: 768px) {
       .orders-header {
         flex-direction: column;
