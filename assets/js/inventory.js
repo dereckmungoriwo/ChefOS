@@ -1263,3 +1263,69 @@
   </style>
 </body>
 </html>
+
+/* =========================================
+   CHEFOS AUTO INVENTORY DEDUCTION ENGINE
+   Connects completed orders to stock usage
+========================================= */
+
+function getCompletedOrders() {
+  return JSON.parse(localStorage.getItem('chefos_completed_orders')) || [];
+}
+
+// Track processed orders so we don't deduct twice
+let processedOrders = JSON.parse(localStorage.getItem('chefos_processed_orders')) || [];
+
+function autoDeductInventory() {
+  const completedOrders = getCompletedOrders();
+
+  completedOrders.forEach(order => {
+    if (processedOrders.includes(order.id)) return;
+
+    // Loop through sold items
+    order.items.forEach(menuItem => {
+
+      // Requires POS menuItems structure with ingredients map
+      if (typeof menuItems === 'undefined') return;
+
+      const recipe = menuItems.find(m => m.name === menuItem.name);
+      if (!recipe || !recipe.ingredients) return;
+
+      Object.entries(recipe.ingredients).forEach(([ingredientKey, qtyUsed]) => {
+
+        // Find inventory item
+        const invItem = inventoryData.find(i =>
+          i.name.toLowerCase().replace(/\s/g,'_') === ingredientKey
+        );
+
+        if (invItem) {
+          const deduction = qtyUsed * menuItem.qty;
+          const oldStock = invItem.currentStock;
+
+          invItem.currentStock = Math.max(0, invItem.currentStock - deduction);
+          invItem.lastUpdated = new Date().toISOString();
+
+          invItem.history.push({
+            date: new Date().toISOString(),
+            action: 'sale_deduction',
+            quantity: deduction,
+            oldStock,
+            newStock: invItem.currentStock,
+            notes: `Auto deduction from order #${order.id}`
+          });
+        }
+      });
+    });
+
+    processedOrders.push(order.id);
+  });
+
+  localStorage.setItem('chefos_processed_orders', JSON.stringify(processedOrders));
+  saveInventory();
+  updateInventoryStats();
+  applyFilters();
+}
+
+/* Run deduction every 10s */
+setInterval(autoDeductInventory, 10000);
+
