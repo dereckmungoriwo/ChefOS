@@ -36,12 +36,30 @@
         </div>
       </div>
       
+      <!-- SETTINGS PANEL -->
+      <div class="settings-panel">
+        <div class="theme-toggle">
+          <span><i class="fas fa-moon"></i> Dark Mode</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="themeToggle">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      
       <!-- HELP CENTER -->
       <div class="help-center">
         <h4><i class="fas fa-life-ring"></i> Help Center</h4>
         <div class="contact-info">
-          <div><i class="fas fa-envelope"></i> support@chefos.com</div>
-          <div><i class="fas fa-phone"></i> +1 (415) 123-4567</div>
+          <a href="mailto:dereck@dereckmungoriwo.online">
+            <i class="fas fa-envelope"></i> dereck@dereckmungoriwo.online
+          </a>
+          <a href="https://wa.me/27717184048" target="_blank">
+            <i class="fab fa-whatsapp"></i> +27 71 718 4048
+          </a>
+          <div>
+            <i class="fas fa-clock"></i> 24/7 Support
+          </div>
         </div>
       </div>
       
@@ -54,11 +72,11 @@
     <div class="main-content">
       <!-- TOP BAR -->
       <div class="top-bar">
-        <div class="time-display" id="currentTime"></div>
+        <div class="time-display" id="currentTime">Loading time...</div>
         <div class="user-info">
           <div class="user-avatar">DM</div>
           <div>
-            <div style="font-weight: 600;">Derek Mungoriwo</div>
+            <div style="font-weight: 600; color: var(--dark);">Dereck Mungoriwo</div>
             <div style="font-size: 14px; color: var(--gray);">Manager</div>
           </div>
         </div>
@@ -284,46 +302,26 @@
     </div>
   </div>
 
+  <script src="assets/js/reports.js"></script>
+
   <script>
-    // DOM Elements
-    const dateButtons = document.querySelectorAll('.date-btn');
-    const startDateInput = document.getElementById('startDate');
-    const endDateInput = document.getElementById('endDate');
-    const applyCustomRangeBtn = document.getElementById('applyCustomRange');
-    const exportBtn = document.getElementById('exportBtn');
-    const topItemsPeriodSelect = document.getElementById('topItemsPeriod');
-    const revenueChartTypeSelect = document.getElementById('revenueChartType');
-    const reportModal = document.getElementById('reportModal');
-    const modalCloseButtons = document.querySelectorAll('.modal-close');
-    
-    // Chart instances
-    let revenueChart = null;
-    let categoryChart = null;
-    
-    // Current date range
-    let currentRange = 'today';
-    let startDate = new Date();
-    let endDate = new Date();
-    
-    // Set default dates
-    startDateInput.valueAsDate = new Date();
-    endDateInput.valueAsDate = new Date();
-    
-    /* =========================
-       INITIALIZE PAGE
-    ========================= */
-    document.addEventListener('DOMContentLoaded', () => {
-      updateTime();
-      loadReportData();
-      initializeCharts();
-      
-      // Update every minute for time display
-      setInterval(updateTime, 60000);
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark-theme');
+      themeToggle.checked = true;
+    }
+    themeToggle.addEventListener('change', function() {
+      if (this.checked) {
+        document.body.classList.add('dark-theme');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.body.classList.remove('dark-theme');
+        localStorage.setItem('theme', 'light');
+      }
     });
-    
-    /* =========================
-       UPDATE TIME
-    ========================= */
+
+    // Update Time
     function updateTime() {
       const now = new Date();
       const options = { 
@@ -333,6 +331,7 @@
         day: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
+        second: '2-digit',
         hour12: true
       };
       const timeEl = document.getElementById('currentTime');
@@ -340,1088 +339,448 @@
         timeEl.textContent = now.toLocaleDateString('en-US', options);
       }
     }
-    
-    /* =========================
-       SET DATE RANGE
-    ========================= */
-    function setDateRange(range) {
-      currentRange = range;
-      const today = new Date();
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // Initialize Reports
+    document.addEventListener('DOMContentLoaded', initReports);
+
+    function initReports() {
+      const dateButtons = document.querySelectorAll('.date-btn');
+      const startDateInput = document.getElementById('startDate');
+      const endDateInput = document.getElementById('endDate');
+      const applyCustomRangeBtn = document.getElementById('applyCustomRange');
+      const exportBtn = document.getElementById('exportBtn');
+      const topItemsPeriodSelect = document.getElementById('topItemsPeriod');
+      const revenueChartTypeSelect = document.getElementById('revenueChartType');
+      const reportModal = document.getElementById('reportModal');
+      const modalCloseButtons = document.querySelectorAll('.modal-close');
       
-      // Update date buttons active state
-      dateButtons.forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.getAttribute('data-range') === range) {
-          btn.classList.add('active');
-        }
-      });
+      let revenueChart = null;
+      let categoryChart = null;
+      let currentRange = 'today';
+      let startDate = new Date();
+      let endDate = new Date();
       
-      // Set date range based on selection
-      switch(range) {
-        case 'today':
-          startDate = new Date(today);
-          endDate = new Date(today);
-          break;
-        case 'week':
-          startDate = new Date(today);
-          startDate.setDate(today.getDate() - 7);
-          endDate = new Date(today);
-          break;
-        case 'month':
-          startDate = new Date(today);
-          startDate.setMonth(today.getMonth() - 1);
-          endDate = new Date(today);
-          break;
-        case 'year':
-          startDate = new Date(today);
-          startDate.setFullYear(today.getFullYear() - 1);
-          endDate = new Date(today);
-          break;
-      }
+      startDateInput.valueAsDate = new Date();
+      endDateInput.valueAsDate = new Date();
       
-      // Update date inputs
-      startDateInput.valueAsDate = startDate;
-      endDateInput.valueAsDate = endDate;
-      
-      // Reload data with new range
+      initializeCharts();
       loadReportData();
-    }
-    
-    /* =========================
-       LOAD REPORT DATA
-    ========================= */
-    function loadReportData() {
-      const orders = JSON.parse(localStorage.getItem('chefos_orders')) || [];
       
-      // Filter orders by date range
-      const filteredOrders = orders.filter(order => {
-        const orderDate = new Date(order.timestamp);
-        return orderDate >= startDate && orderDate <= endDate;
-      });
-      
-      // Calculate metrics
-      calculateMetrics(filteredOrders);
-      
-      // Update top items
-      updateTopItems(filteredOrders);
-      
-      // Update sales table
-      updateSalesTable(filteredOrders);
-      
-      // Update charts
-      updateCharts(filteredOrders);
-      
-      // Update summary cards
-      updateSummaryCards(filteredOrders);
-    }
-    
-    /* =========================
-       CALCULATE METRICS
-    ========================= */
-    function calculateMetrics(orders) {
-      // Total revenue
-      const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
-      document.getElementById('totalRevenue').textContent = `R${totalRevenue.toFixed(2)}`;
-      
-      // Total orders
-      document.getElementById('totalOrders').textContent = orders.length;
-      
-      // Average order value
-      const averageOrder = orders.length > 0 ? totalRevenue / orders.length : 0;
-      document.getElementById('averageOrder').textContent = `R${averageOrder.toFixed(2)}`;
-      
-      // Find busiest table
-      const tableCounts = {};
-      orders.forEach(order => {
-        tableCounts[order.table] = (tableCounts[order.table] || 0) + 1;
-      });
-      
-      let busiestTable = 'N/A';
-      let maxOrders = 0;
-      Object.entries(tableCounts).forEach(([table, count]) => {
-        if (count > maxOrders) {
-          maxOrders = count;
-          busiestTable = table;
-        }
-      });
-      
-      document.getElementById('busiestTable').textContent = `Table ${busiestTable}`;
-      document.getElementById('tableOrders').textContent = `${maxOrders} orders`;
-      
-      // Calculate changes (simplified - in real app, compare with previous period)
-      const revenueChange = orders.length > 0 ? 12.5 : 0;
-      const ordersChange = orders.length > 0 ? 8.3 : 0;
-      const averageChange = orders.length > 0 ? 4.2 : 0;
-      
-      document.getElementById('revenueChange').innerHTML = 
-        `<i class="fas fa-arrow-up"></i> ${revenueChange}%`;
-      document.getElementById('ordersChange').innerHTML = 
-        `<i class="fas fa-arrow-up"></i> ${ordersChange}%`;
-      document.getElementById('averageChange').innerHTML = 
-        `<i class="fas fa-arrow-up"></i> ${averageChange}%`;
-    }
-    
-    /* =========================
-       UPDATE TOP ITEMS
-    ========================= */
-    function updateTopItems(orders) {
-      // Count item sales
-      const itemSales = {};
-      orders.forEach(order => {
-        order.items.forEach(item => {
-          if (!itemSales[item.name]) {
-            itemSales[item.name] = {
-              quantity: 0,
-              revenue: 0
-            };
+      function setDateRange(range) {
+        currentRange = range;
+        const today = new Date();
+        
+        dateButtons.forEach(btn => {
+          btn.classList.remove('active');
+          if (btn.getAttribute('data-range') === range) {
+            btn.classList.add('active');
           }
-          itemSales[item.name].quantity += item.qty;
-          itemSales[item.name].revenue += item.price * item.qty;
         });
-      });
-      
-      // Convert to array and sort by quantity
-      const topItems = Object.entries(itemSales)
-        .map(([name, data]) => ({
-          name,
-          quantity: data.quantity,
-          revenue: data.revenue
-        }))
-        .sort((a, b) => b.quantity - a.quantity)
-        .slice(0, 5);
-      
-      // Update UI
-      const topItemsList = document.getElementById('topItemsList');
-      topItemsList.innerHTML = '';
-      
-      if (topItems.length === 0) {
-        topItemsList.innerHTML = `
-          <div class="empty-state">
-            <i class="fas fa-utensils"></i>
-            <p>No sales data for this period</p>
-          </div>
-        `;
-        return;
-      }
-      
-      topItems.forEach((item, index) => {
-        const itemCard = document.createElement('div');
-        itemCard.className = 'top-item-card';
-        itemCard.innerHTML = `
-          <div class="item-rank">${index + 1}</div>
-          <div class="item-info">
-            <h4>${item.name}</h4>
-            <p>${item.quantity} sold • R${item.revenue.toFixed(2)} revenue</p>
-          </div>
-          <div class="item-stats">
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${(item.quantity / topItems[0].quantity) * 100}%"></div>
-            </div>
-          </div>
-        `;
-        topItemsList.appendChild(itemCard);
-      });
-    }
-    
-    /* =========================
-       UPDATE SALES TABLE
-    ========================= */
-    function updateSalesTable(orders) {
-      const salesTableBody = document.getElementById('salesTableBody');
-      const noSalesMessage = document.getElementById('no-sales');
-      
-      salesTableBody.innerHTML = '';
-      
-      if (orders.length === 0) {
-        noSalesMessage.style.display = 'block';
-        return;
-      }
-      
-      noSalesMessage.style.display = 'none';
-      
-      // Sort by date (newest first)
-      orders.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-      
-      // Populate table
-      orders.forEach(order => {
-        const orderDate = new Date(order.timestamp);
-        const dateString = orderDate.toLocaleDateString();
-        const timeString = orderDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         
-        // Calculate duration (simplified)
-        const duration = '45 min'; // In real app, calculate from timestamps
-        
-        // Status badge
-        let statusBadge = '';
-        switch(order.status) {
-          case 'pending':
-            statusBadge = '<span class="status-badge status-pending">Pending</span>';
+        switch(range) {
+          case 'today':
+            startDate = new Date(today);
+            endDate = new Date(today);
             break;
-          case 'preparing':
-            statusBadge = '<span class="status-badge status-preparing">Preparing</span>';
+          case 'week':
+            startDate = new Date(today);
+            startDate.setDate(today.getDate() - 7);
+            endDate = new Date(today);
             break;
-          case 'ready':
-            statusBadge = '<span class="status-badge status-ready">Ready</span>';
+          case 'month':
+            startDate = new Date(today);
+            startDate.setMonth(today.getMonth() - 1);
+            endDate = new Date(today);
             break;
-          case 'completed':
-            statusBadge = '<span class="status-badge" style="background: #28a745;">Completed</span>';
+          case 'year':
+            startDate = new Date(today);
+            startDate.setFullYear(today.getFullYear() - 1);
+            endDate = new Date(today);
             break;
         }
         
-        // Count total items
-        const totalItems = order.items.reduce((sum, item) => sum + item.qty, 0);
+        startDateInput.valueAsDate = startDate;
+        endDateInput.valueAsDate = endDate;
+        loadReportData();
+      }
+      
+      function loadReportData() {
+        const orders = JSON.parse(localStorage.getItem('chefos_orders')) || [];
+        const completedOrders = JSON.parse(localStorage.getItem('chefos_completed_orders')) || [];
+        const allOrders = [...orders, ...completedOrders];
         
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${dateString}<br><small>${timeString}</small></td>
-          <td>#${order.id}</td>
-          <td>Table ${order.table}</td>
-          <td>${totalItems} items</td>
-          <td><strong>R${order.total.toFixed(2)}</strong></td>
-          <td>${statusBadge}</td>
-          <td>${duration}</td>
-        `;
-        salesTableBody.appendChild(row);
-      });
-    }
-    
-    /* =========================
-       INITIALIZE CHARTS
-    ========================= */
-    function initializeCharts() {
-      // Revenue Chart
-      const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-      revenueChart = new Chart(revenueCtx, {
-        type: 'line',
-        data: {
-          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-          datasets: [{
-            label: 'Revenue',
-            data: [1200, 1900, 1500, 2300, 2900, 3400, 2800],
-            borderColor: '#1e6f5c',
-            backgroundColor: 'rgba(30, 111, 92, 0.1)',
-            borderWidth: 2,
-            fill: true,
-            tension: 0.4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: false
+        const filteredOrders = allOrders.filter(order => {
+          const orderDate = new Date(order.fullTimestamp || order.orderTime);
+          return orderDate >= startDate && orderDate <= endDate;
+        });
+        
+        calculateMetrics(filteredOrders);
+        updateTopItems(filteredOrders);
+        updateSalesTable(filteredOrders);
+        updateCharts(filteredOrders);
+        updateSummaryCards(filteredOrders);
+      }
+      
+      function calculateMetrics(orders) {
+        const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+        document.getElementById('totalRevenue').textContent = `R${totalRevenue.toFixed(2)}`;
+        
+        document.getElementById('totalOrders').textContent = orders.length;
+        
+        const averageOrder = orders.length > 0 ? totalRevenue / orders.length : 0;
+        document.getElementById('averageOrder').textContent = `R${averageOrder.toFixed(2)}`;
+        
+        const tableCounts = {};
+        orders.forEach(order => {
+          tableCounts[order.table] = (tableCounts[order.table] || 0) + 1;
+        });
+        
+        let busiestTable = 'N/A';
+        let maxOrders = 0;
+        Object.entries(tableCounts).forEach(([table, count]) => {
+          if (count > maxOrders) {
+            maxOrders = count;
+            busiestTable = table;
+          }
+        });
+        
+        document.getElementById('busiestTable').textContent = `Table ${busiestTable}`;
+        document.getElementById('tableOrders').textContent = `${maxOrders} orders`;
+        
+        const revenueChange = orders.length > 0 ? 12.5 : 0;
+        const ordersChange = orders.length > 0 ? 8.3 : 0;
+        const averageChange = orders.length > 0 ? 4.2 : 0;
+        
+        document.getElementById('revenueChange').innerHTML = 
+          `<i class="fas fa-arrow-up"></i> ${revenueChange}%`;
+        document.getElementById('ordersChange').innerHTML = 
+          `<i class="fas fa-arrow-up"></i> ${ordersChange}%`;
+        document.getElementById('averageChange').innerHTML = 
+          `<i class="fas fa-arrow-up"></i> ${averageChange}%`;
+      }
+      
+      function updateTopItems(orders) {
+        const itemSales = {};
+        orders.forEach(order => {
+          order.items.forEach(item => {
+            if (!itemSales[item.name]) {
+              itemSales[item.name] = {
+                quantity: 0,
+                revenue: 0
+              };
             }
+            itemSales[item.name].quantity += item.qty;
+            itemSales[item.name].revenue += item.price * item.qty;
+          });
+        });
+        
+        const topItems = Object.entries(itemSales)
+          .map(([name, data]) => ({
+            name,
+            quantity: data.quantity,
+            revenue: data.revenue
+          }))
+          .sort((a, b) => b.quantity - a.quantity)
+          .slice(0, 5);
+        
+        const topItemsList = document.getElementById('topItemsList');
+        topItemsList.innerHTML = '';
+        
+        if (topItems.length === 0) {
+          topItemsList.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-utensils"></i>
+              <p>No sales data for this period</p>
+            </div>
+          `;
+          return;
+        }
+        
+        topItems.forEach((item, index) => {
+          const itemCard = document.createElement('div');
+          itemCard.className = 'top-item-card';
+          itemCard.innerHTML = `
+            <div class="item-rank">${index + 1}</div>
+            <div class="item-info">
+              <h4>${item.name}</h4>
+              <p>${item.quantity} sold • R${item.revenue.toFixed(2)} revenue</p>
+            </div>
+            <div class="item-stats">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${(item.quantity / topItems[0].quantity) * 100}%"></div>
+              </div>
+            </div>
+          `;
+          topItemsList.appendChild(itemCard);
+        });
+      }
+      
+      function updateSalesTable(orders) {
+        const salesTableBody = document.getElementById('salesTableBody');
+        const noSalesMessage = document.getElementById('no-sales');
+        
+        salesTableBody.innerHTML = '';
+        
+        if (orders.length === 0) {
+          noSalesMessage.style.display = 'block';
+          return;
+        }
+        
+        noSalesMessage.style.display = 'none';
+        
+        orders.sort((a, b) => new Date(b.fullTimestamp || b.orderTime) - new Date(a.fullTimestamp || a.orderTime));
+        
+        orders.forEach(order => {
+          const orderDate = new Date(order.fullTimestamp || order.orderTime);
+          const dateString = orderDate.toLocaleDateString();
+          const timeString = orderDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+          
+          const duration = '45 min';
+          
+          const status = (order.status || 'pending').toLowerCase();
+          let statusBadge = '';
+          switch(status) {
+            case 'pending':
+              statusBadge = '<span class="status-badge status-pending">Pending</span>';
+              break;
+            case 'preparing':
+              statusBadge = '<span class="status-badge status-preparing">Preparing</span>';
+              break;
+            case 'ready':
+              statusBadge = '<span class="status-badge status-ready">Ready</span>';
+              break;
+            case 'completed':
+              statusBadge = '<span class="status-badge" style="background: #28a745;">Completed</span>';
+              break;
+          }
+          
+          const totalItems = order.items.reduce((sum, item) => sum + item.qty, 0);
+          
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${dateString}<br><small>${timeString}</small></td>
+            <td>#${order.id.toString().substring(order.id.toString().length - 6)}</td>
+            <td>Table ${order.table}</td>
+            <td>${totalItems} items</td>
+            <td><strong>R${order.total.toFixed(2)}</strong></td>
+            <td>${statusBadge}</td>
+            <td>${duration}</td>
+          `;
+          salesTableBody.appendChild(row);
+        });
+      }
+      
+      function initializeCharts() {
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        revenueChart = new Chart(revenueCtx, {
+          type: 'line',
+          data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+              label: 'Revenue',
+              data: [1200, 1900, 1500, 2300, 2900, 3400, 2800],
+              borderColor: '#1e6f5c',
+              backgroundColor: 'rgba(30, 111, 92, 0.1)',
+              borderWidth: 2,
+              fill: true,
+              tension: 0.4
+            }]
           },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: function(value) {
-                  return 'R' + value;
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: function(value) {
+                    return 'R' + value;
+                  }
                 }
               }
             }
           }
-        }
-      });
-      
-      // Category Chart
-      const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-      categoryChart = new Chart(categoryCtx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Breakfast', 'Main Course', 'Salads', 'Desserts', 'Drinks'],
-          datasets: [{
-            data: [25, 35, 15, 15, 10],
-            backgroundColor: [
-              '#1e6f5c',
-              '#28a085',
-              '#ffc107',
-              '#e74c3c',
-              '#007bff'
-            ],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'bottom'
+        });
+        
+        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        categoryChart = new Chart(categoryCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Breakfast', 'Main Course', 'Salads', 'Desserts', 'Drinks'],
+            datasets: [{
+              data: [25, 35, 15, 15, 10],
+              backgroundColor: [
+                '#1e6f5c',
+                '#28a085',
+                '#ffc107',
+                '#e74c3c',
+                '#007bff'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom'
+              }
             }
           }
+        });
+      }
+      
+      function updateCharts(orders) {
+        const chartType = revenueChartTypeSelect.value;
+        revenueChart.config.type = chartType;
+        revenueChart.update();
+        categoryChart.update();
+      }
+      
+      function updateSummaryCards(orders) {
+        const hourCounts = {};
+        orders.forEach(order => {
+          const hour = new Date(order.fullTimestamp || order.orderTime).getHours();
+          hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+        });
+        
+        const peakHours = Object.entries(hourCounts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3)
+          .map(([hour, count]) => ({
+            hour: `${hour}:00`,
+            orders: count
+          }));
+        
+        const peakHoursEl = document.getElementById('peakHours');
+        peakHoursEl.innerHTML = peakHours.length > 0 
+          ? peakHours.map(p => `
+              <div class="peak-hour">
+                <span>${p.hour}</span>
+                <span>${p.orders} orders</span>
+              </div>
+            `).join('')
+          : '<p class="empty-text">No data</p>';
+        
+        const tableCounts = {};
+        orders.forEach(order => {
+          tableCounts[order.table] = (tableCounts[order.table] || 0) + 1;
+        });
+        
+        const popularTables = Object.entries(tableCounts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3)
+          .map(([table, count]) => ({ table, count }));
+        
+        const popularTablesEl = document.getElementById('popularTables');
+        popularTablesEl.innerHTML = popularTables.length > 0 
+          ? popularTables.map(t => `
+              <div class="popular-table">
+                <span>Table ${t.table}</span>
+                <span>${t.count} orders</span>
+              </div>
+            `).join('')
+          : '<p class="empty-text">No data</p>';
+        
+        const inventory = JSON.parse(localStorage.getItem('chefos_inventory_detailed')) || [];
+        const lowStock = inventory
+          .filter(item => item.currentStock <= item.minStock)
+          .slice(0, 3);
+        
+        const lowStockEl = document.getElementById('lowStockItems');
+        lowStockEl.innerHTML = lowStock.length > 0 
+          ? lowStock.map(item => `
+              <div class="low-stock-item">
+                <span>${item.name}</span>
+                <span>${item.currentStock} ${item.unit} left</span>
+              </div>
+            `).join('')
+          : '<p class="empty-text">All items in stock</p>';
+      }
+      
+      function exportReport(format) {
+        let message = '';
+        switch(format) {
+          case 'excel':
+            message = 'Excel report is being generated...';
+            break;
+          case 'pdf':
+            message = 'PDF report is being generated...';
+            break;
+          case 'csv':
+            message = 'CSV file is being downloaded...';
+            break;
+        }
+        
+        alert(`${message}\n\nIn a production system, this would generate a ${format.toUpperCase()} file.`);
+        reportModal.style.display = 'none';
+      }
+      
+      dateButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          setDateRange(btn.getAttribute('data-range'));
+        });
+      });
+      
+      applyCustomRangeBtn.addEventListener('click', () => {
+        const start = new Date(startDateInput.value);
+        const end = new Date(endDateInput.value);
+        
+        if (start > end) {
+          alert('Start date must be before end date');
+          return;
+        }
+        
+        startDate = start;
+        endDate = end;
+        currentRange = 'custom';
+        
+        dateButtons.forEach(btn => btn.classList.remove('active'));
+        loadReportData();
+      });
+      
+      exportBtn.addEventListener('click', () => {
+        const periodText = currentRange === 'custom' 
+          ? `${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}`
+          : currentRange.charAt(0).toUpperCase() + currentRange.slice(1);
+        
+        document.getElementById('reportPeriod').textContent = periodText;
+        reportModal.style.display = 'flex';
+      });
+      
+      document.querySelectorAll('.export-format-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          exportReport(btn.getAttribute('data-format'));
+        });
+      });
+      
+      topItemsPeriodSelect.addEventListener('change', loadReportData);
+      revenueChartTypeSelect.addEventListener('change', () => {
+        loadReportData();
+      });
+      
+      modalCloseButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          reportModal.style.display = 'none';
+        });
+      });
+      
+      window.addEventListener('click', (event) => {
+        if (event.target === reportModal) {
+          reportModal.style.display = 'none';
         }
       });
+      
+      setDateRange('today');
     }
-    
-    /* =========================
-       UPDATE CHARTS
-    ========================= */
-    function updateCharts(orders) {
-      // Update revenue chart based on selected type
-      const chartType = revenueChartTypeSelect.value;
-      revenueChart.config.type = chartType;
-      
-      // In a real app, update data based on orders
-      // This is sample data
-      revenueChart.update();
-      categoryChart.update();
-    }
-    
-    /* =========================
-       UPDATE SUMMARY CARDS
-    ========================= */
-    function updateSummaryCards(orders) {
-      // Peak Hours
-      const hourCounts = {};
-      orders.forEach(order => {
-        const hour = new Date(order.timestamp).getHours();
-        hourCounts[hour] = (hourCounts[hour] || 0) + 1;
-      });
-      
-      const peakHours = Object.entries(hourCounts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 3)
-        .map(([hour, count]) => ({
-          hour: `${hour}:00`,
-          orders: count
-        }));
-      
-      const peakHoursEl = document.getElementById('peakHours');
-      peakHoursEl.innerHTML = peakHours.length > 0 
-        ? peakHours.map(p => `
-            <div class="peak-hour">
-              <span>${p.hour}</span>
-              <span>${p.orders} orders</span>
-            </div>
-          `).join('')
-        : '<p class="empty-text">No data</p>';
-      
-      // Popular Tables
-      const tableCounts = {};
-      orders.forEach(order => {
-        tableCounts[order.table] = (tableCounts[order.table] || 0) + 1;
-      });
-      
-      const popularTables = Object.entries(tableCounts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 3)
-        .map(([table, count]) => ({ table, count }));
-      
-      const popularTablesEl = document.getElementById('popularTables');
-      popularTablesEl.innerHTML = popularTables.length > 0 
-        ? popularTables.map(t => `
-            <div class="popular-table">
-              <span>Table ${t.table}</span>
-              <span>${t.count} orders</span>
-            </div>
-          `).join('')
-        : '<p class="empty-text">No data</p>';
-      
-      // Low Stock Items (from inventory)
-      const inventory = JSON.parse(localStorage.getItem('chefos_inventory_detailed')) || [];
-      const lowStock = inventory
-        .filter(item => item.currentStock <= item.minStock)
-        .slice(0, 3);
-      
-      const lowStockEl = document.getElementById('lowStockItems');
-      lowStockEl.innerHTML = lowStock.length > 0 
-        ? lowStock.map(item => `
-            <div class="low-stock-item">
-              <span>${item.name}</span>
-              <span>${item.currentStock} ${item.unit} left</span>
-            </div>
-          `).join('')
-        : '<p class="empty-text">All items in stock</p>';
-    }
-    
-    /* =========================
-       EXPORT REPORT
-    ========================= */
-    function exportReport(format) {
-      // In a real app, this would generate and download the file
-      // For now, we'll simulate it
-      
-      let message = '';
-      switch(format) {
-        case 'excel':
-          message = 'Excel report is being generated...';
-          break;
-        case 'pdf':
-          message = 'PDF report is being generated...';
-          break;
-        case 'csv':
-          message = 'CSV file is being downloaded...';
-          break;
-      }
-      
-      alert(`${message}\n\nIn a production system, this would generate a ${format.toUpperCase()} file.`);
-      
-      // Close modal
-      reportModal.style.display = 'none';
-    }
-    
-    /* =========================
-       EVENT LISTENERS
-    ========================= */
-    // Date range buttons
-    dateButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        setDateRange(btn.getAttribute('data-range'));
-      });
-    });
-    
-    // Custom date range
-    applyCustomRangeBtn.addEventListener('click', () => {
-      const start = new Date(startDateInput.value);
-      const end = new Date(endDateInput.value);
-      
-      if (start > end) {
-        alert('Start date must be before end date');
-        return;
-      }
-      
-      startDate = start;
-      endDate = end;
-      currentRange = 'custom';
-      
-      // Update button states
-      dateButtons.forEach(btn => btn.classList.remove('active'));
-      
-      loadReportData();
-    });
-    
-    // Export button
-    exportBtn.addEventListener('click', () => {
-      // Update report period text
-      const periodText = currentRange === 'custom' 
-        ? `${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}`
-        : currentRange.charAt(0).toUpperCase() + currentRange.slice(1);
-      
-      document.getElementById('reportPeriod').textContent = periodText;
-      reportModal.style.display = 'flex';
-    });
-    
-    // Export format buttons
-    document.querySelectorAll('.export-format-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        exportReport(btn.getAttribute('data-format'));
-      });
-    });
-    
-    // Top items period change
-    topItemsPeriodSelect.addEventListener('change', loadReportData);
-    
-    // Chart type change
-    revenueChartTypeSelect.addEventListener('change', () => {
-      loadReportData();
-    });
-    
-    // Modal close
-    modalCloseButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        reportModal.style.display = 'none';
-      });
-    });
-    
-    // Close modal when clicking outside
-    window.addEventListener('click', (event) => {
-      if (event.target === reportModal) {
-        reportModal.style.display = 'none';
-      }
-    });
-    
-    // Initialize with today's data
-    setDateRange('today');
   </script>
-
-  <style>
-    /* Additional CSS for insights page */
-    .date-range-selector {
-      background: var(--white);
-      border-radius: 15px;
-      padding: 25px;
-      margin-bottom: 25px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--gray-light);
-    }
-    
-    .date-range-selector h2 {
-      color: var(--primary);
-      margin: 0 0 20px 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .date-controls {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    
-    .date-btn {
-      padding: 10px 20px;
-      border: 1px solid var(--gray-light);
-      background: var(--white);
-      color: var(--gray);
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: var(--transition);
-    }
-    
-    .date-btn:hover,
-    .date-btn.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-    
-    .custom-range {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-left: 20px;
-      flex-wrap: wrap;
-    }
-    
-    .custom-range input {
-      padding: 8px 12px;
-      border: 1px solid var(--gray-light);
-      border-radius: 6px;
-      font-size: 14px;
-      background: var(--white);
-      color: var(--dark);
-    }
-    
-    .custom-range button {
-      padding: 8px 15px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    
-    .key-metrics {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-    
-    .metric-card {
-      background: var(--white);
-      border-radius: 15px;
-      padding: 25px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--gray-light);
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      transition: var(--transition);
-    }
-    
-    .metric-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    }
-    
-    .metric-icon {
-      width: 60px;
-      height: 60px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 24px;
-    }
-    
-    .revenue .metric-icon { background: linear-gradient(135deg, #1e6f5c, #28a085); }
-    .orders .metric-icon { background: linear-gradient(135deg, #007bff, #0056b3); }
-    .average .metric-icon { background: linear-gradient(135deg, #ffc107, #e0a800); }
-    .tables .metric-icon { background: linear-gradient(135deg, #6c757d, #495057); }
-    
-    .metric-info h3 {
-      margin: 0 0 5px 0;
-      font-size: 28px;
-      color: var(--dark);
-    }
-    
-    .metric-info p {
-      margin: 0;
-      color: var(--gray);
-      font-size: 14px;
-    }
-    
-    .metric-change {
-      margin-top: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      color: #28a745;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    
-    .charts-row {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-    
-    .chart-card {
-      background: var(--white);
-      border-radius: 15px;
-      padding: 25px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--gray-light);
-    }
-    
-    .chart-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    
-    .chart-header h3 {
-      margin: 0;
-      color: var(--dark);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 18px;
-    }
-    
-    .chart-header select {
-      padding: 8px 15px;
-      border: 1px solid var(--gray-light);
-      border-radius: 6px;
-      background: var(--white);
-      color: var(--dark);
-      font-size: 14px;
-    }
-    
-    .chart-container {
-      height: 300px;
-      position: relative;
-    }
-    
-    .top-items-section,
-    .sales-table-section {
-      background: var(--white);
-      border-radius: 15px;
-      padding: 25px;
-      margin-bottom: 30px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--gray-light);
-    }
-    
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    
-    .section-header h3 {
-      margin: 0;
-      color: var(--dark);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 18px;
-    }
-    
-    .section-header select {
-      padding: 8px 15px;
-      border: 1px solid var(--gray-light);
-      border-radius: 6px;
-      background: var(--white);
-      color: var(--dark);
-      font-size: 14px;
-    }
-    
-    .export-btn {
-      padding: 10px 20px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: var(--transition);
-    }
-    
-    .export-btn:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
-    }
-    
-    .top-items-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    
-    .top-item-card {
-      display: flex;
-      align-items: center;
-      padding: 15px;
-      background: var(--light);
-      border-radius: 10px;
-      border: 1px solid var(--gray-light);
-    }
-    
-    .item-rank {
-      width: 35px;
-      height: 35px;
-      background: var(--primary);
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      margin-right: 15px;
-    }
-    
-    .item-info {
-      flex: 1;
-    }
-    
-    .item-info h4 {
-      margin: 0 0 5px 0;
-      font-size: 16px;
-      color: var(--dark);
-    }
-    
-    .item-info p {
-      margin: 0;
-      color: var(--gray);
-      font-size: 13px;
-    }
-    
-    .item-stats {
-      width: 150px;
-    }
-    
-    .progress-bar {
-      width: 100%;
-      height: 8px;
-      background: var(--gray-light);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-    
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary), var(--primary-light));
-      border-radius: 4px;
-    }
-    
-    .sales-table-container {
-      overflow-x: auto;
-    }
-    
-    .sales-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    
-    .sales-table th {
-      background: var(--primary);
-      color: white;
-      padding: 15px;
-      text-align: left;
-      font-weight: 600;
-      font-size: 14px;
-    }
-    
-    .sales-table td {
-      padding: 15px;
-      border-bottom: 1px solid var(--gray-light);
-      vertical-align: middle;
-    }
-    
-    .sales-table tr:hover {
-      background: var(--light);
-    }
-    
-    .summary-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-    
-    .summary-card {
-      background: var(--white);
-      border-radius: 15px;
-      padding: 25px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--gray-light);
-    }
-    
-    .summary-card h4 {
-      margin: 0 0 20px 0;
-      color: var(--dark);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 16px;
-    }
-    
-    .peak-hour,
-    .popular-table,
-    .low-stock-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--gray-light);
-    }
-    
-    .peak-hour:last-child,
-    .popular-table:last-child,
-    .low-stock-item:last-child {
-      border-bottom: none;
-    }
-    
-    .empty-text {
-      text-align: center;
-      color: var(--gray);
-      font-style: italic;
-      padding: 20px 0;
-    }
-    
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-    }
-    
-    .empty-state i {
-      font-size: 48px;
-      color: var(--gray);
-      margin-bottom: 15px;
-    }
-    
-    .empty-state p {
-      color: var(--gray);
-      margin: 0;
-    }
-    
-    /* EXPORT MODAL */
-    .export-options {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-    
-    .option-card {
-      background: var(--light);
-      border-radius: 10px;
-      padding: 25px;
-      text-align: center;
-      border: 1px solid var(--gray-light);
-      transition: var(--transition);
-    }
-    
-    .option-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    
-    .option-card i {
-      font-size: 48px;
-      color: var(--primary);
-      margin-bottom: 15px;
-    }
-    
-    .option-card h4 {
-      margin: 0 0 10px 0;
-      color: var(--dark);
-    }
-    
-    .option-card p {
-      margin: 0 0 15px 0;
-      color: var(--gray);
-      font-size: 14px;
-    }
-    
-    .export-format-btn {
-      padding: 10px 20px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: var(--transition);
-    }
-    
-    .export-format-btn:hover {
-      background: var(--primary-dark);
-    }
-    
-    .date-range-summary {
-      background: var(--light);
-      border-radius: 10px;
-      padding: 15px;
-      text-align: center;
-    }
-    
-    .date-range-summary h4 {
-      margin: 0 0 10px 0;
-      color: var(--dark);
-    }
-    
-    .date-range-summary p {
-      margin: 0;
-      color: var(--primary);
-      font-weight: 600;
-      font-size: 18px;
-    }
-    
-    /* MODAL STYLES */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .modal-content {
-      background: var(--white);
-      border-radius: 15px;
-      width: 90%;
-      max-width: 800px;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
-    
-    .modal-header {
-      padding: 20px;
-      border-bottom: 1px solid var(--gray-light);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .modal-header h3 {
-      margin: 0;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .modal-close {
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      color: var(--gray);
-    }
-    
-    .modal-body {
-      padding: 20px;
-    }
-    
-    /* RESPONSIVE */
-    @media (max-width: 1200px) {
-      .charts-row {
-        grid-template-columns: 1fr;
-      }
-    }
-    
-    @media (max-width: 768px) {
-      .date-controls {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      
-      .custom-range {
-        margin-left: 0;
-        margin-top: 10px;
-      }
-      
-      .key-metrics {
-        grid-template-columns: 1fr;
-      }
-      
-      .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-      }
-      
-      .summary-cards {
-        grid-template-columns: 1fr;
-      }
-      
-      .export-options {
-        grid-template-columns: 1fr;
-      }
-      
-      .sales-table {
-        min-width: 800px;
-      }
-      
-      .modal-content {
-        width: 95%;
-        margin: 10px;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .metric-card {
-        flex-direction: column;
-        text-align: center;
-      }
-      
-      .metric-icon {
-        width: 50px;
-        height: 50px;
-        font-size: 20px;
-      }
-      
-      .top-item-card {
-        flex-direction: column;
-        text-align: center;
-        gap: 10px;
-      }
-      
-      .item-rank {
-        margin-right: 0;
-      }
-      
-      .item-stats {
-        width: 100%;
-      }
-    }
-  </style>
 </body>
 </html>
