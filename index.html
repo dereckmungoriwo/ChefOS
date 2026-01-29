@@ -96,9 +96,13 @@
     <div class="header-right">
 
       <!-- Time Display -->
-      <div class="time-display" id="currentTime" aria-live="polite">
-        Loading time...
-      </div>
+<div class="time-display" aria-live="polite">
+  <svg class="clock-icon" viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/>
+    <path d="M12 7v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+  <span id="clockText">Loading time...</span>
+</div>
 
       <!-- User Info -->
       <div class="user-info">
@@ -197,24 +201,31 @@
   });
   
   // Update time display
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const clockText = document.getElementById("clockText");
+
   function updateTime() {
     const now = new Date();
+
     const options = { 
-      weekday: 'short', 
-      year: 'numeric', 
-      month: 'short', 
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
       hour12: false
     };
-    currentTime.textContent = now.toLocaleString('en-US', options);
+
+    clockText.textContent = now.toLocaleString('en-US', options);
   }
   
-  // Update time immediately and every second for real-time display
+// Run immediately + every second
   updateTime();
   setInterval(updateTime, 1000);
+});
 </script>
 </body>
 </html>
