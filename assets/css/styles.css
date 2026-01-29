@@ -2196,3 +2196,106 @@ textarea {
   font-weight: 600;
   letter-spacing: 0.5px;
 }
+
+/* =========================
+   SETTINGS PAGE — COLOR ENHANCEMENT
+   (Visual only, no layout changes)
+========================= */
+
+/* Subtle tinted page background */
+.settings-container {
+  background: linear-gradient(180deg, rgba(30,111,92,0.04), transparent 40%);
+}
+
+/* Section title more premium */
+.settings-container h2 {
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Card base — NOT plain white anymore */
+.setting-card {
+  background: linear-gradient(145deg, var(--white), rgba(30,111,92,0.03));
+  border: 1px solid rgba(30,111,92,0.12);
+  box-shadow: 0 6px 18px rgba(30,111,92,0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Top accent bar on each card */
+.setting-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+}
+
+/* Hover = alive */
+.setting-card:hover {
+  box-shadow: 0 12px 28px rgba(30,111,92,0.18);
+  border-color: rgba(30,111,92,0.25);
+}
+
+/* Card titles with icon badge feel */
+.setting-card h3 {
+  color: var(--primary-dark);
+}
+
+/* Description text softer */
+.setting-card p {
+  color: #7a8594;
+}
+
+/* Buttons inside settings */
+.setting-card .btn {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border: none;
+  box-shadow: 0 4px 10px rgba(30,111,92,0.25);
+}
+
+.setting-card .btn:hover {
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
+  box-shadow: 0 6px 16px rgba(30,111,92,0.35);
+}
+
+/* Theme toggle container styling */
+.setting-card .theme-toggle {
+  background: rgba(30,111,92,0.06);
+  padding: 12px 15px;
+  border-radius: 10px;
+  border: 1px solid rgba(30,111,92,0.1);
+}
+
+/* Toggle ON color more branded */
+.toggle-slider {
+  background-color: rgba(30,111,92,0.25);
+}
+
+input:checked + .toggle-slider {
+  background: linear-gradient(90deg, var(--secondary), #ffcc00);
+}
+
+/* Dark theme version */
+.dark-theme .setting-card {
+  background: linear-gradient(145deg, #16213e, #1a1a2e);
+  border: 1px solid rgba(45,201,168,0.2);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+}
+
+.dark-theme .setting-card::before {
+  background: linear-gradient(90deg, var(--primary-light), var(--secondary));
+}
+
+.dark-theme .setting-card p {
+  color: #b0b8c5;
+}
+
+.dark-theme .setting-card .theme-toggle {
+  background: rgba(45,201,168,0.08);
+  border-color: rgba(45,201,168,0.15);
+}
