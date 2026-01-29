@@ -348,6 +348,20 @@ input:checked + .toggle-slider:before {
   box-shadow: 0 3px 8px rgba(30,111,92,0.3);
 }
 
+{
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.time-display::before {
+  content: '🕐';
+  font-size: 18px;
+}
+
 /* ================== POS LAYOUT - FIXED OVERFLOW ================== */
 .pos-layout {
   display: grid;
