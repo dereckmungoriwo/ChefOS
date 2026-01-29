@@ -2135,7 +2135,7 @@ textarea {
 }
 
 .header-motto {
-  font-size: 16px;
+  font-size: 13px;
   color: var(--primary);
   margin-top: 4px;
   letter-spacing: 0.5px;
@@ -2155,7 +2155,7 @@ textarea {
 
 .time-display::before {
   content: '🕐';
-  font-size: 28px;
+  font-size: 32px;
 }
 
 .top-bar {
@@ -2195,10 +2195,6 @@ textarea {
   transform: translateX(-50%);
   font-weight: 700;
   letter-spacing: 0.5px;
-}
-
-.top-bar {
-  padding: 0 120px; /* reserve center breathing room */
 }
 
 /* =========================
