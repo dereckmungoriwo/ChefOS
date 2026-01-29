@@ -1,20 +1,24 @@
 // ===== CLOCK DISPLAY GLOBAL =====
 document.addEventListener("DOMContentLoaded", function () {
-  const currentTime = document.getElementById("currentTime");
+  const clockText = document.getElementById("clockText");
 
   function updateTime() {
     const now = new Date();
-    currentTime.textContent = now.toLocaleString('en-US', {
+    const options = { 
       weekday: 'short',
-      day: '2-digit',
-      month: 'short',
       year: 'numeric',
+      month: 'short',
+      day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      hour12: true
-    });
+      second: '2-digit',
+      hour12: false
+    };
+
+    clockText.textContent = now.toLocaleString('en-US', options);
   }
 
   updateTime();
   setInterval(updateTime, 1000);
 });
+
