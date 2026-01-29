@@ -2142,12 +2142,12 @@ textarea {
 }
 
 .time-display {
-  background: var(--primary);
-  color: white;
+  background: transparent !important;
+  color: var(--primary);
   display: flex;
   align-items: center;
-  padding: 8px 14px;
-  border-radius: 30px;
+  padding: 0;
+  border-radius: none;
   gap: 8px;
   font-weight: 600;
   box-shadow: 0 3px 8px rgba(30,111,92,0.3);
