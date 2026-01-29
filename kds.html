@@ -3,92 +3,110 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ChefOS Line - Kitchen Display</title>
+  <title>ChefOS Line - Kitchen Display System</title>
+  <meta name="description" content="Kitchen Display System for restaurant order management">
   <link rel="stylesheet" href="assets/css/styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   <div class="app-container">
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" aria-label="Main navigation">
       <div class="sidebar-header">
-        <h1><i class="fas fa-utensils"></i> ChefOS Line</h1>
+        <h1><i class="fas fa-utensils" aria-hidden="true"></i> ChefOS Line</h1>
       </div>
       
-      <div class="sidebar-nav">
+      <nav class="sidebar-nav" aria-label="Primary navigation">
         <div class="nav-section">
+          <h2 class="visually-hidden">Main Menu</h2>
           <h3>Menu</h3>
           <ul class="nav-links">
-            <li><a href="pos.html"><i class="fas fa-cash-register"></i> POS</a></li>
-            <li><a href="orders.html"><i class="fas fa-list"></i> Orders</a></li>
-            <li><a href="kds.html" class="active"><i class="fas fa-utensils"></i> ChefOS Line</a></li>
+            <li><a href="pos.html"><i class="fas fa-cash-register" aria-hidden="true"></i> POS</a></li>
+            <li><a href="orders.html"><i class="fas fa-list" aria-hidden="true"></i> Orders</a></li>
+            <li><a href="kds.html" class="active" aria-current="page"><i class="fas fa-utensils" aria-hidden="true"></i> ChefOS Line</a></li>
           </ul>
         </div>
         
         <div class="nav-section">
           <h3>Management</h3>
           <ul class="nav-links">
-            <li><a href="inventory.html"><i class="fas fa-boxes"></i> ChefOS Stock</a></li>
-            <li><a href="reports.html"><i class="fas fa-chart-bar"></i> ChefOS Insights</a></li>
-            <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="inventory.html"><i class="fas fa-boxes" aria-hidden="true"></i> ChefOS Stock</a></li>
+            <li><a href="reports.html"><i class="fas fa-chart-bar" aria-hidden="true"></i> ChefOS Insights</a></li>
+            <li><a href="settings.html"><i class="fas fa-cog" aria-hidden="true"></i> Settings</a></li>
           </ul>
         </div>
-      </div>
+      </nav>
       
       <!-- SETTINGS PANEL -->
-      <div class="settings-panel">
+      <div class="settings-panel" role="region" aria-label="Theme settings">
         <div class="theme-toggle">
-          <span><i class="fas fa-moon"></i> Dark Mode</span>
+          <span><i class="fas fa-moon" aria-hidden="true"></i> Dark Mode</span>
           <label class="toggle-switch">
-            <input type="checkbox" id="themeToggle">
-            <span class="toggle-slider"></span>
+            <input type="checkbox" id="themeToggle" aria-label="Toggle dark mode">
+            <span class="toggle-slider" aria-hidden="true"></span>
           </label>
         </div>
       </div>
       
       <!-- HELP CENTER -->
-      <div class="help-center">
-        <h4><i class="fas fa-life-ring"></i> Help Center</h4>
+      <section class="help-center" aria-label="Help and support">
+        <h3><i class="fas fa-life-ring" aria-hidden="true"></i> Help Center</h3>
         <div class="contact-info">
           <a href="mailto:dereck@dereckmungoriwo.online">
-            <i class="fas fa-envelope"></i> dereck@dereckmungoriwo.online
+            <i class="fas fa-envelope" aria-hidden="true"></i> dereck@dereckmungoriwo.online
           </a>
-          <a href="https://wa.me/27717184048" target="_blank">
-            <i class="fab fa-whatsapp"></i> +27 71 718 4048
+          <a href="https://wa.me/27717184048" target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-whatsapp" aria-hidden="true"></i> +27 71 718 4048
           </a>
           <div>
-            <i class="fas fa-clock"></i> 24/7 Support
+            <i class="fas fa-clock" aria-hidden="true"></i> 24/7 Support
           </div>
         </div>
-      </div>
+      </section>
       
       <a href="login.html" class="logout-btn">
-        <i class="fas fa-sign-out-alt"></i> Logout
+        <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Logout
       </a>
     </aside>
 
     <!-- MAIN CONTENT -->
     <div class="main-content">
-      <!-- TOP BAR -->
-      <div class="top-bar">
-        <div class="time-display" id="currentTime">Loading time...</div>
-        <div class="user-info">
-          <div class="user-avatar">CH</div>
-          <div>
-            <div style="font-weight: 600; color: var(--dark);">Chef</div>
-            <div style="font-size: 14px; color: var(--gray);">Kitchen Staff</div>
+      <!-- TOP BAR - MATCHING POS PAGE STRUCTURE -->
+      <header class="top-bar" role="banner">
+        <div class="header-left">
+          <h1 class="app-title">ChefOS Line Kitchen Display</h1>
+          <p class="header-motto">Efficiency • Accuracy • Speed</p>
+        </div>
+
+        <div class="header-right">
+          <!-- Time Display - Matching POS Page -->
+          <div class="time-display" aria-live="polite">
+            <svg class="clock-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path d="M12 7v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <time id="clockText" datetime="">Loading time...</time>
+          </div>
+
+          <!-- User Info - Matching POS Page -->
+          <div class="user-info">
+            <div class="user-avatar" aria-label="Chef avatar">CH</div>
+            <div class="user-meta">
+              <div class="user-name">Chef</div>
+              <div class="user-role">Kitchen Staff</div>
+            </div>
           </div>
         </div>
-      </div>
+      </header>
 
       <!-- KDS CONTAINER -->
-      <div class="kds-container">
-        <h2><i class="fas fa-fire"></i> Kitchen Display System</h2>
+      <main class="kds-container" id="main-content">
+        <h2><i class="fas fa-fire" aria-hidden="true"></i> Kitchen Display System</h2>
         
-        <div id="orders">
+        <div id="orders" aria-live="polite" aria-label="Order queue">
           <!-- Orders will be loaded here by kitchen.js -->
         </div>
-      </div>
+      </main>
     </div>
   </div>
 
@@ -98,45 +116,282 @@
   <!-- Theme toggle and time script -->
   <script>
     // Theme Toggle
-    const themeToggle = document.getElementById('themeToggle');
-    const currentTime = document.getElementById('currentTime');
-    
-    // Check for saved theme
-    if (localStorage.getItem('theme') === 'dark') {
-      document.body.classList.add('dark-theme');
-      themeToggle.checked = true;
-    }
-    
-    // Theme toggle event
-    themeToggle.addEventListener('change', function() {
-      if (this.checked) {
+    document.addEventListener('DOMContentLoaded', function() {
+      const themeToggle = document.getElementById('themeToggle');
+      
+      // Check for saved theme
+      if (localStorage.getItem('theme') === 'dark') {
         document.body.classList.add('dark-theme');
-        localStorage.setItem('theme', 'dark');
-      } else {
-        document.body.classList.remove('dark-theme');
-        localStorage.setItem('theme', 'light');
+        if (themeToggle) themeToggle.checked = true;
       }
+      
+      // Theme toggle event
+      if (themeToggle) {
+        themeToggle.addEventListener('change', function() {
+          if (this.checked) {
+            document.body.classList.add('dark-theme');
+            localStorage.setItem('theme', 'dark');
+          } else {
+            document.body.classList.remove('dark-theme');
+            localStorage.setItem('theme', 'light');
+          }
+        });
+      }
+      
+      // Update time display - Matching POS Page Format
+      function updateTime() {
+        const now = new Date();
+        const dateTimeString = now.toISOString();
+        const formattedDate = now.toLocaleString('en-US', { 
+          weekday: 'short',
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false
+        });
+        
+        const clockText = document.getElementById('clockText');
+        if (clockText) {
+          clockText.textContent = formattedDate;
+          clockText.setAttribute('datetime', dateTimeString);
+        }
+      }
+      
+      // Update time immediately and every second
+      updateTime();
+      setInterval(updateTime, 1000);
+      
+      // Add visually hidden CSS
+      const style = document.createElement('style');
+      style.textContent = `
+        .visually-hidden {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border: 0;
+        }
+        
+        .kds-container {
+          padding: 20px;
+          max-height: calc(100vh - 75px);
+          overflow-y: auto;
+        }
+        
+        .kds-container h2 {
+          color: var(--primary);
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin: 0 0 30px 0;
+        }
+        
+        /* Order styles for kitchen display */
+        .order-card {
+          background: var(--white);
+          border-radius: 12px;
+          padding: 20px;
+          margin-bottom: 20px;
+          box-shadow: var(--shadow);
+          border: 1px solid var(--gray-light);
+          border-left: 5px solid var(--primary);
+        }
+        
+        .order-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 15px;
+          padding-bottom: 15px;
+          border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .order-id {
+          font-weight: 600;
+          color: var(--primary);
+          font-size: 18px;
+        }
+        
+        .order-time {
+          color: var(--gray);
+          font-size: 14px;
+        }
+        
+        .order-table {
+          background: var(--light);
+          padding: 5px 10px;
+          border-radius: 20px;
+          font-weight: 600;
+          color: var(--dark);
+        }
+        
+        .order-items {
+          margin-top: 15px;
+        }
+        
+        .order-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px 0;
+          border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .order-item:last-child {
+          border-bottom: none;
+        }
+        
+        .item-name {
+          font-weight: 600;
+          color: var(--dark);
+        }
+        
+        .item-quantity {
+          background: var(--primary);
+          color: white;
+          padding: 2px 8px;
+          border-radius: 10px;
+          font-size: 12px;
+          font-weight: 600;
+        }
+        
+        .order-status {
+          margin-top: 15px;
+          padding-top: 15px;
+          border-top: 1px solid var(--gray-light);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        
+        .status-badge {
+          padding: 5px 15px;
+          border-radius: 20px;
+          font-size: 14px;
+          font-weight: 600;
+        }
+        
+        .status-pending {
+          background: #ffc107;
+          color: #212529;
+        }
+        
+        .status-preparing {
+          background: #007bff;
+          color: white;
+        }
+        
+        .status-ready {
+          background: #28a745;
+          color: white;
+        }
+        
+        .status-completed {
+          background: #6c757d;
+          color: white;
+        }
+        
+        .order-actions {
+          display: flex;
+          gap: 10px;
+        }
+        
+        .status-btn {
+          padding: 8px 15px;
+          border: none;
+          border-radius: 6px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: var(--transition);
+        }
+        
+        .status-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+        
+        .start-btn {
+          background: #007bff;
+          color: white;
+        }
+        
+        .complete-btn {
+          background: #28a745;
+          color: white;
+        }
+        
+        .serve-btn {
+          background: #17a2b8;
+          color: white;
+        }
+        
+        /* Dark theme adjustments */
+        .dark-theme .order-card {
+          background: #2d3748;
+          border-color: #4a5568;
+        }
+        
+        .dark-theme .order-header,
+        .dark-theme .order-item {
+          border-color: #4a5568;
+        }
+        
+        .dark-theme .order-table {
+          background: #4a5568;
+          color: #fff;
+        }
+        
+        .dark-theme .item-name {
+          color: #fff;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+          .order-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+          }
+          
+          .order-status {
+            flex-direction: column;
+            gap: 15px;
+          }
+          
+          .order-actions {
+            width: 100%;
+            flex-wrap: wrap;
+          }
+          
+          .status-btn {
+            flex: 1;
+            min-width: 120px;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .kds-container h2 {
+            font-size: 20px;
+          }
+          
+          .order-card {
+            padding: 15px;
+          }
+          
+          .order-id {
+            font-size: 16px;
+          }
+        }
+      `;
+      document.head.appendChild(style);
     });
-    
-    // Update time display
-    function updateTime() {
-      const now = new Date();
-      const options = { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
-      };
-      currentTime.textContent = now.toLocaleDateString('en-US', options);
-    }
-    
-    // Update time immediately and every second
-    updateTime();
-    setInterval(updateTime, 1000);
   </script>
 </body>
 </html>
