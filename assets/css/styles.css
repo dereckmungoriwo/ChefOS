@@ -348,20 +348,6 @@ input:checked + .toggle-slider:before {
   box-shadow: 0 3px 8px rgba(30,111,92,0.3);
 }
 
-.time-display {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--gray);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.time-display::before {
-  content: '🕐';
-  font-size: 18px;
-}
-
 /* ================== POS LAYOUT - FIXED OVERFLOW ================== */
 .pos-layout {
   display: grid;
@@ -2153,9 +2139,19 @@ textarea {
   box-shadow: none;
 }
 
-.time-display::before {
-  content: none !important; 
-  font-size: 32px;
+.time-display {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  color: seagreen;
+  font-weight: 600;
+
+  white-space: nowrap;   /* 🔥 prevents line breaks */
 }
 
 .top-bar {
