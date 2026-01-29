@@ -2303,3 +2303,21 @@ input:checked + .toggle-slider {
   background: rgba(45,201,168,0.08);
   border-color: rgba(45,201,168,0.15);
 }
+
+/* ================== ORDERS PAGE CONTAINER ================== */
+.orders page-container {
+  padding: 25px 30px;
+  height: calc(100vh - 75px);
+  overflow-y: auto;
+  background: var(--light);
+}
+
+/* orders Page titles */
+.page-container h1 {
+  font-size: 26px;
+  color: var(--primary);
+  margin-bottom: 20px;
+  font-weight: 700;
+  border-bottom: 3px solid var(--primary);
+  padding-bottom: 12px;
+}
