@@ -204,13 +204,11 @@
   });
   
   // Update time display
-  <script>
-document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", function () {
   const clockText = document.getElementById("clockText");
 
   function updateTime() {
     const now = new Date();
-
     const options = { 
       weekday: 'short',
       year: 'numeric',
@@ -224,8 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     clockText.textContent = now.toLocaleString('en-US', options);
   }
-  
-  // Run immediately + every second updateTime()
+
   updateTime();
   setInterval(updateTime, 1000);
 });
