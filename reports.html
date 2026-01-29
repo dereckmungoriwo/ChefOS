@@ -68,43 +68,35 @@
       </a>
     </aside>
 
-    <!-- MAIN CONTENT -->
-<main class="main-content">
+    <header class="top-bar">
+  
+  <div class="header-left">
+    <h2 class="app-title">ChefOS Control Panel</h2>
+    <p class="header-motto">Precision • Speed • Control</p>
+  </div>
 
-  <!-- TOP BAR -->
-  <header class="top-bar">
+  <div class="header-right">
 
-    <div class="header-left">
-      <h2 class="app-title">ChefOS Control Panel</h2>
-      <p class="header-motto">Precision • Speed • Control</p>
+    <div class="time-display" aria-live="polite">
+      <svg class="clock-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/>
+        <path d="M12 7v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span id="clockText">Loading time...</span>
     </div>
 
-    <div class="header-right">
-
-      <!-- Time Display -->
-<div class="time-display" aria-live="polite">
-  <svg class="clock-icon" viewBox="0 0 24 24" aria-hidden="true">
-    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/>
-    <path d="M12 7v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  </svg>
-  <span id="clockText">Loading time...</span>
-</div>
-      
-      <!-- User Info -->
-      <div class="user-info">
-        <div class="user-avatar" aria-label="User initials">DM</div>
-        <div class="user-meta">
-          <div class="user-name">Dereck Mungoriwo</div>
-          <div class="user-role">Manager</div>
-        </div>
+    <div class="user-info">
+      <div class="user-avatar" aria-label="User initials">DM</div>
+      <div class="user-meta">
+        <div class="user-name">Dereck Mungoriwo</div>
+        <div class="user-role">Manager</div>
       </div>
-
     </div>
 
-  </header>
+  </div>
 
-</main>
-
+</header>
+    
       <!-- INSIGHTS CONTAINER -->
       <div class="insights-container">
         <!-- DATE RANGE SELECTOR -->
@@ -804,6 +796,29 @@
       
       setDateRange('today');
     }
-  </script>
+
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const clockText = document.getElementById("clockText");
+
+  function updateTime() {
+    const now = new Date();
+    const options = {
+      weekday: 'short',
+      day: '2-digit',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    };
+    clockText.textContent = now.toLocaleString('en-US', options);
+  }
+
+  updateTime();
+  setInterval(updateTime, 1000);
+});
+
+</script>
 </body>
 </html>
