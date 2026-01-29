@@ -2153,11 +2153,6 @@ textarea {
   box-shadow: none;
 }
 
-.time-display::before {
-  content: '🕐';
-  font-size: 32px;
-}
-
 .top-bar {
   display: flex;
   justify-content: space-between;
