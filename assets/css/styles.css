@@ -348,7 +348,7 @@ input:checked + .toggle-slider:before {
 
 .header-motto {
     font-size: 13px;
-    color: var(--gray);
+    color: var(--gray) !important;
     margin: 0;
     font-weight: 500;
     white-space: nowrap;
@@ -367,15 +367,15 @@ input:checked + .toggle-slider:before {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: var(--dark);
-    font-size: 14px;
-    font-weight: 500;
+    color: var(--grey) !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
     white-space: nowrap;
 }
 
 .clock-icon {
-    width: 16px;
-    height: 16px;
+    width: 16px !important;
+    height: 16px !important;
     flex-shrink: 0;
 }
 
