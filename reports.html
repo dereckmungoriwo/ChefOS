@@ -68,36 +68,32 @@
       </a>
     </aside>
     
-<main class="main-content">
-    <header class="top-bar">
-  
-  <div class="header-left">
-    <h2 class="app-title">ChefOS Control Panel</h2>
-    <p class="header-motto">Precision • Speed • Control</p>
-  </div>
+    <main class="main-content">
+      <header class="top-bar">
+        <div class="header-left">
+          <h2 class="app-title">ChefOS Control Panel</h2>
+          <p class="header-motto">Precision • Speed • Control</p>
+        </div>
 
-  <div class="header-right">
+        <div class="header-right">
+          <div class="time-display" aria-live="polite">
+            <svg class="clock-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path d="M12 7v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span id="clockText">Loading time...</span>
+          </div>
 
-    <div class="time-display" aria-live="polite">
-      <svg class="clock-icon" viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/>
-        <path d="M12 7v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-      <span id="clockText">Loading time...</span>
-    </div>
-
-    <div class="user-info">
-      <div class="user-avatar" aria-label="User initials">DM</div>
-      <div class="user-meta">
-        <div class="user-name">Dereck Mungoriwo</div>
-        <div class="user-role">Manager</div>
-      </div>
-    </div>
-
-  </div>
-
-</header>
-    
+          <div class="user-info">
+            <div class="user-avatar" aria-label="User initials">DM</div>
+            <div class="user-meta">
+              <div class="user-name">Dereck Mungoriwo</div>
+              <div class="user-role">Manager</div>
+            </div>
+          </div>
+        </div>
+      </header>
+      
       <!-- INSIGHTS CONTAINER -->
       <div class="insights-container">
         <!-- DATE RANGE SELECTOR -->
@@ -270,7 +266,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </main>
   </div>
 
   <!-- REPORT MODAL -->
@@ -321,47 +317,83 @@
   <script src="assets/js/reports.js"></script>
 
   <script>
-    // Theme Toggle
-    const themeToggle = document.getElementById('themeToggle');
-    if (localStorage.getItem('theme') === 'dark') {
-      document.body.classList.add('dark-theme');
-      themeToggle.checked = true;
-    }
-    themeToggle.addEventListener('change', function() {
-      if (this.checked) {
+    // Theme Toggle with better error handling
+    (function initializeTheme() {
+      const themeToggle = document.getElementById('themeToggle');
+      if (!themeToggle) return;
+      
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
         document.body.classList.add('dark-theme');
-        localStorage.setItem('theme', 'dark');
-      } else {
-        document.body.classList.remove('dark-theme');
-        localStorage.setItem('theme', 'light');
+        themeToggle.checked = true;
       }
-    });
+      
+      themeToggle.addEventListener('change', function() {
+        if (this.checked) {
+          document.body.classList.add('dark-theme');
+          localStorage.setItem('theme', 'dark');
+        } else {
+          document.body.classList.remove('dark-theme');
+          localStorage.setItem('theme', 'light');
+        }
+      });
+    })();
 
     // Update Time
-    function updateTime() {
+    function updateClock() {
+      const clockText = document.getElementById('clockText');
+      if (!clockText) return;
+      
       const now = new Date();
-      const options = { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric',
+      const options = {
+        weekday: 'short',
+        day: '2-digit',
+        month: 'short',
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
-        hour12: true
+        hour12: false
       };
-      const timeEl = document.getElementById('currentTime');
-      if (timeEl) {
-        timeEl.textContent = now.toLocaleDateString('en-US', options);
+      
+      try {
+        clockText.textContent = now.toLocaleString('en-US', options);
+      } catch (error) {
+        console.error('Error updating clock:', error);
+        clockText.textContent = now.toISOString().split('T')[0] + ' ' + now.toTimeString().split(' ')[0];
       }
     }
-    updateTime();
-    setInterval(updateTime, 1000);
+    
+    // Initialize clock immediately and set interval
+    updateClock();
+    const clockInterval = setInterval(updateClock, 1000);
 
-    // Initialize Reports
-    document.addEventListener('DOMContentLoaded', initReports);
+    // Initialize Reports with proper cleanup
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        initReports();
+      } catch (error) {
+        console.error('Failed to initialize reports:', error);
+        showError('Unable to load reports. Please refresh the page.');
+      }
+    });
+
+    function showError(message) {
+      const container = document.querySelector('.insights-container');
+      if (container) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.innerHTML = `
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>${message}</p>
+        `;
+        container.prepend(errorDiv);
+      }
+    }
 
     function initReports() {
+      // DOM Elements
       const dateButtons = document.querySelectorAll('.date-btn');
       const startDateInput = document.getElementById('startDate');
       const endDateInput = document.getElementById('endDate');
@@ -372,85 +404,193 @@
       const reportModal = document.getElementById('reportModal');
       const modalCloseButtons = document.querySelectorAll('.modal-close');
       
+      // Validate required elements
+      if (!startDateInput || !endDateInput || !reportModal) {
+        throw new Error('Required DOM elements not found');
+      }
+      
+      // State management
       let revenueChart = null;
       let categoryChart = null;
       let currentRange = 'today';
       let startDate = new Date();
       let endDate = new Date();
       
-      startDateInput.valueAsDate = new Date();
-      endDateInput.valueAsDate = new Date();
+      // Utility functions
+      function formatCurrency(amount) {
+        return `R${parseFloat(amount).toFixed(2)}`;
+      }
       
-      initializeCharts();
-      loadReportData();
+      function safeParseJSON(key, defaultValue = []) {
+        try {
+          const data = localStorage.getItem(key);
+          return data ? JSON.parse(data) : defaultValue;
+        } catch (error) {
+          console.error(`Error parsing ${key}:`, error);
+          return defaultValue;
+        }
+      }
+      
+      // Initialize date inputs
+      const today = new Date();
+      startDateInput.valueAsDate = today;
+      endDateInput.valueAsDate = today;
+      startDateInput.max = today.toISOString().split('T')[0];
+      endDateInput.max = today.toISOString().split('T')[0];
+      
+      // Core functions
+      function initializeCharts() {
+        try {
+          const revenueCtx = document.getElementById('revenueChart')?.getContext('2d');
+          const categoryCtx = document.getElementById('categoryChart')?.getContext('2d');
+          
+          if (!revenueCtx || !categoryCtx) {
+            throw new Error('Chart canvases not found');
+          }
+          
+          revenueChart = new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+              labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+              datasets: [{
+                label: 'Revenue',
+                data: [1200, 1900, 1500, 2300, 2900, 3400, 2800],
+                borderColor: '#1e6f5c',
+                backgroundColor: 'rgba(30, 111, 92, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  callbacks: {
+                    label: (context) => `Revenue: ${formatCurrency(context.raw)}`
+                  }
+                }
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: {
+                    callback: (value) => formatCurrency(value)
+                  }
+                }
+              }
+            }
+          });
+          
+          categoryChart = new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+              labels: ['Breakfast', 'Main Course', 'Salads', 'Desserts', 'Drinks'],
+              datasets: [{
+                data: [25, 35, 15, 15, 10],
+                backgroundColor: [
+                  '#1e6f5c',
+                  '#28a085',
+                  '#ffc107',
+                  '#e74c3c',
+                  '#007bff'
+                ],
+                borderWidth: 1
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { position: 'bottom' },
+                tooltip: {
+                  callbacks: {
+                    label: (context) => `${context.label}: ${context.raw}%`
+                  }
+                }
+              }
+            }
+          });
+        } catch (error) {
+          console.error('Failed to initialize charts:', error);
+          throw error;
+        }
+      }
       
       function setDateRange(range) {
         currentRange = range;
         const today = new Date();
         
+        // Update button states
         dateButtons.forEach(btn => {
-          btn.classList.remove('active');
-          if (btn.getAttribute('data-range') === range) {
-            btn.classList.add('active');
-          }
+          btn.classList.toggle('active', btn.getAttribute('data-range') === range);
         });
         
+        // Calculate date range
+        const rangeStart = new Date(today);
         switch(range) {
           case 'today':
             startDate = new Date(today);
             endDate = new Date(today);
             break;
           case 'week':
-            startDate = new Date(today);
-            startDate.setDate(today.getDate() - 7);
-            endDate = new Date(today);
+            startDate = new Date(today.setDate(today.getDate() - 7));
+            endDate = new Date();
             break;
           case 'month':
-            startDate = new Date(today);
-            startDate.setMonth(today.getMonth() - 1);
-            endDate = new Date(today);
+            startDate = new Date(today.setMonth(today.getMonth() - 1));
+            endDate = new Date();
             break;
           case 'year':
-            startDate = new Date(today);
-            startDate.setFullYear(today.getFullYear() - 1);
-            endDate = new Date(today);
+            startDate = new Date(today.setFullYear(today.getFullYear() - 1));
+            endDate = new Date();
+            break;
+          default:
+            // Keep existing dates for custom range
             break;
         }
         
+        // Update date inputs
         startDateInput.valueAsDate = startDate;
         endDateInput.valueAsDate = endDate;
+        
+        // Load data
         loadReportData();
       }
       
-      function loadReportData() {
-        const orders = JSON.parse(localStorage.getItem('chefos_orders')) || [];
-        const completedOrders = JSON.parse(localStorage.getItem('chefos_completed_orders')) || [];
-        const allOrders = [...orders, ...completedOrders];
-        
-        const filteredOrders = allOrders.filter(order => {
-          const orderDate = new Date(order.fullTimestamp || order.orderTime);
-          return orderDate >= startDate && orderDate <= endDate;
+      function filterOrdersByDate(orders) {
+        return orders.filter(order => {
+          try {
+            const orderDate = new Date(order.fullTimestamp || order.orderTime);
+            return orderDate >= startDate && orderDate <= endDate;
+          } catch (error) {
+            console.error('Error parsing order date:', error);
+            return false;
+          }
         });
-        
-        calculateMetrics(filteredOrders);
-        updateTopItems(filteredOrders);
-        updateSalesTable(filteredOrders);
-        updateCharts(filteredOrders);
-        updateSummaryCards(filteredOrders);
       }
       
       function calculateMetrics(orders) {
-        const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
-        document.getElementById('totalRevenue').textContent = `R${totalRevenue.toFixed(2)}`;
+        // Revenue
+        const totalRevenue = orders.reduce((sum, order) => {
+          return sum + (parseFloat(order.total) || 0);
+        }, 0);
+        document.getElementById('totalRevenue').textContent = formatCurrency(totalRevenue);
         
+        // Order count
         document.getElementById('totalOrders').textContent = orders.length;
         
+        // Average order value
         const averageOrder = orders.length > 0 ? totalRevenue / orders.length : 0;
-        document.getElementById('averageOrder').textContent = `R${averageOrder.toFixed(2)}`;
+        document.getElementById('averageOrder').textContent = formatCurrency(averageOrder);
         
+        // Busiest table
         const tableCounts = {};
         orders.forEach(order => {
-          tableCounts[order.table] = (tableCounts[order.table] || 0) + 1;
+          const table = order.table || 'Unknown';
+          tableCounts[table] = (tableCounts[table] || 0) + 1;
         });
         
         let busiestTable = 'N/A';
@@ -465,33 +605,38 @@
         document.getElementById('busiestTable').textContent = `Table ${busiestTable}`;
         document.getElementById('tableOrders').textContent = `${maxOrders} orders`;
         
+        // Placeholder for change calculations (would require historical data)
         const revenueChange = orders.length > 0 ? 12.5 : 0;
         const ordersChange = orders.length > 0 ? 8.3 : 0;
         const averageChange = orders.length > 0 ? 4.2 : 0;
         
         document.getElementById('revenueChange').innerHTML = 
-          `<i class="fas fa-arrow-up"></i> ${revenueChange}%`;
+          `<i class="fas fa-arrow-up"></i> ${revenueChange.toFixed(1)}%`;
         document.getElementById('ordersChange').innerHTML = 
-          `<i class="fas fa-arrow-up"></i> ${ordersChange}%`;
+          `<i class="fas fa-arrow-up"></i> ${ordersChange.toFixed(1)}%`;
         document.getElementById('averageChange').innerHTML = 
-          `<i class="fas fa-arrow-up"></i> ${averageChange}%`;
+          `<i class="fas fa-arrow-up"></i> ${averageChange.toFixed(1)}%`;
       }
       
       function updateTopItems(orders) {
         const itemSales = {};
+        
+        // Aggregate item sales
         orders.forEach(order => {
-          order.items.forEach(item => {
-            if (!itemSales[item.name]) {
-              itemSales[item.name] = {
-                quantity: 0,
-                revenue: 0
-              };
+          (order.items || []).forEach(item => {
+            const name = item.name || 'Unknown Item';
+            const qty = parseInt(item.qty) || 0;
+            const price = parseFloat(item.price) || 0;
+            
+            if (!itemSales[name]) {
+              itemSales[name] = { quantity: 0, revenue: 0 };
             }
-            itemSales[item.name].quantity += item.qty;
-            itemSales[item.name].revenue += item.price * item.qty;
+            itemSales[name].quantity += qty;
+            itemSales[name].revenue += price * qty;
           });
         });
         
+        // Sort and get top 5
         const topItems = Object.entries(itemSales)
           .map(([name, data]) => ({
             name,
@@ -502,6 +647,9 @@
           .slice(0, 5);
         
         const topItemsList = document.getElementById('topItemsList');
+        if (!topItemsList) return;
+        
+        // Clear and update
         topItemsList.innerHTML = '';
         
         if (topItems.length === 0) {
@@ -514,18 +662,23 @@
           return;
         }
         
+        // Find max quantity for percentage calculation
+        const maxQuantity = Math.max(...topItems.map(item => item.quantity));
+        
         topItems.forEach((item, index) => {
           const itemCard = document.createElement('div');
           itemCard.className = 'top-item-card';
+          const percentage = maxQuantity > 0 ? (item.quantity / maxQuantity) * 100 : 0;
+          
           itemCard.innerHTML = `
             <div class="item-rank">${index + 1}</div>
             <div class="item-info">
-              <h4>${item.name}</h4>
-              <p>${item.quantity} sold • R${item.revenue.toFixed(2)} revenue</p>
+              <h4>${escapeHTML(item.name)}</h4>
+              <p>${item.quantity} sold • ${formatCurrency(item.revenue)} revenue</p>
             </div>
             <div class="item-stats">
               <div class="progress-bar">
-                <div class="progress-fill" style="width: ${(item.quantity / topItems[0].quantity) * 100}%"></div>
+                <div class="progress-fill" style="width: ${percentage.toFixed(1)}%"></div>
               </div>
             </div>
           `;
@@ -533,9 +686,17 @@
         });
       }
       
+      function escapeHTML(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+      
       function updateSalesTable(orders) {
         const salesTableBody = document.getElementById('salesTableBody');
         const noSalesMessage = document.getElementById('no-sales');
+        
+        if (!salesTableBody || !noSalesMessage) return;
         
         salesTableBody.innerHTML = '';
         
@@ -546,15 +707,23 @@
         
         noSalesMessage.style.display = 'none';
         
-        orders.sort((a, b) => new Date(b.fullTimestamp || b.orderTime) - new Date(a.fullTimestamp || a.orderTime));
+        // Sort by most recent first
+        orders.sort((a, b) => {
+          const dateA = new Date(a.fullTimestamp || a.orderTime);
+          const dateB = new Date(b.fullTimestamp || b.orderTime);
+          return dateB - dateA;
+        });
         
+        // Populate table
         orders.forEach(order => {
           const orderDate = new Date(order.fullTimestamp || order.orderTime);
           const dateString = orderDate.toLocaleDateString();
           const timeString = orderDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
           
+          // Calculate duration (placeholder - would need actual timing data)
           const duration = '45 min';
           
+          // Status badge
           const status = (order.status || 'pending').toLowerCase();
           let statusBadge = '';
           switch(status) {
@@ -568,19 +737,22 @@
               statusBadge = '<span class="status-badge status-ready">Ready</span>';
               break;
             case 'completed':
-              statusBadge = '<span class="status-badge" style="background: #28a745;">Completed</span>';
+              statusBadge = '<span class="status-badge status-completed">Completed</span>';
               break;
+            default:
+              statusBadge = `<span class="status-badge">${status}</span>`;
           }
           
-          const totalItems = order.items.reduce((sum, item) => sum + item.qty, 0);
+          const totalItems = (order.items || []).reduce((sum, item) => sum + (parseInt(item.qty) || 0), 0);
+          const orderId = order.id ? `#${order.id.toString().slice(-6)}` : '#N/A';
           
           const row = document.createElement('tr');
           row.innerHTML = `
             <td>${dateString}<br><small>${timeString}</small></td>
-            <td>#${order.id.toString().substring(order.id.toString().length - 6)}</td>
-            <td>Table ${order.table}</td>
+            <td>${orderId}</td>
+            <td>Table ${order.table || 'N/A'}</td>
             <td>${totalItems} items</td>
-            <td><strong>R${order.total.toFixed(2)}</strong></td>
+            <td><strong>${formatCurrency(order.total)}</strong></td>
             <td>${statusBadge}</td>
             <td>${duration}</td>
           `;
@@ -588,107 +760,43 @@
         });
       }
       
-      function initializeCharts() {
-        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-        revenueChart = new Chart(revenueCtx, {
-          type: 'line',
-          data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            datasets: [{
-              label: 'Revenue',
-              data: [1200, 1900, 1500, 2300, 2900, 3400, 2800],
-              borderColor: '#1e6f5c',
-              backgroundColor: 'rgba(30, 111, 92, 0.1)',
-              borderWidth: 2,
-              fill: true,
-              tension: 0.4
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                display: false
-              }
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                ticks: {
-                  callback: function(value) {
-                    return 'R' + value;
-                  }
-                }
-              }
-            }
-          }
-        });
-        
-        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-        categoryChart = new Chart(categoryCtx, {
-          type: 'doughnut',
-          data: {
-            labels: ['Breakfast', 'Main Course', 'Salads', 'Desserts', 'Drinks'],
-            datasets: [{
-              data: [25, 35, 15, 15, 10],
-              backgroundColor: [
-                '#1e6f5c',
-                '#28a085',
-                '#ffc107',
-                '#e74c3c',
-                '#007bff'
-              ],
-              borderWidth: 1
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                position: 'bottom'
-              }
-            }
-          }
-        });
-      }
-      
-      function updateCharts(orders) {
-        const chartType = revenueChartTypeSelect.value;
-        revenueChart.config.type = chartType;
-        revenueChart.update();
-        categoryChart.update();
-      }
-      
       function updateSummaryCards(orders) {
+        // Peak hours
         const hourCounts = {};
         orders.forEach(order => {
-          const hour = new Date(order.fullTimestamp || order.orderTime).getHours();
-          hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+          try {
+            const hour = new Date(order.fullTimestamp || order.orderTime).getHours();
+            hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+          } catch (error) {
+            console.error('Error extracting hour from order:', error);
+          }
         });
         
         const peakHours = Object.entries(hourCounts)
           .sort((a, b) => b[1] - a[1])
           .slice(0, 3)
           .map(([hour, count]) => ({
-            hour: `${hour}:00`,
+            hour: `${hour.toString().padStart(2, '0')}:00`,
             orders: count
           }));
         
         const peakHoursEl = document.getElementById('peakHours');
-        peakHoursEl.innerHTML = peakHours.length > 0 
-          ? peakHours.map(p => `
-              <div class="peak-hour">
-                <span>${p.hour}</span>
-                <span>${p.orders} orders</span>
-              </div>
-            `).join('')
-          : '<p class="empty-text">No data</p>';
+        if (peakHoursEl) {
+          peakHoursEl.innerHTML = peakHours.length > 0 
+            ? peakHours.map(p => `
+                <div class="peak-hour">
+                  <span>${p.hour}</span>
+                  <span>${p.orders} orders</span>
+                </div>
+              `).join('')
+            : '<p class="empty-text">No data</p>';
+        }
         
+        // Popular tables
         const tableCounts = {};
         orders.forEach(order => {
-          tableCounts[order.table] = (tableCounts[order.table] || 0) + 1;
+          const table = order.table || 'Unknown';
+          tableCounts[table] = (tableCounts[table] || 0) + 1;
         });
         
         const popularTables = Object.entries(tableCounts)
@@ -697,128 +805,195 @@
           .map(([table, count]) => ({ table, count }));
         
         const popularTablesEl = document.getElementById('popularTables');
-        popularTablesEl.innerHTML = popularTables.length > 0 
-          ? popularTables.map(t => `
-              <div class="popular-table">
-                <span>Table ${t.table}</span>
-                <span>${t.count} orders</span>
-              </div>
-            `).join('')
-          : '<p class="empty-text">No data</p>';
+        if (popularTablesEl) {
+          popularTablesEl.innerHTML = popularTables.length > 0 
+            ? popularTables.map(t => `
+                <div class="popular-table">
+                  <span>Table ${t.table}</span>
+                  <span>${t.count} orders</span>
+                </div>
+              `).join('')
+            : '<p class="empty-text">No data</p>';
+        }
         
-        const inventory = JSON.parse(localStorage.getItem('chefos_inventory_detailed')) || [];
+        // Low stock items
+        const inventory = safeParseJSON('chefos_inventory_detailed', []);
         const lowStock = inventory
-          .filter(item => item.currentStock <= item.minStock)
+          .filter(item => {
+            const current = parseInt(item.currentStock) || 0;
+            const min = parseInt(item.minStock) || 0;
+            return current <= min;
+          })
           .slice(0, 3);
         
         const lowStockEl = document.getElementById('lowStockItems');
-        lowStockEl.innerHTML = lowStock.length > 0 
-          ? lowStock.map(item => `
-              <div class="low-stock-item">
-                <span>${item.name}</span>
-                <span>${item.currentStock} ${item.unit} left</span>
-              </div>
-            `).join('')
-          : '<p class="empty-text">All items in stock</p>';
+        if (lowStockEl) {
+          lowStockEl.innerHTML = lowStock.length > 0 
+            ? lowStock.map(item => `
+                <div class="low-stock-item">
+                  <span>${escapeHTML(item.name)}</span>
+                  <span>${item.currentStock} ${item.unit || 'units'} left</span>
+                </div>
+              `).join('')
+            : '<p class="empty-text">All items in stock</p>';
+        }
+      }
+      
+      function loadReportData() {
+        try {
+          // Load orders from localStorage
+          const pendingOrders = safeParseJSON('chefos_orders');
+          const completedOrders = safeParseJSON('chefos_completed_orders');
+          const allOrders = [...pendingOrders, ...completedOrders];
+          
+          // Filter by date range
+          const filteredOrders = filterOrdersByDate(allOrders);
+          
+          // Update all sections
+          calculateMetrics(filteredOrders);
+          updateTopItems(filteredOrders);
+          updateSalesTable(filteredOrders);
+          updateSummaryCards(filteredOrders);
+          
+          // Update charts if they exist
+          if (revenueChart) {
+            const chartType = revenueChartTypeSelect?.value || 'line';
+            revenueChart.config.type = chartType;
+            revenueChart.update('none');
+          }
+          
+          if (categoryChart) {
+            categoryChart.update('none');
+          }
+        } catch (error) {
+          console.error('Error loading report data:', error);
+          showError('Failed to load report data. Please try again.');
+        }
       }
       
       function exportReport(format) {
-        let message = '';
-        switch(format) {
-          case 'excel':
-            message = 'Excel report is being generated...';
-            break;
-          case 'pdf':
-            message = 'PDF report is being generated...';
-            break;
-          case 'csv':
-            message = 'CSV file is being downloaded...';
-            break;
-        }
+        const messages = {
+          excel: 'Excel report is being generated...',
+          pdf: 'PDF report is being generated...',
+          csv: 'CSV file is being downloaded...'
+        };
         
+        const message = messages[format] || 'Report is being generated...';
         alert(`${message}\n\nIn a production system, this would generate a ${format.toUpperCase()} file.`);
         reportModal.style.display = 'none';
       }
       
-      dateButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          setDateRange(btn.getAttribute('data-range'));
+      // Event listeners
+      function setupEventListeners() {
+        // Date range buttons
+        dateButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            setDateRange(btn.getAttribute('data-range'));
+          });
         });
-      });
-      
-      applyCustomRangeBtn.addEventListener('click', () => {
-        const start = new Date(startDateInput.value);
-        const end = new Date(endDateInput.value);
         
-        if (start > end) {
-          alert('Start date must be before end date');
-          return;
+        // Custom date range
+        if (applyCustomRangeBtn) {
+          applyCustomRangeBtn.addEventListener('click', () => {
+            const start = new Date(startDateInput.value);
+            const end = new Date(endDateInput.value);
+            
+            if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+              alert('Please select valid dates');
+              return;
+            }
+            
+            if (start > end) {
+              alert('Start date must be before end date');
+              return;
+            }
+            
+            startDate = start;
+            endDate = end;
+            currentRange = 'custom';
+            
+            // Update button states
+            dateButtons.forEach(btn => btn.classList.remove('active'));
+            loadReportData();
+          });
         }
         
-        startDate = start;
-        endDate = end;
-        currentRange = 'custom';
-        
-        dateButtons.forEach(btn => btn.classList.remove('active'));
-        loadReportData();
-      });
-      
-      exportBtn.addEventListener('click', () => {
-        const periodText = currentRange === 'custom' 
-          ? `${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}`
-          : currentRange.charAt(0).toUpperCase() + currentRange.slice(1);
-        
-        document.getElementById('reportPeriod').textContent = periodText;
-        reportModal.style.display = 'flex';
-      });
-      
-      document.querySelectorAll('.export-format-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          exportReport(btn.getAttribute('data-format'));
-        });
-      });
-      
-      topItemsPeriodSelect.addEventListener('change', loadReportData);
-      revenueChartTypeSelect.addEventListener('change', () => {
-        loadReportData();
-      });
-      
-      modalCloseButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          reportModal.style.display = 'none';
-        });
-      });
-      
-      window.addEventListener('click', (event) => {
-        if (event.target === reportModal) {
-          reportModal.style.display = 'none';
+        // Export button
+        if (exportBtn) {
+          exportBtn.addEventListener('click', () => {
+            const periodText = currentRange === 'custom' 
+              ? `${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}`
+              : currentRange.charAt(0).toUpperCase() + currentRange.slice(1);
+            
+            document.getElementById('reportPeriod').textContent = periodText;
+            reportModal.style.display = 'flex';
+          });
         }
-      });
+        
+        // Export format buttons
+        document.querySelectorAll('.export-format-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            exportReport(btn.getAttribute('data-format'));
+          });
+        });
+        
+        // Modal close buttons
+        modalCloseButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            reportModal.style.display = 'none';
+          });
+        });
+        
+        // Close modal on outside click
+        window.addEventListener('click', (event) => {
+          if (event.target === reportModal) {
+            reportModal.style.display = 'none';
+          }
+        });
+        
+        // Period select change
+        if (topItemsPeriodSelect) {
+          topItemsPeriodSelect.addEventListener('change', loadReportData);
+        }
+        
+        // Chart type change
+        if (revenueChartTypeSelect) {
+          revenueChartTypeSelect.addEventListener('change', loadReportData);
+        }
+        
+        // Prevent form submission
+        document.querySelectorAll('input[type="date"]').forEach(input => {
+          input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              loadReportData();
+            }
+          });
+        });
+      }
       
+      // Cleanup function
+      function cleanup() {
+        if (revenueChart) {
+          revenueChart.destroy();
+        }
+        if (categoryChart) {
+          categoryChart.destroy();
+        }
+        clearInterval(clockInterval);
+      }
+      
+      // Initialize
+      initializeCharts();
+      setupEventListeners();
       setDateRange('today');
+      
+      // Handle page unload
+      window.addEventListener('beforeunload', cleanup);
+      
+      // Return cleanup function for manual control
+      return cleanup;
     }
-
-    <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const clockText = document.getElementById("clockText");
-
-  function updateTime() {
-    const now = new Date();
-    const options = {
-      weekday: 'short',
-      day: '2-digit',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    };
-    clockText.textContent = now.toLocaleString('en-US', options);
-  }
-
-  updateTime();
-  setInterval(updateTime, 1000);
-});
-</script>
+  </script>
 </body>
 </html>
