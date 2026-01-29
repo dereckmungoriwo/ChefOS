@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ChefOS Insights</title>
+  <title>ChefOS Insights - Analytics Dashboard</title>
+  <meta name="description" content="Business Analytics and Reporting Dashboard for ChefOS POS">
   <link rel="stylesheet" href="assets/css/styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -11,81 +12,86 @@
 <body>
   <div class="app-container">
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" aria-label="Main navigation">
       <div class="sidebar-header">
-        <h1><i class="fas fa-chart-bar"></i> ChefOS Insights</h1>
+        <h1><i class="fas fa-chart-bar" aria-hidden="true"></i> ChefOS Insights</h1>
       </div>
       
-      <div class="sidebar-nav">
+      <nav class="sidebar-nav" aria-label="Primary navigation">
         <div class="nav-section">
+          <h2 class="visually-hidden">Main Menu</h2>
           <h3>Menu</h3>
           <ul class="nav-links">
-            <li><a href="pos.html"><i class="fas fa-cash-register"></i> POS</a></li>
-            <li><a href="orders.html"><i class="fas fa-list"></i> Orders</a></li>
-            <li><a href="kds.html"><i class="fas fa-utensils"></i> ChefOS Line</a></li>
+            <li><a href="pos.html"><i class="fas fa-cash-register" aria-hidden="true"></i> POS</a></li>
+            <li><a href="orders.html"><i class="fas fa-list" aria-hidden="true"></i> Orders</a></li>
+            <li><a href="kds.html"><i class="fas fa-utensils" aria-hidden="true"></i> ChefOS Line</a></li>
           </ul>
         </div>
         
         <div class="nav-section">
           <h3>Management</h3>
           <ul class="nav-links">
-            <li><a href="inventory.html"><i class="fas fa-boxes"></i> ChefOS Stock</a></li>
-            <li><a href="reports.html" class="active"><i class="fas fa-chart-bar"></i> ChefOS Insights</a></li>
-            <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="inventory.html"><i class="fas fa-boxes" aria-hidden="true"></i> ChefOS Stock</a></li>
+            <li><a href="reports.html" class="active" aria-current="page"><i class="fas fa-chart-bar" aria-hidden="true"></i> ChefOS Insights</a></li>
+            <li><a href="settings.html"><i class="fas fa-cog" aria-hidden="true"></i> Settings</a></li>
           </ul>
         </div>
-      </div>
+      </nav>
       
       <!-- SETTINGS PANEL -->
-      <div class="settings-panel">
+      <div class="settings-panel" role="region" aria-label="Theme settings">
         <div class="theme-toggle">
-          <span><i class="fas fa-moon"></i> Dark Mode</span>
+          <span><i class="fas fa-moon" aria-hidden="true"></i> Dark Mode</span>
           <label class="toggle-switch">
-            <input type="checkbox" id="themeToggle">
-            <span class="toggle-slider"></span>
+            <input type="checkbox" id="themeToggle" aria-label="Toggle dark mode">
+            <span class="toggle-slider" aria-hidden="true"></span>
           </label>
         </div>
       </div>
       
       <!-- HELP CENTER -->
-      <div class="help-center">
-        <h4><i class="fas fa-life-ring"></i> Help Center</h4>
+      <section class="help-center" aria-label="Help and support">
+        <h3><i class="fas fa-life-ring" aria-hidden="true"></i> Help Center</h3>
         <div class="contact-info">
           <a href="mailto:dereck@dereckmungoriwo.online">
-            <i class="fas fa-envelope"></i> dereck@dereckmungoriwo.online
+            <i class="fas fa-envelope" aria-hidden="true"></i> dereck@dereckmungoriwo.online
           </a>
-          <a href="https://wa.me/27717184048" target="_blank">
-            <i class="fab fa-whatsapp"></i> +27 71 718 4048
+          <a href="https://wa.me/27717184048" target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-whatsapp" aria-hidden="true"></i> +27 71 718 4048
           </a>
           <div>
-            <i class="fas fa-clock"></i> 24/7 Support
+            <i class="fas fa-clock" aria-hidden="true"></i> 24/7 Support
           </div>
         </div>
-      </div>
+      </section>
       
       <a href="login.html" class="logout-btn">
-        <i class="fas fa-sign-out-alt"></i> Logout
+        <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Logout
       </a>
     </aside>
     
+    <!-- MAIN CONTENT -->
     <main class="main-content">
-      <header class="top-bar">
+      <!-- TOP BAR - MATCHING POS PAGE STRUCTURE -->
+      <header class="top-bar" role="banner">
         <div class="header-left">
-          <h2 class="app-title">ChefOS Control Panel</h2>
-          <p class="header-motto">Precision • Speed • Control</p>
+          <h1 class="app-title">ChefOS Insights Dashboard</h1>
+          <p class="header-motto">Analytics • Insights • Growth</p>
         </div>
 
         <div class="header-right">
+          <!-- Time Display - Matching POS Page -->
           <div class="time-display" aria-live="polite">
-            <svg class="clock-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <svg class="clock-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
               <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/>
               <path d="M12 7v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
-            <span id="clockText">Loading time...</span>
+            <time id="clockText" datetime="">Loading time...</time>
           </div>
 
+          <!-- User Info - Matching POS Page -->
           <div class="user-info">
-            <div class="user-avatar" aria-label="User initials">DM</div>
+            <div class="user-avatar" aria-label="User avatar">DM</div>
             <div class="user-meta">
               <div class="user-name">Dereck Mungoriwo</div>
               <div class="user-role">Manager</div>
@@ -95,68 +101,70 @@
       </header>
       
       <!-- INSIGHTS CONTAINER -->
-      <div class="insights-container">
+      <div class="insights-container" id="main-content">
         <!-- DATE RANGE SELECTOR -->
-        <div class="date-range-selector">
-          <h2><i class="fas fa-chart-line"></i> Business Insights</h2>
-          <div class="date-controls">
-            <button class="date-btn active" data-range="today">Today</button>
-            <button class="date-btn" data-range="week">This Week</button>
-            <button class="date-btn" data-range="month">This Month</button>
-            <button class="date-btn" data-range="year">This Year</button>
+        <section class="date-range-selector" aria-label="Report date range">
+          <h2><i class="fas fa-chart-line" aria-hidden="true"></i> Business Insights</h2>
+          <div class="date-controls" role="tablist" aria-label="Time period selection">
+            <button class="date-btn active" data-range="today" role="tab" aria-selected="true" aria-controls="insights-content">Today</button>
+            <button class="date-btn" data-range="week" role="tab" aria-selected="false" aria-controls="insights-content">This Week</button>
+            <button class="date-btn" data-range="month" role="tab" aria-selected="false" aria-controls="insights-content">This Month</button>
+            <button class="date-btn" data-range="year" role="tab" aria-selected="false" aria-controls="insights-content">This Year</button>
             <div class="custom-range">
-              <input type="date" id="startDate">
-              <span>to</span>
-              <input type="date" id="endDate">
+              <label for="startDate" class="visually-hidden">Start date</label>
+              <input type="date" id="startDate" aria-label="Custom start date">
+              <span aria-hidden="true">to</span>
+              <label for="endDate" class="visually-hidden">End date</label>
+              <input type="date" id="endDate" aria-label="Custom end date">
               <button id="applyCustomRange">Apply</button>
             </div>
           </div>
-        </div>
+        </section>
 
         <!-- KEY METRICS -->
         <div class="key-metrics">
-          <div class="metric-card revenue">
+          <div class="metric-card revenue" role="region" aria-label="Revenue statistics">
             <div class="metric-icon">
-              <i class="fas fa-money-bill-wave"></i>
+              <i class="fas fa-money-bill-wave" aria-hidden="true"></i>
             </div>
             <div class="metric-info">
               <h3 id="totalRevenue">R0.00</h3>
               <p>Total Revenue</p>
-              <div class="metric-change" id="revenueChange">
-                <i class="fas fa-arrow-up"></i> 0%
+              <div class="metric-change" id="revenueChange" aria-live="polite">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i> 0%
               </div>
             </div>
           </div>
           
-          <div class="metric-card orders">
+          <div class="metric-card orders" role="region" aria-label="Order statistics">
             <div class="metric-icon">
-              <i class="fas fa-shopping-cart"></i>
+              <i class="fas fa-shopping-cart" aria-hidden="true"></i>
             </div>
             <div class="metric-info">
               <h3 id="totalOrders">0</h3>
               <p>Total Orders</p>
-              <div class="metric-change" id="ordersChange">
-                <i class="fas fa-arrow-up"></i> 0%
+              <div class="metric-change" id="ordersChange" aria-live="polite">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i> 0%
               </div>
             </div>
           </div>
           
-          <div class="metric-card average">
+          <div class="metric-card average" role="region" aria-label="Average order statistics">
             <div class="metric-icon">
-              <i class="fas fa-receipt"></i>
+              <i class="fas fa-receipt" aria-hidden="true"></i>
             </div>
             <div class="metric-info">
               <h3 id="averageOrder">R0.00</h3>
               <p>Average Order</p>
-              <div class="metric-change" id="averageChange">
-                <i class="fas fa-arrow-up"></i> 0%
+              <div class="metric-change" id="averageChange" aria-live="polite">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i> 0%
               </div>
             </div>
           </div>
           
-          <div class="metric-card tables">
+          <div class="metric-card tables" role="region" aria-label="Table utilization statistics">
             <div class="metric-icon">
-              <i class="fas fa-utensils"></i>
+              <i class="fas fa-utensils" aria-hidden="true"></i>
             </div>
             <div class="metric-info">
               <h3 id="busiestTable">N/A</h3>
@@ -170,63 +178,65 @@
 
         <!-- CHARTS ROW -->
         <div class="charts-row">
-          <div class="chart-card">
+          <section class="chart-card" aria-label="Revenue trend chart">
             <div class="chart-header">
-              <h3><i class="fas fa-chart-bar"></i> Revenue Trend</h3>
-              <select id="revenueChartType">
+              <h3><i class="fas fa-chart-bar" aria-hidden="true"></i> Revenue Trend</h3>
+              <label for="revenueChartType" class="visually-hidden">Chart type</label>
+              <select id="revenueChartType" aria-label="Select chart type">
                 <option value="line">Line Chart</option>
                 <option value="bar">Bar Chart</option>
               </select>
             </div>
             <div class="chart-container">
-              <canvas id="revenueChart"></canvas>
+              <canvas id="revenueChart" role="img" aria-label="Revenue trend visualization"></canvas>
             </div>
-          </div>
+          </section>
           
-          <div class="chart-card">
+          <section class="chart-card" aria-label="Sales by category chart">
             <div class="chart-header">
-              <h3><i class="fas fa-chart-pie"></i> Sales by Category</h3>
+              <h3><i class="fas fa-chart-pie" aria-hidden="true"></i> Sales by Category</h3>
             </div>
             <div class="chart-container">
-              <canvas id="categoryChart"></canvas>
+              <canvas id="categoryChart" role="img" aria-label="Sales distribution by category"></canvas>
             </div>
-          </div>
+          </section>
         </div>
 
         <!-- TOP SELLING ITEMS -->
-        <div class="top-items-section">
+        <section class="top-items-section" aria-label="Top selling items">
           <div class="section-header">
-            <h3><i class="fas fa-star"></i> Top Selling Items</h3>
-            <select id="topItemsPeriod">
+            <h3><i class="fas fa-star" aria-hidden="true"></i> Top Selling Items</h3>
+            <label for="topItemsPeriod" class="visually-hidden">Time period for top items</label>
+            <select id="topItemsPeriod" aria-label="Select time period for top items">
               <option value="today">Today</option>
               <option value="week">This Week</option>
               <option value="month">This Month</option>
             </select>
           </div>
-          <div class="top-items-list" id="topItemsList">
+          <div class="top-items-list" id="topItemsList" aria-live="polite">
             <!-- Top items will be loaded here -->
           </div>
-        </div>
+        </section>
 
         <!-- SALES TABLE -->
-        <div class="sales-table-section">
+        <section class="sales-table-section" aria-label="Detailed sales report">
           <div class="section-header">
-            <h3><i class="fas fa-table"></i> Detailed Sales Report</h3>
-            <button class="export-btn" id="exportBtn">
-              <i class="fas fa-download"></i> Export Report
+            <h3><i class="fas fa-table" aria-hidden="true"></i> Detailed Sales Report</h3>
+            <button class="export-btn" id="exportBtn" aria-label="Export report">
+              <i class="fas fa-download" aria-hidden="true"></i> Export Report
             </button>
           </div>
           <div class="sales-table-container">
-            <table class="sales-table">
+            <table class="sales-table" aria-label="Sales transaction history">
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Order ID</th>
-                  <th>Table</th>
-                  <th>Items</th>
-                  <th>Total</th>
-                  <th>Status</th>
-                  <th>Duration</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Order ID</th>
+                  <th scope="col">Table</th>
+                  <th scope="col">Items</th>
+                  <th scope="col">Total</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Duration</th>
                 </tr>
               </thead>
               <tbody id="salesTableBody">
@@ -234,87 +244,85 @@
               </tbody>
             </table>
             
-            <div id="no-sales" style="display: none; text-align: center; padding: 40px;">
-              <i class="fas fa-chart-line fa-3x" style="color: var(--gray);"></i>
+            <div id="no-sales" style="display: none; text-align: center; padding: 40px;" aria-live="polite">
+              <i class="fas fa-chart-line fa-3x" style="color: var(--gray);" aria-hidden="true"></i>
               <h3 style="margin: 20px 0 10px; color: var(--gray);">No Sales Data</h3>
               <p style="color: var(--gray);">Sales data will appear here once orders are placed.</p>
             </div>
           </div>
-        </div>
+        </section>
 
         <!-- SUMMARY CARDS -->
         <div class="summary-cards">
-          <div class="summary-card peak-hours">
-            <h4><i class="fas fa-clock"></i> Peak Hours</h4>
+          <section class="summary-card peak-hours" aria-label="Peak hours analysis">
+            <h4><i class="fas fa-clock" aria-hidden="true"></i> Peak Hours</h4>
             <div class="peak-list" id="peakHours">
               <!-- Peak hours will be loaded here -->
             </div>
-          </div>
+          </section>
           
-          <div class="summary-card popular-tables">
-            <h4><i class="fas fa-table"></i> Popular Tables</h4>
+          <section class="summary-card popular-tables" aria-label="Popular tables analysis">
+            <h4><i class="fas fa-table" aria-hidden="true"></i> Popular Tables</h4>
             <div class="table-list" id="popularTables">
               <!-- Popular tables will be loaded here -->
             </div>
-          </div>
+          </section>
           
-          <div class="summary-card low-stock">
-            <h4><i class="fas fa-exclamation-triangle"></i> Low Stock Alert</h4>
+          <section class="summary-card low-stock" aria-label="Low stock alerts">
+            <h4><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> Low Stock Alert</h4>
             <div class="stock-list" id="lowStockItems">
               <!-- Low stock items will be loaded here -->
             </div>
-          </div>
+          </section>
         </div>
       </div>
     </main>
   </div>
 
   <!-- REPORT MODAL -->
-  <div id="reportModal" class="modal">
+  <div id="reportModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
     <div class="modal-content">
       <div class="modal-header">
-        <h3><i class="fas fa-file-export"></i> Export Report</h3>
-        <button class="modal-close">&times;</button>
+        <h3 id="reportModalTitle"><i class="fas fa-file-export" aria-hidden="true"></i> Export Report</h3>
+        <button class="modal-close" aria-label="Close modal">&times;</button>
       </div>
       <div class="modal-body">
         <div class="export-options">
-          <div class="option-card">
-            <i class="fas fa-file-excel"></i>
+          <div class="option-card" role="option" aria-label="Excel export option">
+            <i class="fas fa-file-excel" aria-hidden="true"></i>
             <h4>Excel Format</h4>
             <p>Download as .xlsx file</p>
-            <button class="export-format-btn" data-format="excel">
-              <i class="fas fa-download"></i> Export
+            <button class="export-format-btn" data-format="excel" aria-label="Export to Excel">
+              <i class="fas fa-download" aria-hidden="true"></i> Export
             </button>
           </div>
           
-          <div class="option-card">
-            <i class="fas fa-file-pdf"></i>
+          <div class="option-card" role="option" aria-label="PDF export option">
+            <i class="fas fa-file-pdf" aria-hidden="true"></i>
             <h4>PDF Format</h4>
             <p>Download as .pdf file</p>
-            <button class="export-format-btn" data-format="pdf">
-              <i class="fas fa-download"></i> Export
+            <button class="export-format-btn" data-format="pdf" aria-label="Export to PDF">
+              <i class="fas fa-download" aria-hidden="true"></i> Export
             </button>
           </div>
           
-          <div class="option-card">
-            <i class="fas fa-file-csv"></i>
+          <div class="option-card" role="option" aria-label="CSV export option">
+            <i class="fas fa-file-csv" aria-hidden="true"></i>
             <h4>CSV Format</h4>
             <p>Download as .csv file</p>
-            <button class="export-format-btn" data-format="csv">
-              <i class="fas fa-download"></i> Export
+            <button class="export-format-btn" data-format="csv" aria-label="Export to CSV">
+              <i class="fas fa-download" aria-hidden="true"></i> Export
             </button>
           </div>
         </div>
         
         <div class="date-range-summary">
           <h4>Report Period</h4>
-          <p id="reportPeriod">Today</p>
+          <p id="reportPeriod" aria-live="polite">Today</p>
         </div>
       </div>
     </div>
   </div>
-
-  <script src="assets/js/reports.js"></script>
 
   <script>
     // Theme Toggle with better error handling
@@ -341,24 +349,27 @@
       });
     })();
 
-    // Update Time
+    // Update Time - Matching POS Page Format
     function updateClock() {
       const clockText = document.getElementById('clockText');
       if (!clockText) return;
       
       const now = new Date();
-      const options = {
+      const dateTimeString = now.toISOString();
+      const formattedDate = now.toLocaleString('en-US', {
         weekday: 'short',
-        day: '2-digit',
+        year: 'numeric',
         month: 'short',
+        day: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
         hour12: false
-      };
+      });
       
       try {
-        clockText.textContent = now.toLocaleString('en-US', options);
+        clockText.textContent = formattedDate;
+        clockText.setAttribute('datetime', dateTimeString);
       } catch (error) {
         console.error('Error updating clock:', error);
         clockText.textContent = now.toISOString().split('T')[0] + ' ' + now.toTimeString().split(' ')[0];
@@ -384,8 +395,9 @@
       if (container) {
         const errorDiv = document.createElement('div');
         errorDiv.className = 'error-message';
+        errorDiv.setAttribute('role', 'alert');
         errorDiv.innerHTML = `
-          <i class="fas fa-exclamation-triangle"></i>
+          <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
           <p>${message}</p>
         `;
         container.prepend(errorDiv);
@@ -433,10 +445,11 @@
       
       // Initialize date inputs
       const today = new Date();
-      startDateInput.valueAsDate = today;
-      endDateInput.valueAsDate = today;
-      startDateInput.max = today.toISOString().split('T')[0];
-      endDateInput.max = today.toISOString().split('T')[0];
+      const todayStr = today.toISOString().split('T')[0];
+      startDateInput.value = todayStr;
+      endDateInput.value = todayStr;
+      startDateInput.max = todayStr;
+      endDateInput.max = todayStr;
       
       // Core functions
       function initializeCharts() {
@@ -525,7 +538,9 @@
         
         // Update button states
         dateButtons.forEach(btn => {
-          btn.classList.toggle('active', btn.getAttribute('data-range') === range);
+          const isActive = btn.getAttribute('data-range') === range;
+          btn.classList.toggle('active', isActive);
+          btn.setAttribute('aria-selected', isActive);
         });
         
         // Calculate date range
@@ -553,8 +568,9 @@
         }
         
         // Update date inputs
-        startDateInput.valueAsDate = startDate;
-        endDateInput.valueAsDate = endDate;
+        const formatDateForInput = (date) => date.toISOString().split('T')[0];
+        startDateInput.value = formatDateForInput(startDate);
+        endDateInput.value = formatDateForInput(endDate);
         
         // Load data
         loadReportData();
@@ -611,11 +627,11 @@
         const averageChange = orders.length > 0 ? 4.2 : 0;
         
         document.getElementById('revenueChange').innerHTML = 
-          `<i class="fas fa-arrow-up"></i> ${revenueChange.toFixed(1)}%`;
+          `<i class="fas fa-arrow-up" aria-hidden="true"></i> ${revenueChange.toFixed(1)}%`;
         document.getElementById('ordersChange').innerHTML = 
-          `<i class="fas fa-arrow-up"></i> ${ordersChange.toFixed(1)}%`;
+          `<i class="fas fa-arrow-up" aria-hidden="true"></i> ${ordersChange.toFixed(1)}%`;
         document.getElementById('averageChange').innerHTML = 
-          `<i class="fas fa-arrow-up"></i> ${averageChange.toFixed(1)}%`;
+          `<i class="fas fa-arrow-up" aria-hidden="true"></i> ${averageChange.toFixed(1)}%`;
       }
       
       function updateTopItems(orders) {
@@ -655,7 +671,7 @@
         if (topItems.length === 0) {
           topItemsList.innerHTML = `
             <div class="empty-state">
-              <i class="fas fa-utensils"></i>
+              <i class="fas fa-utensils" aria-hidden="true"></i>
               <p>No sales data for this period</p>
             </div>
           `;
@@ -668,6 +684,7 @@
         topItems.forEach((item, index) => {
           const itemCard = document.createElement('div');
           itemCard.className = 'top-item-card';
+          itemCard.setAttribute('role', 'listitem');
           const percentage = maxQuantity > 0 ? (item.quantity / maxQuantity) * 100 : 0;
           
           itemCard.innerHTML = `
@@ -677,7 +694,7 @@
               <p>${item.quantity} sold • ${formatCurrency(item.revenue)} revenue</p>
             </div>
             <div class="item-stats">
-              <div class="progress-bar">
+              <div class="progress-bar" role="progressbar" aria-valuenow="${percentage}" aria-valuemin="0" aria-valuemax="100">
                 <div class="progress-fill" style="width: ${percentage.toFixed(1)}%"></div>
               </div>
             </div>
@@ -913,7 +930,10 @@
             currentRange = 'custom';
             
             // Update button states
-            dateButtons.forEach(btn => btn.classList.remove('active'));
+            dateButtons.forEach(btn => {
+              btn.classList.remove('active');
+              btn.setAttribute('aria-selected', 'false');
+            });
             loadReportData();
           });
         }
@@ -970,6 +990,41 @@
             }
           });
         });
+        
+        // Add keyboard navigation for date tabs
+        dateButtons.forEach((tab, index) => {
+          tab.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+              e.preventDefault();
+              const nextTab = dateButtons[(index + 1) % dateButtons.length];
+              nextTab.click();
+              nextTab.focus();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+              e.preventDefault();
+              const prevTab = dateButtons[(index - 1 + dateButtons.length) % dateButtons.length];
+              prevTab.click();
+              prevTab.focus();
+            } else if (e.key === 'Home') {
+              e.preventDefault();
+              dateButtons[0].click();
+              dateButtons[0].focus();
+            } else if (e.key === 'End') {
+              e.preventDefault();
+              dateButtons[dateButtons.length - 1].click();
+              dateButtons[dateButtons.length - 1].focus();
+            } else if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              this.click();
+            }
+          });
+        });
+        
+        // Add keyboard navigation for modals
+        document.addEventListener('keydown', function(event) {
+          if (event.key === 'Escape') {
+            reportModal.style.display = 'none';
+          }
+        });
       }
       
       // Cleanup function
@@ -994,6 +1049,23 @@
       // Return cleanup function for manual control
       return cleanup;
     }
+    
+    // Add visually hidden CSS
+    const style = document.createElement('style');
+    style.textContent = `
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+    `;
+    document.head.appendChild(style);
   </script>
 </body>
 </html>
