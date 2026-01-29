@@ -224,7 +224,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     clockText.textContent = now.toLocaleString('en-US', options);
   }
-
+  
+  // Run immediately + every second updateTime()
   updateTime();
   setInterval(updateTime, 1000);
 });
