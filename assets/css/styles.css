@@ -2156,8 +2156,9 @@ textarea {
 }
 
 .clock-icon {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
+  font-weight: 700;
   flex-shrink: 0;
 }
 
