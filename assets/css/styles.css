@@ -2135,8 +2135,8 @@ textarea {
 }
 
 .header-motto {
-  font-size: 13px;
-  color: var(--gray);
+  font-size: 18px;
+  color: var(--primary);
   margin-top: 4px;
   letter-spacing: 0.5px;
 }
@@ -2149,13 +2149,13 @@ textarea {
   padding: 0;
   border-radius: none;
   gap: 8px;
-  font-weight: 600;
-  box-shadow: 0 3px 8px rgba(30,111,92,0.3);
+  font-weight: 800;
+  box-shadow: none;
 }
 
 .time-display::before {
   content: '🕐';
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .top-bar {
@@ -2193,7 +2193,7 @@ textarea {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  font-weight: 600;
+  font-weight: 800;
   letter-spacing: 0.5px;
 }
 
