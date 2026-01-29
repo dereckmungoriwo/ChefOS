@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ChefOS Login</title>
+  <title>ChefOS POS - Login</title>
+  <meta name="description" content="Secure login for ChefOS Restaurant Management System">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
@@ -12,20 +13,48 @@
       box-sizing: border-box;
     }
     
+    :root {
+      --primary: #1e6f5c;
+      --primary-light: #28a085;
+      --secondary: #ffd700;
+      --text-light: #ffffff;
+      --text-dark: #333333;
+      --gray: #6b7280;
+      --gray-light: #e5e7eb;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      --radius: 20px;
+    }
+    
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #1e6f5c 0%, #28a085 100%);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 20px;
+      line-height: 1.5;
+    }
+    
+    .skip-to-content {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: var(--text-dark);
+      color: var(--text-light);
+      padding: 8px;
+      z-index: 1001;
+      text-decoration: none;
+    }
+    
+    .skip-to-content:focus {
+      top: 0;
     }
     
     .login-container {
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      background: var(--text-light);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
       overflow: hidden;
       max-width: 400px;
       width: 100%;
@@ -44,16 +73,16 @@
     }
     
     .login-header {
-      background: linear-gradient(135deg, #1e6f5c, #28a085);
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
       padding: 40px 30px;
       text-align: center;
-      color: white;
+      color: var(--text-light);
     }
     
     .login-header i {
       font-size: 60px;
       margin-bottom: 15px;
-      color: #ffd700;
+      color: var(--secondary);
     }
     
     .login-header h1 {
@@ -78,7 +107,7 @@
     label {
       display: block;
       margin-bottom: 8px;
-      color: #333;
+      color: var(--text-dark);
       font-weight: 600;
       font-size: 14px;
     }
@@ -87,18 +116,23 @@
     select {
       width: 100%;
       padding: 14px 18px;
-      border: 2px solid #e5e7eb;
+      border: 2px solid var(--gray-light);
       border-radius: 10px;
       font-size: 15px;
       transition: all 0.3s ease;
-      background: white;
+      background: var(--text-light);
+      color: var(--text-dark);
     }
     
     input:focus,
     select:focus {
       outline: none;
-      border-color: #1e6f5c;
+      border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(30, 111, 92, 0.1);
+    }
+    
+    input:invalid:not(:focus):not(:placeholder-shown) {
+      border-color: #e74c3c;
     }
     
     .input-icon {
@@ -110,8 +144,9 @@
       left: 18px;
       top: 50%;
       transform: translateY(-50%);
-      color: #6b7280;
+      color: var(--gray);
       font-size: 16px;
+      pointer-events: none;
     }
     
     .input-icon input,
@@ -122,8 +157,8 @@
     .login-btn {
       width: 100%;
       padding: 16px;
-      background: linear-gradient(135deg, #1e6f5c, #28a085);
-      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: var(--text-light);
       border: none;
       border-radius: 10px;
       font-size: 16px;
@@ -133,9 +168,14 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       box-shadow: 0 4px 12px rgba(30, 111, 92, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
     
-    .login-btn:hover {
+    .login-btn:hover,
+    .login-btn:focus {
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(30, 111, 92, 0.4);
     }
@@ -144,20 +184,28 @@
       transform: translateY(0);
     }
     
+    .login-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
     .login-footer {
       text-align: center;
       padding: 20px 30px 30px;
-      color: #6b7280;
+      color: var(--gray);
       font-size: 13px;
     }
     
     .login-footer a {
-      color: #1e6f5c;
+      color: var(--primary);
       text-decoration: none;
       font-weight: 600;
     }
     
-    .login-footer a:hover {
+    .login-footer a:hover,
+    .login-footer a:focus {
       text-decoration: underline;
     }
     
@@ -168,17 +216,45 @@
       margin-top: 20px;
       text-align: center;
       font-size: 13px;
-      color: #6b7280;
+      color: var(--gray);
     }
     
     .support-info a {
-      color: #1e6f5c;
+      color: var(--primary);
       text-decoration: none;
       font-weight: 600;
     }
     
     .support-info i {
       margin-right: 5px;
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--gray);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px;
+      border-radius: 4px;
+    }
+    
+    .password-toggle:hover,
+    .password-toggle:focus {
+      color: var(--primary);
+      background: rgba(0, 0, 0, 0.05);
+      outline: none;
+    }
+    
+    .error-message {
+      color: #e74c3c;
+      font-size: 13px;
+      margin-top: 5px;
+      display: none;
     }
     
     @media (max-width: 480px) {
@@ -194,126 +270,315 @@
         padding: 30px 20px;
       }
     }
+    
+    @media (prefers-reduced-motion: reduce) {
+      .login-container,
+      .login-btn {
+        animation: none;
+        transition: none;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <div class="login-header">
-      <i class="fas fa-utensils"></i>
+  <a href="#main-content" class="skip-to-content">Skip to main content</a>
+  
+  <main class="login-container">
+    <section class="login-header" aria-label="ChefOS POS system">
+      <i class="fas fa-utensils" aria-hidden="true"></i>
       <h1>ChefOS POS</h1>
       <p>Professional Restaurant Management</p>
-    </div>
+    </section>
     
     <div class="login-body">
-      <form id="loginForm">
+      <form id="loginForm" method="post" novalidate>
         <div class="form-group">
           <label for="username">
-            <i class="fas fa-user"></i> Username
+            <i class="fas fa-user" aria-hidden="true"></i> Username
           </label>
           <div class="input-icon">
-            <i class="fas fa-user"></i>
-            <input type="text" id="username" placeholder="Enter your username" required autofocus>
+            <i class="fas fa-user" aria-hidden="true"></i>
+            <input 
+              type="text" 
+              id="username" 
+              name="username" 
+              placeholder="Enter your username" 
+              required 
+              autocomplete="username"
+              aria-required="true"
+              aria-describedby="username-error">
           </div>
+          <div id="username-error" class="error-message" role="alert" aria-live="polite"></div>
         </div>
         
         <div class="form-group">
           <label for="password">
-            <i class="fas fa-lock"></i> Password
+            <i class="fas fa-lock" aria-hidden="true"></i> Password
           </label>
           <div class="input-icon">
-            <i class="fas fa-lock"></i>
-            <input type="password" id="password" placeholder="Enter your password" required>
+            <i class="fas fa-lock" aria-hidden="true"></i>
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              placeholder="Enter your password" 
+              required 
+              autocomplete="current-password"
+              aria-required="true"
+              aria-describedby="password-error">
+            <button 
+              type="button" 
+              class="password-toggle" 
+              aria-label="Toggle password visibility">
+              <i class="fas fa-eye" aria-hidden="true"></i>
+            </button>
           </div>
+          <div id="password-error" class="error-message" role="alert" aria-live="polite"></div>
         </div>
         
         <div class="form-group">
           <label for="role">
-            <i class="fas fa-user-tag"></i> Role
+            <i class="fas fa-user-tag" aria-hidden="true"></i> Role
           </label>
           <div class="input-icon">
-            <i class="fas fa-user-tag"></i>
-            <select id="role" required>
+            <i class="fas fa-user-tag" aria-hidden="true"></i>
+            <select 
+              id="role" 
+              name="role" 
+              required 
+              aria-required="true"
+              aria-describedby="role-error">
+              <option value="">Select your role</option>
               <option value="manager">Manager</option>
               <option value="cashier">Cashier</option>
               <option value="chef">Chef</option>
             </select>
           </div>
+          <div id="role-error" class="error-message" role="alert" aria-live="polite"></div>
         </div>
         
-        <button type="submit" class="login-btn">
-          <i class="fas fa-sign-in-alt"></i> Login
+        <button type="submit" class="login-btn" id="loginBtn" aria-label="Login to ChefOS system">
+          <i class="fas fa-sign-in-alt" aria-hidden="true"></i> Login
         </button>
       </form>
       
-      <div class="support-info">
+      <section class="support-info" aria-label="Support information">
         <div style="margin-bottom: 8px;">
-          <i class="fas fa-life-ring"></i> <strong>Need Help?</strong>
+          <i class="fas fa-life-ring" aria-hidden="true"></i> <strong>Need Help?</strong>
         </div>
         <div>
-          <a href="mailto:dereck@dereckmungoriwo.online">
-            <i class="fas fa-envelope"></i> dereck@dereckmungoriwo.online
+          <a href="mailto:dereck@dereckmungoriwo.online" aria-label="Email support">
+            <i class="fas fa-envelope" aria-hidden="true"></i> dereck@dereckmungoriwo.online
           </a>
         </div>
         <div style="margin-top: 5px;">
-          <a href="https://wa.me/27717184048" target="_blank">
-            <i class="fab fa-whatsapp"></i> +27 71 718 4048
+          <a href="https://wa.me/27717184048" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp support">
+            <i class="fab fa-whatsapp" aria-hidden="true"></i> +27 71 718 4048
           </a>
         </div>
-      </div>
+      </section>
     </div>
     
-    <div class="login-footer">
+    <footer class="login-footer" role="contentinfo">
       © 2025 ChefOS POS. All rights reserved.
-    </div>
-  </div>
+    </footer>
+  </main>
 
   <script>
-    const loginForm = document.getElementById('loginForm');
-    const usernameInput = document.getElementById('username');
-    const passwordInput = document.getElementById('password');
-    const roleSelect = document.getElementById('role');
-    
-    loginForm.addEventListener('submit', (e) => {
-      e.preventDefault();
+    (function() {
+      'use strict';
       
-      const username = usernameInput.value.trim();
-      const password = passwordInput.value;
-      const role = roleSelect.value;
+      // DOM Elements
+      const loginForm = document.getElementById('loginForm');
+      const usernameInput = document.getElementById('username');
+      const passwordInput = document.getElementById('password');
+      const roleSelect = document.getElementById('role');
+      const loginBtn = document.getElementById('loginBtn');
+      const passwordToggle = document.querySelector('.password-toggle');
+      const passwordIcon = passwordToggle.querySelector('i');
       
-      if (!username) {
-        alert('Please enter a username');
-        usernameInput.focus();
-        return;
+      // Error elements
+      const usernameError = document.getElementById('username-error');
+      const passwordError = document.getElementById('password-error');
+      const roleError = document.getElementById('role-error');
+      
+      // Password visibility toggle
+      passwordToggle.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        passwordIcon.className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+        passwordToggle.setAttribute('aria-label', 
+          type === 'password' ? 'Show password' : 'Hide password');
+      });
+      
+      // Input validation
+      function showError(input, errorElement, message) {
+        input.style.borderColor = '#e74c3c';
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+        input.setAttribute('aria-invalid', 'true');
       }
       
-      if (!password) {
-        alert('Please enter a password');
-        passwordInput.focus();
-        return;
+      function clearError(input, errorElement) {
+        input.style.borderColor = '';
+        errorElement.textContent = '';
+        errorElement.style.display = 'none';
+        input.setAttribute('aria-invalid', 'false');
       }
       
-      // Store user info
-      const user = {
-        username,
-        role,
-        loginTime: new Date().toISOString()
-      };
+      // Real-time validation
+      usernameInput.addEventListener('blur', () => {
+        if (!usernameInput.value.trim()) {
+          showError(usernameInput, usernameError, 'Username is required');
+        } else {
+          clearError(usernameInput, usernameError);
+        }
+      });
       
-      localStorage.setItem('chefos_user', JSON.stringify(user));
+      passwordInput.addEventListener('blur', () => {
+        if (!passwordInput.value) {
+          showError(passwordInput, passwordError, 'Password is required');
+        } else if (passwordInput.value.length < 4) {
+          showError(passwordInput, passwordError, 'Password must be at least 4 characters');
+        } else {
+          clearError(passwordInput, passwordError);
+        }
+      });
       
-      // Redirect based on role
-      switch (role) {
-        case 'cashier':
-        case 'manager':
-          window.location.href = 'pos.html';
-          break;
-        case 'chef':
-          window.location.href = 'kds.html';
-          break;
-        default:
-          window.location.href = 'pos.html';
-      }
-    });
+      roleSelect.addEventListener('change', () => {
+        if (!roleSelect.value) {
+          showError(roleSelect, roleError, 'Please select a role');
+        } else {
+          clearError(roleSelect, roleError);
+        }
+      });
+      
+      // Form submission
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Disable button during processing
+        loginBtn.disabled = true;
+        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Logging in...';
+        
+        // Validate all fields
+        let isValid = true;
+        
+        if (!usernameInput.value.trim()) {
+          showError(usernameInput, usernameError, 'Username is required');
+          isValid = false;
+        }
+        
+        if (!passwordInput.value) {
+          showError(passwordInput, passwordError, 'Password is required');
+          isValid = false;
+        } else if (passwordInput.value.length < 4) {
+          showError(passwordInput, passwordError, 'Password must be at least 4 characters');
+          isValid = false;
+        }
+        
+        if (!roleSelect.value) {
+          showError(roleSelect, roleError, 'Please select a role');
+          isValid = false;
+        }
+        
+        if (!isValid) {
+          loginBtn.disabled = false;
+          loginBtn.innerHTML = '<i class="fas fa-sign-in-alt" aria-hidden="true"></i> Login';
+          
+          // Focus on first error
+          const firstError = document.querySelector('[aria-invalid="true"]');
+          if (firstError) firstError.focus();
+          
+          return;
+        }
+        
+        // Simulate network delay for better UX
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // Store user info (in production, this would be an API call)
+        const user = {
+          username: usernameInput.value.trim(),
+          role: roleSelect.value,
+          loginTime: new Date().toISOString(),
+          sessionId: Date.now().toString(36) + Math.random().toString(36).substr(2)
+        };
+        
+        localStorage.setItem('chefos_user', JSON.stringify(user));
+        
+        // Log login attempt (in production, this would be sent to a server)
+        console.log('Login attempt:', {
+          username: user.username,
+          role: user.role,
+          time: user.loginTime,
+          userAgent: navigator.userAgent
+        });
+        
+        // Redirect based on role with delay for visual feedback
+        loginBtn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> Login Successful!';
+        
+        setTimeout(() => {
+          switch (user.role) {
+            case 'cashier':
+            case 'manager':
+              window.location.href = 'pos.html';
+              break;
+            case 'chef':
+              window.location.href = 'kds.html';
+              break;
+            default:
+              window.location.href = 'pos.html';
+          }
+        }, 1000);
+      });
+      
+      // Auto-focus username on page load
+      usernameInput.focus();
+      
+      // Handle Enter key for login
+      loginForm.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && e.target.tagName !== 'BUTTON' && e.target.type !== 'submit') {
+          e.preventDefault();
+          const submitBtn = loginForm.querySelector('button[type="submit"]');
+          submitBtn.click();
+        }
+      });
+      
+      // Add keyboard navigation
+      const formElements = loginForm.querySelectorAll('input, select, button');
+      formElements.forEach((element, index) => {
+        element.addEventListener('keydown', (e) => {
+          if (e.key === 'Tab') {
+            // Let browser handle default tab navigation
+            return;
+          }
+          
+          if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            const nextIndex = (index + 1) % formElements.length;
+            formElements[nextIndex].focus();
+          } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            const prevIndex = (index - 1 + formElements.length) % formElements.length;
+            formElements[prevIndex].focus();
+          }
+        });
+      });
+      
+      // Auto-fill demo credentials for testing (remove in production)
+      window.addEventListener('DOMContentLoaded', () => {
+        // Remove this section in production!
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          console.log('Development mode: Auto-filling demo credentials');
+          usernameInput.value = 'demo_user';
+          passwordInput.value = 'demo123';
+          roleSelect.value = 'manager';
+          clearError(usernameInput, usernameError);
+          clearError(passwordInput, passwordError);
+          clearError(roleSelect, roleError);
+        }
+      });
+    })();
   </script>
 </body>
 </html>
