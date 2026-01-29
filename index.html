@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ChefOS POS - Point of Sale System</title>
+  <meta name="description" content="Restaurant Point of Sale System by ChefOS">
   <link rel="stylesheet" href="assets/css/styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -11,19 +12,20 @@
 
 <div class="app-container">
   <!-- SIDEBAR -->
-  <aside class="sidebar">
+  <aside class="sidebar" aria-label="Main navigation">
     <div class="sidebar-header">
-      <h1><i class="fas fa-utensils"></i> ChefOS POS</h1>
+      <h1><i class="fas fa-utensils" aria-hidden="true"></i> ChefOS POS</h1>
     </div>
     
-    <div class="sidebar-nav">
+    <nav class="sidebar-nav" aria-label="Primary navigation">
       <!-- Main Navigation -->
       <div class="nav-section">
+        <h2 class="visually-hidden">Main Menu</h2>
         <h3>Menu</h3>
         <ul class="nav-links">
-          <li><a href="index.html" class="active"><i class="fas fa-cash-register"></i> POS</a></li>
-          <li><a href="orders.html"><i class="fas fa-list"></i> Orders</a></li>
-          <li><a href="kds.html"><i class="fas fa-utensils"></i> ChefOS Line</a></li>
+          <li><a href="index.html" class="active" aria-current="page"><i class="fas fa-cash-register" aria-hidden="true"></i> POS</a></li>
+          <li><a href="orders.html"><i class="fas fa-list" aria-hidden="true"></i> Orders</a></li>
+          <li><a href="kds.html"><i class="fas fa-utensils" aria-hidden="true"></i> ChefOS Line</a></li>
         </ul>
       </div>
       
@@ -31,9 +33,9 @@
       <div class="nav-section">
         <h3>Management</h3>
         <ul class="nav-links">
-          <li><a href="inventory.html"><i class="fas fa-boxes"></i> ChefOS Stock</a></li>
-          <li><a href="reports.html"><i class="fas fa-chart-bar"></i> ChefOS Insights</a></li>
-          <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+          <li><a href="inventory.html"><i class="fas fa-boxes" aria-hidden="true"></i> ChefOS Stock</a></li>
+          <li><a href="reports.html"><i class="fas fa-chart-bar" aria-hidden="true"></i> ChefOS Insights</a></li>
+          <li><a href="settings.html"><i class="fas fa-cog" aria-hidden="true"></i> Settings</a></li>
         </ul>
       </div>
       
@@ -41,130 +43,123 @@
       <div class="nav-section">
         <h3>Quick Categories</h3>
         <ul class="nav-links">
-          <li><a href="#" class="category-link" data-category="breakfast"><i class="fas fa-sun"></i> Breakfast</a></li>
-          <li><a href="#" class="category-link" data-category="main"><i class="fas fa-utensils"></i> Main Course</a></li>
-          <li><a href="#" class="category-link" data-category="salads"><i class="fas fa-leaf"></i> Salads</a></li>
-          <li><a href="#" class="category-link" data-category="desserts"><i class="fas fa-ice-cream"></i> Desserts</a></li>
-          <li><a href="#" class="category-link" data-category="drinks"><i class="fas fa-glass-whiskey"></i> Drinks</a></li>
+          <li><button class="category-link" data-category="breakfast" type="button"><i class="fas fa-sun" aria-hidden="true"></i> Breakfast</button></li>
+          <li><button class="category-link" data-category="main" type="button"><i class="fas fa-utensils" aria-hidden="true"></i> Main Course</button></li>
+          <li><button class="category-link" data-category="salads" type="button"><i class="fas fa-leaf" aria-hidden="true"></i> Salads</button></li>
+          <li><button class="category-link" data-category="desserts" type="button"><i class="fas fa-ice-cream" aria-hidden="true"></i> Desserts</button></li>
+          <li><button class="category-link" data-category="drinks" type="button"><i class="fas fa-glass-whiskey" aria-hidden="true"></i> Drinks</button></li>
         </ul>
       </div>
-    </div>
+    </nav>
     
     <!-- SETTINGS PANEL -->
-    <div class="settings-panel">
+    <div class="settings-panel" role="region" aria-label="Theme settings">
       <div class="theme-toggle">
-        <span><i class="fas fa-moon"></i> Dark Mode</span>
+        <span><i class="fas fa-moon" aria-hidden="true"></i> Dark Mode</span>
         <label class="toggle-switch">
-          <input type="checkbox" id="themeToggle">
-          <span class="toggle-slider"></span>
+          <input type="checkbox" id="themeToggle" aria-label="Toggle dark mode">
+          <span class="toggle-slider" aria-hidden="true"></span>
         </label>
       </div>
     </div>
     
     <!-- HELP CENTER -->
-    <div class="help-center">
-      <h4><i class="fas fa-life-ring"></i> Help Center</h4>
+    <section class="help-center" aria-label="Help and support">
+      <h3><i class="fas fa-life-ring" aria-hidden="true"></i> Help Center</h3>
       <div class="contact-info">
         <a href="mailto:dereck@dereckmungoriwo.online">
-          <i class="fas fa-envelope"></i> dereck@dereckmungoriwo.online
+          <i class="fas fa-envelope" aria-hidden="true"></i> dereck@dereckmungoriwo.online
         </a>
-        <a href="https://wa.me/27717184048" target="_blank">
-          <i class="fab fa-whatsapp"></i> +27 71 718 4048
+        <a href="https://wa.me/27717184048" target="_blank" rel="noopener noreferrer">
+          <i class="fab fa-whatsapp" aria-hidden="true"></i> +27 71 718 4048
         </a>
         <div>
-          <i class="fas fa-clock"></i> 24/7 Support
+          <i class="fas fa-clock" aria-hidden="true"></i> 24/7 Support
         </div>
       </div>
-    </div>
+    </section>
     
     <a href="login.html" class="logout-btn">
-      <i class="fas fa-sign-out-alt"></i> Logout
+      <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Logout
     </a>
   </aside>
 
-<!-- MAIN CONTENT -->
-<main class="main-content">
-
-  <!-- TOP BAR -->
-  <header class="top-bar">
-
-    <div class="header-left">
-      <h2 class="app-title">ChefOS Control Panel</h2>
-      <p class="header-motto">Precision • Speed • Control</p>
-    </div>
-
-    <div class="header-right">
-
-      <!-- Time Display -->
-<div class="time-display" aria-live="polite">
-  <svg class="clock-icon" viewBox="0 0 24 24" aria-hidden="true">
-    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/>
-    <path d="M12 7v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  </svg>
-  <span id="clockText">Loading time...</span>
-</div>
-
-      <!-- User Info -->
-      <div class="user-info">
-        <div class="user-avatar" aria-label="User initials">DM</div>
-        <div class="user-meta">
-          <div class="user-name">Dereck Mungoriwo</div>
-          <div class="user-role">Manager</div>
-        </div>
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+    <!-- TOP BAR -->
+    <header class="top-bar" role="banner">
+      <div class="header-left">
+        <h1 class="app-title">ChefOS Control Panel</h1>
+        <p class="header-motto">Precision • Speed • Control</p>
       </div>
 
-    </div>
+      <div class="header-right">
+        <!-- Time Display -->
+        <div class="time-display" aria-live="polite">
+          <svg class="clock-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/>
+            <path d="M12 7v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <time id="clockText" datetime="">Loading time...</time>
+        </div>
 
-  </header>
-
-</main>
+        <!-- User Info -->
+        <div class="user-info">
+          <div class="user-avatar" aria-label="User avatar">DM</div>
+          <div class="user-meta">
+            <div class="user-name">Dereck Mungoriwo</div>
+            <div class="user-role">Manager</div>
+          </div>
+        </div>
+      </div>
+    </header>
 
     <!-- POS LAYOUT -->
-    <main class="pos-layout">
-      <section class="menu-area">
-        <h2><i class="fas fa-utensils"></i> Menu</h2>
+    <main class="pos-layout" id="main-content">
+      <section class="menu-area" aria-labelledby="menu-heading">
+        <h2 id="menu-heading"><i class="fas fa-utensils" aria-hidden="true"></i> Menu</h2>
         
         <!-- Category Tabs -->
-        <div class="category-tabs">
-          <button class="category-tab active" data-category="breakfast">
-            <i class="fas fa-sun"></i> Breakfast
+        <div class="category-tabs" role="tablist" aria-label="Menu categories">
+          <button class="category-tab active" data-category="breakfast" role="tab" aria-selected="true" aria-controls="menu">
+            <i class="fas fa-sun" aria-hidden="true"></i> Breakfast
           </button>
-          <button class="category-tab" data-category="main">
-            <i class="fas fa-utensils"></i> Main Course
+          <button class="category-tab" data-category="main" role="tab" aria-selected="false" aria-controls="menu">
+            <i class="fas fa-utensils" aria-hidden="true"></i> Main Course
           </button>
-          <button class="category-tab" data-category="salads">
-            <i class="fas fa-leaf"></i> Salads
+          <button class="category-tab" data-category="salads" role="tab" aria-selected="false" aria-controls="menu">
+            <i class="fas fa-leaf" aria-hidden="true"></i> Salads
           </button>
-          <button class="category-tab" data-category="desserts">
-            <i class="fas fa-ice-cream"></i> Desserts
+          <button class="category-tab" data-category="desserts" role="tab" aria-selected="false" aria-controls="menu">
+            <i class="fas fa-ice-cream" aria-hidden="true"></i> Desserts
           </button>
-          <button class="category-tab" data-category="drinks">
-            <i class="fas fa-glass-whiskey"></i> Drinks
+          <button class="category-tab" data-category="drinks" role="tab" aria-selected="false" aria-controls="menu">
+            <i class="fas fa-glass-whiskey" aria-hidden="true"></i> Drinks
           </button>
         </div>
         
-        <!-- Menu Grid (3x2 = 6 items per category) -->
-        <div id="menu" class="menu-grid">
+        <!-- Menu Grid -->
+        <div id="menu" class="menu-grid" role="tabpanel" aria-labelledby="menu-heading">
           <!-- Menu items will be loaded here by JavaScript -->
         </div>
       </section>
 
-      <aside class="order-area">
-        <h2><i class="fas fa-shopping-cart"></i> Current Order</h2>
-        <div id="cart" class="cart-items">
+      <aside class="order-area" aria-labelledby="order-heading">
+        <h2 id="order-heading"><i class="fas fa-shopping-cart" aria-hidden="true"></i> Current Order</h2>
+        <div id="cart" class="cart-items" role="region" aria-label="Order items">
           <!-- Order items will appear here -->
         </div>
         
         <div class="order-summary">
-          <h3 id="total">Total: R0.00</h3>
+          <h3 id="total" aria-live="polite" aria-atomic="true">Total: R0.00</h3>
           
           <label for="tableNumber">
-            <i class="fas fa-chair"></i> Table Number
+            <i class="fas fa-chair" aria-hidden="true"></i> Table Number
           </label>
-          <input id="tableNumber" type="number" min="1" placeholder="Enter table number" />
+          <input id="tableNumber" type="number" min="1" max="100" placeholder="Enter table number" aria-label="Table number" />
           
           <button id="placeOrder" class="place-order-btn">
-            <i class="fas fa-paper-plane"></i> Send to Kitchen
+            <i class="fas fa-paper-plane" aria-hidden="true"></i> Send to Kitchen
           </button>
         </div>
       </aside>
@@ -180,49 +175,92 @@
 <!-- Theme toggle and time script -->
 <script>
   // Theme Toggle
-  const themeToggle = document.getElementById('themeToggle');
-  const currentTime = document.getElementById('currentTime');
-  
-  // Check for saved theme
-  if (localStorage.getItem('theme') === 'dark') {
-    document.body.classList.add('dark-theme');
-    themeToggle.checked = true;
-  }
-  
-  // Theme toggle event
-  themeToggle.addEventListener('change', function() {
-    if (this.checked) {
+  document.addEventListener('DOMContentLoaded', function() {
+    const themeToggle = document.getElementById('themeToggle');
+    const clockText = document.getElementById('clockText');
+    
+    // Check for saved theme
+    if (localStorage.getItem('theme') === 'dark') {
       document.body.classList.add('dark-theme');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.body.classList.remove('dark-theme');
-      localStorage.setItem('theme', 'light');
+      if (themeToggle) themeToggle.checked = true;
     }
+    
+    // Theme toggle event
+    if (themeToggle) {
+      themeToggle.addEventListener('change', function() {
+        if (this.checked) {
+          document.body.classList.add('dark-theme');
+          localStorage.setItem('theme', 'dark');
+        } else {
+          document.body.classList.remove('dark-theme');
+          localStorage.setItem('theme', 'light');
+        }
+      });
+    }
+    
+    // Update time display
+    function updateTime() {
+      const now = new Date();
+      const dateTimeString = now.toISOString();
+      const formattedDate = now.toLocaleString('en-US', { 
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      });
+      
+      if (clockText) {
+        clockText.textContent = formattedDate;
+        clockText.setAttribute('datetime', dateTimeString);
+      }
+    }
+    
+    updateTime();
+    setInterval(updateTime, 1000);
+    
+    // Add keyboard navigation for category tabs
+    const categoryTabs = document.querySelectorAll('.category-tab');
+    categoryTabs.forEach((tab, index) => {
+      tab.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          const nextTab = categoryTabs[(index + 1) % categoryTabs.length];
+          nextTab.focus();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          const prevTab = categoryTabs[(index - 1 + categoryTabs.length) % categoryTabs.length];
+          prevTab.focus();
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          categoryTabs[0].focus();
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          categoryTabs[categoryTabs.length - 1].focus();
+        }
+      });
+    });
   });
   
-  // Update time display
-document.addEventListener("DOMContentLoaded", () => {
-  const clockText = document.getElementById("clockText");
-
-  function updateTime() {
-    const now = new Date();
-    const options = { 
-      weekday: 'short',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    };
-
-    clockText.textContent = now.toLocaleString('en-US', options);
-  }
-
-  updateTime();
-  setInterval(updateTime, 1000);
-});
+  // CSS for visually hidden elements (add to your styles.css)
+  const style = document.createElement('style');
+  style.textContent = `
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  `;
+  document.head.appendChild(style);
 </script>
 </body>
 </html>
