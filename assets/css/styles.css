@@ -2440,7 +2440,7 @@ input:checked + .toggle-slider {
 
 /* Styling to match the .view-btn design */
 .status-badge.status-completed {
-    background-color: var(--green); /* Uses your main green theme color */
+    background-color: #2D6A4F !important;
     color: white;
     padding: 8px 15px;
     border-radius: 6px;
