@@ -8,7 +8,7 @@ const menuItems = [
   {
     id: "pancakes",
     name: "Classic Pancakes",
-    description: "Fluffy pancakes with maple syrup",
+    description: "Fluffy pancakes with netella and berries",
     price: 65,
     category: "Breakfast",
     image: "assets/images/pancakes.jpg",
@@ -17,7 +17,7 @@ const menuItems = [
   {
     id: "eggs_benedict",
     name: "Eggs Benedict",
-    description: "Poached eggs with hollandaise",
+    description: "Salmom and Poached eggs with hollandaise",
     price: 95,
     category: "Breakfast",
     image: "assets/images/eggs-benedict.jpg",
@@ -26,11 +26,11 @@ const menuItems = [
   {
     id: "breakfast_burrito",
     name: "Breakfast Burrito",
-    description: "Eggs, bacon, cheese in tortilla",
+    description: "beef strips, fresh parsley, tahini sauce in tortilla",
     price: 75,
     category: "Breakfast",
     image: "assets/images/breakfast-burrito.jpg",
-    ingredients: { eggs: 2, tortilla: 1, bacon: 2, cheese: 1 }
+    ingredients: { beef: 2, tortilla: 1, bacon: 2, cheese: 1 }
   },
   {
     id: "french_toast",
