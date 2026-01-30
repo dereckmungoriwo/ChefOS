@@ -2438,3 +2438,23 @@ input:checked + .toggle-slider {
   border-color: rgba(45,201,168,0.15);
 }
 
+/* Styling to match the .view-btn design */
+.status-badge.status-completed {
+    background-color: var(--primary); /* Uses your main green theme color */
+    color: white;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 90px;
+    transition: var(--transition);
+}
+
+/* Optional: Slight hover effect to match buttons */
+.status-badge.status-completed:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
