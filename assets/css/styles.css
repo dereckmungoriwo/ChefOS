@@ -2458,3 +2458,39 @@ input:checked + .toggle-slider {
     transform: translateY(-2px);
     box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 }
+
+/* Base styling for all status badges to match the 'View' button design */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 90px;
+    text-align: center;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+/* Specific Colors */
+.status-completed, .status-good {
+    background-color: #008000 !important;
+    color: white !important;
+}
+
+.status-pending, .status-low {
+    background-color: #f6ad55 !important; /* Professional Amber/Orange */
+    color: #fff !important;
+}
+
+.status-preparing {
+    background-color: #4299e1 !important; /* Soft Blue */
+    color: white !important;
+}
+
+.status-ready {
+    background-color: #48bb78 !important; /* Success Green */
+    color: white !important;
+}
