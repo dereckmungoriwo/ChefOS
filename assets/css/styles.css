@@ -2500,8 +2500,7 @@ input:checked + .toggle-slider {
 .nav-links i, 
 .quick-categories i, 
 .order-filters i, 
-.inventory-stats i,
-.top-bar .clock-icon {
+.inventory-stats i {
     color: #FFD700 !important; /* Vibrant Gold/Yellow */
 }
 
