@@ -352,7 +352,7 @@ if (!document.getElementById('toast-styles')) {
     /* ---- Menu search bar ---- */
     .menu-search-box {
       position: relative;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
     .menu-search-box > i {
       position: absolute;
