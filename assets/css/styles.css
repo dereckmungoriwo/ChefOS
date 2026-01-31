@@ -2498,10 +2498,9 @@ input:checked + .toggle-slider {
 /* Target Sidebar and Category Icons */
 .sidebar-nav i, 
 .nav-links i, 
-.quick-categories i, 
 .order-filters i, 
 .inventory-stats i,
-.side-bar .dark mode-icon {
+.dark mode-icon {
     color: #FFD700 !important; /* Vibrant Gold/Yellow */
 }
 
