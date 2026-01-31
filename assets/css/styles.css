@@ -2536,3 +2536,63 @@ input:checked + .toggle-slider {
 .sidebar-header h1 i {
     color: #FFD700 !important;
 }
+
+/* Expand sidebar width slightly to accommodate longer text */
+.sidebar {
+    width: 280px; /* Increased from 240px/260px */
+    padding: 20px 15px;
+}
+
+/* Fix Help Center container and overlapping text */
+.help-center {
+    width: 100%;
+    overflow: hidden; /* Prevents text from spilling out */
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+}
+
+.help-center .contact-info a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem; /* Slightly smaller to fit the long email */
+    word-break: break-all; /* Ensures email breaks correctly if still too long */
+    margin-bottom: 8px;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.settings-panel {
+    padding: 10px 15px;
+    margin-bottom: 20px;
+}
+
+.theme-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; /* Ensures it uses the full sidebar width */
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: 10px;
+}
+
+/* Target the icon to ensure it stays on the left */
+.theme-toggle span {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #FFD700; /* Matching your yellow icon theme */
+}
+
+/* Make the toggle slider a bit longer */
+.toggle-switch {
+    width: 50px; /* Increased width */
+    height: 24px;
+}
+
+.toggle-slider:before {
+    height: 18px;
+    width: 18px;
+}
