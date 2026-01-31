@@ -2543,56 +2543,73 @@ input:checked + .toggle-slider {
     padding: 20px 15px;
 }
 
-/* Fix Help Center container and overlapping text */
+/* Sidebar Layout Alignment */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 15px; /* Sets the standard gap from the sidebar edges */
+    gap: 15px;
+    width: 280px; /* Ensure this matches your layout's sidebar width */
+}
+
+/* Force all containers to be the same width and shape */
+.sidebar-header, 
+.settings-panel, 
+.help-center, 
+.logout-btn {
+    width: 100% !important;
+    border-radius: 12px !important; /* Uniform rounded corners */
+    padding: 15px !important;
+    box-sizing: border-box !important; /* Critical: keeps padding INSIDE the width */
+}
+
+/* Specific Fix for the Help Center Overlap */
 .help-center {
-    width: 100%;
-    overflow: hidden; /* Prevents text from spilling out */
-    padding: 15px;
     background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
+    margin-top: auto; /* Pushes containers toward the bottom */
 }
 
 .help-center .contact-info a {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 0.85rem; /* Slightly smaller to fit the long email */
-    word-break: break-all; /* Ensures email breaks correctly if still too long */
-    margin-bottom: 8px;
     color: #ffffff;
     text-decoration: none;
+    font-size: 0.85rem;
+    word-break: break-all; /* Fixes the long email address overlap */
+    line-height: 1.4;
+}
+
+/* Align the Logout Button */
+.logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff !important;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 5px;
 }
 
 .settings-panel {
-    padding: 10px 15px;
-    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .theme-toggle {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Pins text to left, toggle to right */
+    width: 100%;
     align-items: center;
-    width: 100%; /* Ensures it uses the full sidebar width */
-    background: rgba(255, 255, 255, 0.05);
-    padding: 12px;
-    border-radius: 10px;
 }
 
-/* Target the icon to ensure it stays on the left */
 .theme-toggle span {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #FFD700; /* Matching your yellow icon theme */
 }
 
-/* Make the toggle slider a bit longer */
-.toggle-switch {
-    width: 50px; /* Increased width */
-    height: 24px;
-}
-
-.toggle-slider:before {
-    height: 18px;
-    width: 18px;
+/* Ensure your moon icon is yellow to match the brand */
+.theme-toggle i {
+    color: #FFD700 !important;
 }
