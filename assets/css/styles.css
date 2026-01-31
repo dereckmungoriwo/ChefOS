@@ -2495,15 +2495,6 @@ input:checked + .toggle-slider {
     color: white !important;
 }
 
-/* Target Sidebar and Category Icons */
-.sidebar-nav i, 
-.nav-links i, 
-.order-filters i, 
-.inventory-stats i,
-.dark mode-icon {
-    color: #FFD700 !important; /* Vibrant Gold/Yellow */
-}
-
 /* ================== UNIFIED SIDEBAR LAYOUT ================== */
 .sidebar {
   width: 280px; /* Slightly wider to accommodate text comfortably */
@@ -2544,15 +2535,6 @@ input:checked + .toggle-slider {
 .sidebar-nav {
   padding: 10px 0; /* Remove side padding, use sidebar's padding instead */
   flex-grow: 1;
-}
-
-/* ACTIVE LINK GLOW EFFECT */
-.nav-links a.active {
-  background: var(--primary-light, rgba(255,255,255,0.15));
-  border-left: 4px solid #FFD700; /* Yellow accent */
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); /* Subtle Yellow Glow */
-  color: white;
-  font-weight: 600;
 }
 
 /* HELP CENTER - Fixing text overlap */
