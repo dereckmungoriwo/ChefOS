@@ -2504,47 +2504,83 @@ input:checked + .toggle-slider {
     color: #FFD700 !important; /* Vibrant Gold/Yellow */
 }
 
-/* Sidebar Standard Width & Alignment */
+/* ================== UNIFIED SIDEBAR LAYOUT ================== */
 .sidebar {
-    display: flex;
-    flex-direction: column;
-    padding: 20px 15px; /* Standard spacing from sidebar edges */
-    gap: 15px;
+  width: 280px; /* Slightly wider to accommodate text comfortably */
+  background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+  z-index: 100;
+  transition: var(--transition);
+  overflow-y: auto;
+  /* Standardized outer spacing for all internal elements */
+  padding: 20px 15px; 
+  box-sizing: border-box;
 }
 
-/* Force all containers to match the top header's width and shape */
+/* Force Header, Settings, Help, and Logout to the same width/track */
 .sidebar-header, 
 .settings-panel, 
 .help-center, 
 .logout-btn {
-    width: 100% !important; /* Forces stretch to match header width */
-    border-radius: 12px !important; /* Uniform rounded corners */
-    padding: 15px !important;
-    box-sizing: border-box !important; /* Keeps padding inside the width */
-    display: flex;
-    flex-direction: column;
+  width: 100% !important;
+  border-radius: 12px !important; /* Unified rounded corners */
+  padding: 15px !important;
+  margin: 0 0 15px 0 !important; /* Standardized bottom spacing */
+  box-sizing: border-box !important; /* Keeps padding inside the width */
+  background: rgba(0,0,0,0.15); /* Consistent panel background */
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Specific styling for Help Center panel */
-.help-center {
-    background: rgba(255, 255, 255, 0.05);
-    margin-top: auto; /* Keeps it at the bottom above logout */
-    border: 1px solid rgba(255, 255, 255, 0.1);
+/* SIDEBAR HEADER - No longer needs separate margin/padding */
+.sidebar-header {
+  background: rgba(0,0,0,0.2) !important;
+  border-bottom: none !important;
 }
 
-/* Standardized Logout button */
+/* NAVIGATION - Matches the width of the panels */
+.sidebar-nav {
+  padding: 10px 0; /* Remove side padding, use sidebar's padding instead */
+  flex-grow: 1;
+}
+
+/* ACTIVE LINK GLOW EFFECT */
+.nav-links a.active {
+  background: var(--primary-light, rgba(255,255,255,0.15));
+  border-left: 4px solid #FFD700; /* Yellow accent */
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); /* Subtle Yellow Glow */
+  color: white;
+  font-weight: 600;
+}
+
+/* HELP CENTER - Fixing text overlap */
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  word-break: break-all; /* Prevents long text from spilling out */
+}
+
+.contact-info a, .contact-info div {
+  margin: 0;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* LOGOUT - Now looks like a panel button */
 .logout-btn {
-    flex-direction: row; /* Overrides column for the button text/icon */
-    justify-content: center;
-    gap: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    color: #ffffff !important;
-    text-decoration: none;
-    font-weight: 600;
-    margin-top: 5px;
-    transition: all 0.3s ease;
+  margin-top: auto !important; /* Pushes to bottom */
+  background: rgba(231,76,60,0.15) !important;
+  border: 1px solid rgba(231,76,60,0.2) !important;
+  justify-content: center;
+  color: #ff7675 !important;
 }
 
 .logout-btn:hover {
-    background: #e74c3c; /* Red highlight on hover */
+  background: rgba(231,76,60,0.3) !important;
+  color: white !important;
 }
