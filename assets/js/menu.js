@@ -17,15 +17,100 @@ function initializeSystem() {
   }
 
   setupCategoryTabs();
+  setupSearchBar();
   setupSidebarLinks();
   loadMenu('breakfast'); // Load breakfast by default
   updateCartDisplay();
+}
+
+/* ================= SEARCH BAR ================= */
+function setupSearchBar() {
+  const searchInput = document.getElementById('menuSearchInput');
+  const searchClear  = document.getElementById('menuSearchClear');
+  if (!searchInput) return;
+
+  searchInput.addEventListener('input', function () {
+    const q = this.value.trim();
+    searchClear.style.display = q ? 'flex' : 'none';
+
+    if (q.length === 0) {
+      // nothing typed → restore current category view
+      const activeTab = document.querySelector('.category-tab.active');
+      loadMenu(activeTab ? activeTab.dataset.category : 'breakfast');
+    } else {
+      searchMenu(q);
+    }
+  });
+
+  searchClear.addEventListener('click', function () {
+    searchInput.value = '';
+    searchClear.style.display = 'none';
+    const activeTab = document.querySelector('.category-tab.active');
+    loadMenu(activeTab ? activeTab.dataset.category : 'breakfast');
+  });
+}
+
+function searchMenu(query) {
+  const menuDiv = document.getElementById('menu');
+  if (!menuDiv) return;
+
+  const q = query.toLowerCase();
+  const results = menuItems.filter(item =>
+    item.name.toLowerCase().includes(q) ||
+    (item.description && item.description.toLowerCase().includes(q))
+  );
+
+  menuDiv.innerHTML = '';
+
+  if (results.length === 0) {
+    menuDiv.innerHTML = `
+      <div class="no-items-message">
+        <i class="fas fa-search fa-3x"></i>
+        <p>No items match "<strong>${query}</strong>"</p>
+      </div>
+    `;
+    return;
+  }
+
+  results.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'menu-item';
+
+    const inventory = JSON.parse(localStorage.getItem("chefos_inventory")) || {};
+    let canOrder = true;
+    if (item.ingredients) {
+      for (let [ingredient, qty] of Object.entries(item.ingredients)) {
+        if ((inventory[ingredient] || 0) < qty) { canOrder = false; break; }
+      }
+    }
+
+    div.innerHTML = `
+      <div class="menu-item-image">
+        <img src="${item.image}" alt="${item.name}" onerror="this.parentElement.innerHTML='<div class=\\'item-image-placeholder\\'><i class=\\'fas fa-utensils\\'></i></div>'">
+      </div>
+      <div class="menu-item-content">
+        <h4>${item.name}</h4>
+        <p>${item.description || ''}</p>
+        <div class="price">R${item.price.toFixed(2)}</div>
+        <button onclick="addToCart('${item.id}')" ${!canOrder ? 'disabled' : ''}>
+          <i class="fas fa-${canOrder ? 'plus' : 'times'}"></i> ${canOrder ? 'ADD TO CART' : 'OUT OF STOCK'}
+        </button>
+      </div>
+    `;
+    menuDiv.appendChild(div);
+  });
 }
 
 /* ================= CATEGORY UI ================= */
 function setupCategoryTabs() {
   document.querySelectorAll('.category-tab').forEach(tab => {
     tab.addEventListener('click', function () {
+      // clear search when a tab is clicked
+      const searchInput = document.getElementById('menuSearchInput');
+      const searchClear  = document.getElementById('menuSearchClear');
+      if (searchInput) { searchInput.value = ''; }
+      if (searchClear)  { searchClear.style.display = 'none'; }
+
       document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
       this.classList.add('active');
       loadMenu(this.dataset.category);
@@ -235,7 +320,7 @@ function showToast(message) {
   }, 2000);
 }
 
-// Add toast styles if not already in CSS
+// Add toast + search-bar styles if not already in CSS
 if (!document.getElementById('toast-styles')) {
   const style = document.createElement('style');
   style.id = 'toast-styles';
@@ -262,6 +347,61 @@ if (!document.getElementById('toast-styles')) {
     }
     .toast-notification i {
       font-size: 20px;
+    }
+
+    /* ---- Menu search bar ---- */
+    .menu-search-box {
+      position: relative;
+      margin-bottom: 15px;
+    }
+    .menu-search-box > i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray);
+      font-size: 15px;
+      pointer-events: none;
+    }
+    .menu-search-box input {
+      width: 100%;
+      padding: 11px 40px 11px 42px;
+      border: 1px solid var(--gray-light);
+      border-radius: 9px;
+      font-size: 14px;
+      background: var(--white);
+      color: var(--dark);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .menu-search-box input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(30,111,92,0.15);
+    }
+    .menu-search-box input::placeholder {
+      color: var(--gray);
+    }
+    .search-clear-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--gray);
+      font-size: 14px;
+      cursor: pointer;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.2s, color 0.2s;
+    }
+    .search-clear-btn:hover {
+      background: var(--gray-light);
+      color: var(--dark);
     }
   `;
   document.head.appendChild(style);
