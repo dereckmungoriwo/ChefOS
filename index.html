@@ -39,19 +39,6 @@
         </ul>
       </div>
       
-      <!-- Category Quick Links -->
-      <div class="nav-section">
-        <h3>Quick Categories</h3>
-        <ul class="nav-links">
-          <li><button class="category-link" data-category="breakfast" type="button"><i class="fas fa-sun" aria-hidden="true"></i> Breakfast</button></li>
-          <li><button class="category-link" data-category="main" type="button"><i class="fas fa-utensils" aria-hidden="true"></i> Main Course</button></li>
-          <li><button class="category-link" data-category="salads" type="button"><i class="fas fa-leaf" aria-hidden="true"></i> Salads</button></li>
-          <li><button class="category-link" data-category="desserts" type="button"><i class="fas fa-ice-cream" aria-hidden="true"></i> Desserts</button></li>
-          <li><button class="category-link" data-category="drinks" type="button"><i class="fas fa-glass-whiskey" aria-hidden="true"></i> Drinks</button></li>
-        </ul>
-      </div>
-    </nav>
-    
     <!-- SETTINGS PANEL -->
     <div class="settings-panel" role="region" aria-label="Theme settings">
       <div class="theme-toggle">
@@ -118,6 +105,15 @@
     <main class="pos-layout" id="main-content">
       <section class="menu-area" aria-labelledby="menu-heading">
         <h2 id="menu-heading"><i class="fas fa-utensils" aria-hidden="true"></i> Menu</h2>
+
+              <!-- Search Bar -->
+        <div class="menu-search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" id="menuSearchInput" placeholder="Search menu items..." autocomplete="off">
+          <button id="menuSearchClear" class="search-clear-btn" style="display:none;">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
         
         <!-- Category Tabs -->
         <div class="category-tabs" role="tablist" aria-label="Menu categories">
