@@ -2537,79 +2537,47 @@ input:checked + .toggle-slider {
     color: #FFD700 !important;
 }
 
-/* Expand sidebar width slightly to accommodate longer text */
-.sidebar {
-    width: 280px; /* Increased from 240px/260px */
-    padding: 20px 15px;
-}
-
-/* Sidebar Layout Alignment */
+/* Sidebar Standard Width & Alignment */
 .sidebar {
     display: flex;
     flex-direction: column;
-    padding: 20px 15px; /* Sets the standard gap from the sidebar edges */
+    padding: 20px 15px; /* Standard spacing from sidebar edges */
     gap: 15px;
-    width: 280px; /* Ensure this matches your layout's sidebar width */
 }
 
-/* Force all containers to be the same width and shape */
+/* Force all containers to match the top header's width and shape */
 .sidebar-header, 
 .settings-panel, 
 .help-center, 
 .logout-btn {
-    width: 100% !important;
+    width: 100% !important; /* Forces stretch to match header width */
     border-radius: 12px !important; /* Uniform rounded corners */
     padding: 15px !important;
-    box-sizing: border-box !important; /* Critical: keeps padding INSIDE the width */
+    box-sizing: border-box !important; /* Keeps padding inside the width */
+    display: flex;
+    flex-direction: column;
 }
 
-/* Specific Fix for the Help Center Overlap */
+/* Specific styling for Help Center panel */
 .help-center {
     background: rgba(255, 255, 255, 0.05);
-    margin-top: auto; /* Pushes containers toward the bottom */
+    margin-top: auto; /* Keeps it at the bottom above logout */
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.help-center .contact-info a {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #ffffff;
-    text-decoration: none;
-    font-size: 0.85rem;
-    word-break: break-all; /* Fixes the long email address overlap */
-    line-height: 1.4;
-}
-
-/* Align the Logout Button */
+/* Standardized Logout button */
 .logout-btn {
-    display: flex;
-    align-items: center;
+    flex-direction: row; /* Overrides column for the button text/icon */
     justify-content: center;
+    gap: 10px;
     background: rgba(255, 255, 255, 0.1);
     color: #ffffff !important;
     text-decoration: none;
     font-weight: 600;
     margin-top: 5px;
+    transition: all 0.3s ease;
 }
 
-.settings-panel {
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.theme-toggle {
-    display: flex;
-    justify-content: space-between; /* Pins text to left, toggle to right */
-    width: 100%;
-    align-items: center;
-}
-
-.theme-toggle span {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-/* Ensure your moon icon is yellow to match the brand */
-.theme-toggle i {
-    color: #FFD700 !important;
+.logout-btn:hover {
+    background: #e74c3c; /* Red highlight on hover */
 }
