@@ -362,6 +362,7 @@ if (!document.getElementById('toast-styles')) {
       top: 50%;
       transform: translateY(-50%);
       color: var(--primary);
+      border color: var(--primary) !important;
       font-size: 15px;
       pointer-events: none;
     }
