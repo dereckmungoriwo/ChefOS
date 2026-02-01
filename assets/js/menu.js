@@ -353,13 +353,14 @@ if (!document.getElementById('toast-styles')) {
     .menu-search-box {
       position: relative;
       margin-bottom: 20px;
+      border: var(--primary);
     }
     .menu-search-box > i {
       position: absolute;
       left: 14px;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--gray);
+      color: var(--primary);
       font-size: 15px;
       pointer-events: none;
     }
