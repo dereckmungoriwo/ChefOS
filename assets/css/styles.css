@@ -2568,36 +2568,10 @@ input:checked + .toggle-slider {
 }
 
 .sidebar-header {
-    /* Use the same background logic as your other panels */
-    background: rgba(0, 0, 0, 0.2) !important; 
-    border: 1px solid rgba(255, 215, 0, 0.2) !important; /* Subtle yellow border accent */
-    
-    /* Ensure alignment matches your standard sidebar track */
-    width: 100% !important;
-    padding: 20px 15px !important;
-    border-radius: 12px !important;
-    box-sizing: border-box !important;
-    
-    /* Improve brand presence */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    margin-bottom: 25px !important;
-}
-
-.sidebar-header h1 {
-    font-size: 20px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: #ffffff;
-    margin: 0;
-}
-
-.sidebar-header h1 i {
-    font-size: 28px;
-    color: #FFD700 !important; /* Force the yellow theme for the logo */
-    margin-bottom: 8px; /* Places icon above text for a 'Logo' feel */
-    display: block;
+  /* Use the same background logic as your other panels */
+  background: rgba(0,0,0,0.15) !important;
+  padding: 18px;
+  margin: 0 20px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
 }
