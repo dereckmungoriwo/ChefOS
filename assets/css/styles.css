@@ -81,7 +81,10 @@ body {
 .sidebar-header {
   padding: 25px 20px;
   border-bottom: 1px solid rgba(255,255,255,0.15);
-  background: rgba(0,0,0,0.1);
+  background: rgba(0,0,0,0.15) !important;
+  margin: 0 20px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
 .sidebar-header h1 {
@@ -374,8 +377,8 @@ input:checked + .toggle-slider:before {
 }
 
 .clock-icon {
-    width: 16px !important;
-    height: 16px !important;
+    width: 14px !important;
+    height: 14px !important;
     flex-shrink: 0;
 }
 
@@ -2495,43 +2498,125 @@ input:checked + .toggle-slider {
     color: white !important;
 }
 
-/* Target Sidebar and Category Icons */
-.sidebar-nav i, 
-.nav-links i, 
-.order-filters i, 
-.inventory-stats i,
-.dark mode-icon {
-    color: #FFD700 !important; /* Vibrant Gold/Yellow */
+/* ================== UNIFIED SIDEBAR LAYOUT ================== */
+.sidebar {
+  width: 280px; /* Slightly wider to accommodate text comfortably */
+  background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+  z-index: 100;
+  transition: var(--transition);
+  overflow-y: auto;
+  /* Standardized outer spacing for all internal elements */
+  padding: 20px 15px; 
+  box-sizing: border-box;
 }
 
-/* Target the Cart Icon specifically */
-.current-order i.fa-shopping-cart, 
-.cart-header i {
-    color: #FFD700 !important;
+/* Force Header, Settings, Help, and Logout to the same width/track */
+.sidebar-header, 
+.settings-panel, 
+.help-center, 
+.logout-btn {
+  width: 100% !important;
+  border-radius: 12px !important; /* Unified rounded corners */
+  padding: 15px !important;
+  margin: 0 0 15px 0 !important; /* Standardized bottom spacing */
+  box-sizing: border-box !important; /* Keeps padding inside the width */
+  background: rgba(0,0,0,0.15); /* Consistent panel background */
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Ensure active menu items maintain readable text */
-.nav-links li a.active {
-    color: #ffffff !important; /* Keeps text white */
+/* SIDEBAR HEADER - No longer needs separate margin/padding */
+.sidebar-header {
+  background: rgba(0,0,0,0.2) !important;
+  border-bottom: none !important;
 }
 
-.nav-links li a.active i {
-    color: #FFD700 !important; /* Keeps icon yellow even when active */
+/* NAVIGATION - Matches the width of the panels */
+.sidebar-nav {
+  padding: 10px 0; /* Remove side padding, use sidebar's padding instead */
+  flex-grow: 1;
 }
 
-/* POS Category Buttons Icons */
-.category-btn i, 
-.filter-btn i {
-    color: #FFD700 !important;
-    margin-right: 8px;
+/* HELP CENTER - Fixing text overlap */
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  word-break: break-all; /* Prevents long text from spilling out */
 }
 
-/* If you want the category text to be yellow ONLY when active */
-.category-btn.active {
-    color: #FFD700 !important;
-    border-color: #FFD700 !important;
+.contact-info a, .contact-info div {
+  margin: 0;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* LOGOUT - Now looks like a panel button */
+.logout-btn {
+  margin-top: auto !important; /* Pushes to bottom */
+  background: rgba(231,76,60,0.15) !important;
+  border: 1px solid rgba(231,76,60,0.2) !important;
+  justify-content: center;
+  color: #ff7675 !important;
+}
+
+.logout-btn:hover {
+  background: rgba(231,76,60,0.3) !important;
+  color: white !important;
+}
+
+/* Update the Top Bar height constraints */
+.top-bar {
+    min-height: 80px; /* Ensures enough space for your new centered clock */
+    padding: 15px 25px;
+    z-index: 10; /* Keeps it above the scrollable menu */
+}
+
+/* Adjust POS Layout to match the new header height */
+.pos-layout {
+    height: calc(100vh - 80px); /* Matches min-height of top-bar */
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.sidebar-header {
+    background: rgba(0, 0, 0, 0.2) !important; 
+    border: 1px solid rgba(255, 215, 0, 0.3) !important; /* Subtle gold border */
+    display: flex;
+    flex-direction: column; /* Stack icon on top of text */
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 25px 15px !important;
+    margin-bottom: 25px !important;
+}
+
+.sidebar-header h1 {
+    flex-direction: column; /* Stack the icon and text */
+    gap: 8px;
+    font-size: 20px;
 }
 
 .sidebar-header h1 i {
-    color: #FFD700 !important;
+    font-size: 32px; /* Large, bold brand icon */
+    color: var(--secondary) !important;
+    margin-bottom: 5px;
+}
+
+.nav-links a.active {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: white !important;
+    border-left: 4px solid var(--secondary) !important;
+    font-weight: 700;
+    /* The Glow Effect */
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); 
+    transform: translateX(5px);
 }
