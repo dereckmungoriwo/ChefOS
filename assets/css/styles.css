@@ -81,10 +81,7 @@ body {
 .sidebar-header {
   padding: 25px 20px;
   border-bottom: 1px solid rgba(255,255,255,0.15);
-  background: rgba(0,0,0,0.15) !important;
-  margin: 0 20px 20px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.1);
 }
 
 .sidebar-header h1 {
@@ -377,8 +374,8 @@ input:checked + .toggle-slider:before {
 }
 
 .clock-icon {
-    width: 14px !important;
-    height: 14px !important;
+    width: 16px !important;
+    height: 16px !important;
     flex-shrink: 0;
 }
 
