@@ -2569,3 +2569,54 @@ input:checked + .toggle-slider {
   background: rgba(231,76,60,0.3) !important;
   color: white !important;
 }
+
+/* Update the Top Bar height constraints */
+.top-bar {
+    min-height: 80px; /* Ensures enough space for your new centered clock */
+    padding: 15px 25px;
+    z-index: 10; /* Keeps it above the scrollable menu */
+}
+
+/* Adjust POS Layout to match the new header height */
+.pos-layout {
+    height: calc(100vh - 80px); /* Matches min-height of top-bar */
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.sidebar-header {
+    background: rgba(0, 0, 0, 0.2) !important; 
+    border: 1px solid rgba(255, 215, 0, 0.3) !important; /* Subtle gold border */
+    display: flex;
+    flex-direction: column; /* Stack icon on top of text */
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 25px 15px !important;
+    margin-bottom: 25px !important;
+}
+
+.sidebar-header h1 {
+    flex-direction: column; /* Stack the icon and text */
+    gap: 8px;
+    font-size: 20px;
+}
+
+.sidebar-header h1 i {
+    font-size: 32px; /* Large, bold brand icon */
+    color: var(--secondary) !important;
+    margin-bottom: 5px;
+}
+
+.nav-links a.active {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: white !important;
+    border-left: 4px solid var(--secondary) !important;
+    font-weight: 700;
+    /* The Glow Effect */
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); 
+    transform: translateX(5px);
+}
