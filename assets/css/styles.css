@@ -2494,3 +2494,44 @@ input:checked + .toggle-slider {
     background-color: #48bb78 !important; /* Success Green */
     color: white !important;
 }
+
+/* Target Sidebar and Category Icons */
+.sidebar-nav i, 
+.nav-links i, 
+.order-filters i, 
+.inventory-stats i,
+.dark mode-icon {
+    color: #FFD700 !important; /* Vibrant Gold/Yellow */
+}
+
+/* Target the Cart Icon specifically */
+.current-order i.fa-shopping-cart, 
+.cart-header i {
+    color: #FFD700 !important;
+}
+
+/* Ensure active menu items maintain readable text */
+.nav-links li a.active {
+    color: #ffffff !important; /* Keeps text white */
+}
+
+.nav-links li a.active i {
+    color: #FFD700 !important; /* Keeps icon yellow even when active */
+}
+
+/* POS Category Buttons Icons */
+.category-btn i, 
+.filter-btn i {
+    color: #FFD700 !important;
+    margin-right: 8px;
+}
+
+/* If you want the category text to be yellow ONLY when active */
+.category-btn.active {
+    color: #FFD700 !important;
+    border-color: #FFD700 !important;
+}
+
+.sidebar-header h1 i {
+    color: #FFD700 !important;
+}
