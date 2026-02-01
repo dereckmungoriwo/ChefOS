@@ -362,7 +362,6 @@ if (!document.getElementById('toast-styles')) {
       top: 50%;
       transform: translateY(-50%);
       color: var(--primary);
-      border color: var(--primary) !important;
       font-size: 15px;
       pointer-events: none;
     }
@@ -378,7 +377,6 @@ if (!document.getElementById('toast-styles')) {
     }
     .menu-search-box input:focus {
       outline: none;
-      border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(30,111,92,0.15);
     }
     .menu-search-box input::placeholder {
@@ -391,7 +389,6 @@ if (!document.getElementById('toast-styles')) {
       transform: translateY(-50%);
       background: none;
       border: none;
-      color: var(--primary);
       font-size: 14px;
       cursor: pointer;
       width: 24px;
