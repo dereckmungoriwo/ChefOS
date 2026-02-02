@@ -371,14 +371,14 @@ input:checked + .toggle-slider:before {
     align-items: center;
     gap: 8px;
     color: var(--primary) !important;
-    font-size: 20px !important;
-    font-weight: 600 !important;
+    font-size: 28px !important;
+    font-weight: 700 !important;
     white-space: nowrap;
 }
 
 .clock-icon {
-    width: 20px !important;
-    height: 20px !important;
+    width: 26px !important;
+    height: 26px !important;
     flex-shrink: 0;
 }
 
