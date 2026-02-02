@@ -73,31 +73,32 @@
     <div class="main-content">
       <!-- TOP BAR - MATCHING POS PAGE STRUCTURE -->
       <header class="top-bar" role="banner">
-        <div class="header-left">
-          <h1 class="app-title">ChefOS Orders Management</h1>
-          <p class="header-motto">Tracking • Control • Analytics</p>
-        </div>
+  <div class="header-left">
+    <h1 class="app-title">ChefOS Orders Management</h1>
+    <p class="header-motto">Tracking • Control • Analytics</p>
+  </div>
 
-        <div class="header-right">
-          <!-- Time Display - Matching POS Page -->
-          <div class="time-display" aria-live="polite">
-            <svg class="clock-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/>
-              <path d="M12 7v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            <time id="clockText" datetime="">Loading time...</time>
-          </div>
+  <!-- TRUE CENTER COLUMN -->
+  <div class="header-center">
+    <div class="time-display" aria-live="polite">
+      <svg class="clock-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/>
+        <path d="M12 7v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <time id="clockText">Loading time...</time>
+    </div>
+  </div>
 
-          <!-- User Info - Matching POS Page -->
-          <div class="user-info">
-            <div class="user-avatar" aria-label="User avatar">DM</div>
-            <div class="user-meta">
-              <div class="user-name">Dereck Mungoriwo</div>
-              <div class="user-role">Manager</div>
-            </div>
-          </div>
-        </div>
-      </header>
+  <div class="header-right">
+    <div class="user-info">
+      <div class="user-avatar">DM</div>
+      <div class="user-meta">
+        <div class="user-name">Dereck Mungoriwo</div>
+        <div class="user-role">Manager</div>
+      </div>
+    </div>
+  </div>
+</header>
 
       <!-- PAGE CONTAINER (system standard wrapper) -->
       <div class="page-container">
