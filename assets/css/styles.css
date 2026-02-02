@@ -372,7 +372,7 @@ input:checked + .toggle-slider:before {
     gap: 8px;
     color: var(--primary) !important;
     font-size: 20px !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
     white-space: nowrap;
 }
 
