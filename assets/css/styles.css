@@ -563,7 +563,7 @@ input:checked + .toggle-slider:before {
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
-  color: var(--gray);
+  color: var(--primary);
   transition: var(--transition);
   display: flex;
   align-items: center;
