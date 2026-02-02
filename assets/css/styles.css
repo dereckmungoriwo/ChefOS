@@ -367,19 +367,26 @@ input:checked + .toggle-slider:before {
 }
 
 .time-display {
-    display: flex;
+    display: inline-flex;              /* shrink to content like a badge */
     align-items: center;
     gap: 8px;
-    color: var(--primary) !important;
-    font-size: 28px !important;
-    font-weight: 700 !important;
+
+    background-color: var(--primary);  /* background */
+    color: #fff !important;            /* white text */
+    
+    padding: 8px 14px;                 /* inner spacing */
+    border-radius: 10px;               /* rounded square (not full pill) */
+
+    font-size: 20px !important;
+    font-weight: 600 !important;
     white-space: nowrap;
 }
 
 .clock-icon {
-    width: 26px !important;
-    height: 26px !important;
+    width: 20px !important;
+    height: 20px !important;
     flex-shrink: 0;
+    fill: currentColor;   /* inherits white */
 }
 
 .user-info {
